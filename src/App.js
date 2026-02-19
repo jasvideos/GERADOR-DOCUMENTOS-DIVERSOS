@@ -1453,7 +1453,7 @@ function App() {
   };
 
   const visibleFieldGroups = selectedDoc?.fieldGroups?.filter(g => g.showIf ? g.showIf(formData) : true) || [];
-  const currentFields = selectedDoc?.fieldGroups?.[activeTab]?.fields || [];
+  const currentFields = selectedDoc?.fieldGroups?.[activeTab]?.fields?.filter(field => field.showIf ? field.showIf(formData) : true) || [];
 
   const handleTabClick = (group) => {
     const originalIndex = selectedDoc.fieldGroups.findIndex(g => g.tab === group.tab);
