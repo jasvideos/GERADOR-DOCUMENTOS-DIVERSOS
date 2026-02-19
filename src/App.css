@@ -37,8 +37,8 @@ body {
 .main-container {
   display: flex;
   flex: 1;
-  height: auto;
   overflow: hidden;
+  padding-bottom: 50px; /* Adiciona espaço para o rodapé */
 }
 
 .left-panel {
@@ -63,7 +63,7 @@ body {
 /* --- Home Screen Buttons --- */
 .doc-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 15px;
 }
 
@@ -71,7 +71,7 @@ body {
   background-color: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 20px;
+  padding: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -79,7 +79,7 @@ body {
   align-items: flex-start;
   text-align: left;
   height: auto;
-  min-height: 140px;
+  min-height: 120px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -90,21 +90,21 @@ body {
 }
 
 .doc-card-icon {
-  font-size: 2rem;
-  margin-bottom: 15px;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
 }
 
 .doc-card-title {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #2c3e50;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 
 .doc-card-desc {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #7f8c8d;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 /* --- Preview Placeholder --- */
@@ -287,6 +287,10 @@ form {
   padding: 10px;
   font-size: 0.9rem;
   border-top: 1px solid #34495e;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
 }
 
 /* Estilos para as Abas */

@@ -179,8 +179,8 @@ const documentModels = [
       const valorExtenso = numeroPorExtenso(data.valor_aluguel) || '____________________';
       const texto = `Recebi(emos) de ${data.locatario_nome || '____________________'} (CPF/CNPJ nº ${data.locatario_cpf_cnpj || '____________________'}), a importância de R$ ${data.valor_aluguel || '___'} (${valorExtenso}), referente ao pagamento do aluguel do imóvel situado no endereço ${data.endereco_imovel || '__________________________________'}, correspondente ao mês de ${data.mes_referencia || '____________________'}.`;
       
-      doc.text(texto, margin, yPos, { maxWidth: maxLineWidth, align: 'justify' });
       const splitText = doc.splitTextToSize(texto, maxLineWidth);
+      doc.text(splitText, margin, yPos, { align: 'left' });
       yPos += (splitText.length * 5) + 15;
 
       doc.text('Por ser a expressão da verdade, firmo(amos) o presente.', margin, yPos);
@@ -1186,8 +1186,8 @@ const documentModels = [
       const texto = `Eu, ${data.nome || '__________________________________'}, portador da carteira de identidade/passaporte nº ${data.documento_numero || '_______'}, expedido por (pelo) ${data.orgao_expedidor || '_______'}, em ${formatDate(data.data_expedicao)}, com validade até ${formatDate(data.validade_documento)}, CPF nº ${data.cpf || '______________'}, residente em (na/no/nos) ${data.pais || '______________'} no seguinte endereço: ${data.endereco || '__________________________________'}, telefone ${data.telefone || '________'}, e-mail ${data.email || '______________'} DECLARO para fins de prova junto à Defensoria Pública, que sou carente de recursos, não dispondo de condições econômicas para custear honorários de advogado particular no Brasil e tampouco arcar com as custas e despesas de processos judiciais sem sacrifício do meu sustento e de minha família. Por ser a expressão da verdade, assumindo inteira responsabilidade pelas declarações acima e sob as penas da lei, assino a presente declaração para que produza seus efeitos legais.`;
 
       const maxWidth = pageWidth - (margin * 2);
-      doc.text(texto, margin, yPos, { maxWidth, align: 'justify' });
       const splitText = doc.splitTextToSize(texto, maxWidth);
+      doc.text(splitText, margin, yPos, { align: 'left' });
       yPos += (splitText.length * 5) + 20;
 
       let dateText = `${data.cidade || 'Local'} - ${data.estado || 'UF'}, ___ de ____________ de ______.`;
