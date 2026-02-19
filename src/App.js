@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import './App.css';
 
-// --- Função Auxiliar para Valor por Extenso ---
+// --- Funções Utilitárias ---
 const numeroPorExtenso = (valor) => {
   if (!valor) return '';
   const v = parseFloat(valor.toString().replace(',', '.'));
@@ -239,52 +239,274 @@ const documentModels = [
   },
   {
     id: 'contrato_locacao',
-    title: 'Contrato de Locação Residencial',
+    title: 'Contrato de Locação',
     icon: '📝',
-    description: 'Minuta de contrato básico para locação de imóveis residenciais.',
-    fieldGroups: [{ fields: [
-      { name: 'locador', label: 'Nome do Locador (Dono)', type: 'text' },
-      { name: 'locatario', label: 'Nome do Locatário (Inquilino)', type: 'text' },
-      { name: 'endereco_imovel', label: 'Endereço do Imóvel', type: 'text' },
-      { name: 'valor_aluguel', label: 'Valor do Aluguel (R$)', type: 'number' },
-      { name: 'prazo_meses', label: 'Prazo (meses)', type: 'number' },
-      { name: 'data_inicio', label: 'Data de Início', type: 'date' }
-    ]}],
+    description: 'Contrato completo (Residencial ou Comercial) com cláusulas detalhadas.',
+    fieldGroups: [
+      {
+        tab: 'Partes',
+        fields: [
+          { type: 'heading', label: 'Dados do Locador' },
+          { name: 'locador_nome', label: 'Nome Completo (Locador)', type: 'text' },
+          { name: 'locador_cpf_cnpj', label: 'CPF/CNPJ', type: 'text', className: 'half-width' },
+          { name: 'locador_rg', label: 'RG/Inscr. Est.', type: 'text', className: 'half-width' },
+          { name: 'locador_estado_civil', label: 'Estado Civil', type: 'text', className: 'half-width' },
+          { name: 'locador_profissao', label: 'Profissão', type: 'text', className: 'half-width' },
+          { name: 'locador_endereco', label: 'Endereço Completo', type: 'text' },
+          { name: 'locador_contato', label: 'Telefone/E-mail', type: 'text' },
+          
+          { type: 'heading', label: 'Dados do Locatário' },
+          { name: 'locatario_nome', label: 'Nome Completo (Locatário)', type: 'text' },
+          { name: 'locatario_cpf_cnpj', label: 'CPF/CNPJ', type: 'text', className: 'half-width' },
+          { name: 'locatario_rg', label: 'RG/Inscr. Est.', type: 'text', className: 'half-width' },
+          { name: 'locatario_estado_civil', label: 'Estado Civil', type: 'text', className: 'half-width' },
+          { name: 'locatario_profissao', label: 'Profissão', type: 'text', className: 'half-width' },
+          { name: 'locatario_endereco', label: 'Endereço Completo', type: 'text' },
+          { name: 'locatario_contato', label: 'Telefone/E-mail', type: 'text' },
+        ]
+      },
+      {
+        tab: 'Imóvel e Prazo',
+        fields: [
+          { name: 'endereco_imovel', label: 'Endereço do Imóvel', type: 'text' },
+          { name: 'imovel_tipo', label: 'Tipo de Locação', type: 'select', options: ['Residencial', 'Comercial'] },
+          { name: 'imovel_descricao', label: 'Descrição Detalhada', type: 'textarea', placeholder: 'Ex: Casa com 2 quartos, sala, cozinha...' },
+          { name: 'finalidade_atividade', label: 'Atividade Comercial (se aplicável)', type: 'text', showIf: (data) => data.imovel_tipo === 'Comercial' },
+          
+          { type: 'heading', label: 'Prazo da Locação' },
+          { name: 'prazo_duracao', label: 'Prazo (ex: 12 meses)', type: 'text', className: 'third-width' },
+          { name: 'data_inicio', label: 'Data Início', type: 'date', className: 'third-width' },
+          { name: 'data_termino', label: 'Data Término', type: 'date', className: 'third-width' },
+        ]
+      },
+      {
+        tab: 'Valores',
+        fields: [
+          { name: 'valor_aluguel', label: 'Valor do Aluguel (R$)', type: 'number', className: 'half-width' },
+          { name: 'dia_vencimento', label: 'Dia do Vencimento', type: 'number', className: 'half-width' },
+          { name: 'meio_pagamento', label: 'Meio de Pagamento', type: 'select', options: ['Transferência', 'Pix', 'Boleto', 'Dinheiro', 'Outro'] },
+          { name: 'indice_reajuste', label: 'Índice de Reajuste', type: 'text', defaultValue: 'IGPM' },
+          
+          { type: 'heading', label: 'Multas e Juros' },
+          { name: 'multa_rescisao', label: 'Multa Rescisão (meses)', type: 'number', defaultValue: '3', className: 'third-width' },
+          { name: 'multa_atraso', label: 'Multa Atraso (%)', type: 'number', defaultValue: '10', className: 'third-width' },
+          { name: 'juros_mora', label: 'Juros Mora (% ao mês)', type: 'number', defaultValue: '1', className: 'third-width' },
+        ]
+      },
+      {
+        tab: 'Garantia',
+        fields: [
+          { name: 'tipo_garantia', label: 'Tipo de Garantia', type: 'select', options: ['Caução', 'Fiador', 'Seguro Fiança', 'Título de Capitalização', 'Sem Garantia'] },
+          { name: 'valor_caucao', label: 'Valor da Caução (R$)', type: 'number', showIf: (data) => data.tipo_garantia === 'Caução' },
+          { name: 'dados_fiador', label: 'Dados do Fiador', type: 'textarea', showIf: (data) => data.tipo_garantia === 'Fiador', placeholder: 'Nome, CPF, Endereço...' },
+        ]
+      },
+      {
+        tab: 'Finalização',
+        fields: [
+          { name: 'cidade', label: 'Cidade', type: 'text', className: 'half-width' },
+          { name: 'data_assinatura', label: 'Data da Assinatura', type: 'date', className: 'half-width' },
+          { name: 'testemunha1_nome', label: 'Nome Testemunha 1', type: 'text', className: 'half-width' },
+          { name: 'testemunha1_cpf', label: 'CPF Testemunha 1', type: 'text', className: 'half-width' },
+          { name: 'testemunha2_nome', label: 'Nome Testemunha 2', type: 'text', className: 'half-width' },
+          { name: 'testemunha2_cpf', label: 'CPF Testemunha 2', type: 'text', className: 'half-width' },
+          { name: 'incluir_vistoria', label: 'Incluir Termo de Vistoria Anexo', type: 'checkbox' },
+          { 
+            name: 'itens_vistoria', 
+            label: 'Itens da Vistoria', 
+            type: 'dynamic_list', 
+            showIf: (data) => data.incluir_vistoria,
+            defaultValues: ['Pintura (Paredes/Teto)', 'Pisos e Rodapés', 'Portas, Fechaduras e Chaves', 'Janelas e Vidros', 'Instalações Elétricas', 'Instalações Hidráulicas', 'Louças Sanitárias e Pias', 'Móveis e Armários']
+          },
+        ]
+      }
+    ],
     generatePDF: (data) => {
       const doc = new jsPDF();
-      doc.setFontSize(16);
-      doc.text('CONTRATO DE LOCAÇÃO RESIDENCIAL', 105, 20, null, null, 'center');
+      const margin = 20;
+      const pageWidth = 210;
+      const maxLineWidth = pageWidth - (margin * 2);
+      let yPos = 20;
+
+      const formatDate = (dateStr) => {
+        if (!dateStr) return '___/___/____';
+        const [y, m, d] = dateStr.split('-');
+        return `${d}/${m}/${y}`;
+      };
+
+      const addClause = (title, content) => {
+        if (yPos > 270) { doc.addPage(); yPos = 20; }
+        doc.setFont('helvetica', 'bold');
+        doc.text(title, margin, yPos);
+        yPos += 5;
+        doc.setFont('helvetica', 'normal');
+        const splitContent = doc.splitTextToSize(content, maxLineWidth);
+        doc.text(splitContent, margin, yPos, { align: 'left' });
+        yPos += (splitContent.length * 5) + 5;
+      };
+
+      // Título
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.text('CONTRATO DE LOCAÇÃO', pageWidth / 2, yPos, { align: 'center' });
+      yPos += 7;
+      doc.setFontSize(12);
+      doc.text(`(${data.imovel_tipo ? data.imovel_tipo.toUpperCase() : 'RESIDENCIAL OU COMERCIAL'})`, pageWidth / 2, yPos, { align: 'center' });
+      yPos += 15;
       
       doc.setFontSize(10);
-      let yPos = 40;
-      const lineHeight = 7;
+      doc.setFont('helvetica', 'normal');
+      
+      doc.text("Pelo presente instrumento particular de contrato de locação, de um lado:", margin, yPos);
+      yPos += 10;
 
-      const clausulas = [
-        `LOCADOR: ${data.locador || '________________'}.`,
-        `LOCATÁRIO: ${data.locatario || '________________'}.`,
-        `OBJETO: O imóvel situado em ${data.endereco_imovel || '________________'}.`,
-        `VALOR: O aluguel mensal será de R$ ${data.valor_aluguel || '___'}, a ser pago até o dia 05 de cada mês.`,
-        `PRAZO: A locação terá duração de ${data.prazo_meses || '___'} meses, iniciando-se em ${data.data_inicio || '___'}.`,
-        `FORO: As partes elegem o foro da comarca local para dirimir quaisquer dúvidas.`
-      ];
+      // Dados das Partes
+      const printParty = (label, prefix) => {
+        doc.setFont('helvetica', 'bold');
+        doc.text(label, margin, yPos);
+        yPos += 5;
+        doc.setFont('helvetica', 'normal');
+        
+        const text = `Nome completo: ${data[prefix + '_nome'] || '____________________________________________'}, CPF/CNPJ: ${data[prefix + '_cpf_cnpj'] || '____________________'}, RG/Inscrição Estadual: ${data[prefix + '_rg'] || '____________________'}, Estado civil: ${data[prefix + '_estado_civil'] || '____________________'}, Profissão: ${data[prefix + '_profissao'] || '____________________'}, Endereço completo: ${data[prefix + '_endereco'] || '_________________________________________________'}, Telefone/E-mail: ${data[prefix + '_contato'] || '____________________'}.`;
 
-      clausulas.forEach((clausula, index) => {
-        const splitText = doc.splitTextToSize(`${index + 1}. ${clausula}`, 170);
-        doc.text(splitText, 20, yPos);
+        const splitText = doc.splitTextToSize(text, maxLineWidth);
+        doc.text(splitText, margin, yPos, { align: 'left' });
         yPos += (splitText.length * 5) + 5;
-      });
+      };
 
+      printParty('LOCADOR', 'locador');
+      printParty('LOCATÁRIO', 'locatario');
+
+      const transition = "As partes acima identificadas têm entre si justo e contratado o presente contrato de locação, que se regerá pelas cláusulas e condições seguintes e pela legislação aplicável.";
+      const splitTransition = doc.splitTextToSize(transition, maxLineWidth);
+      doc.text(splitTransition, margin, yPos);
+      yPos += (splitTransition.length * 5) + 5;
+
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPos, pageWidth - margin, yPos);
+      yPos += 10;
+
+      // Cláusulas
+      addClause('CLÁUSULA 1 — DO IMÓVEL', `O LOCADOR dá em locação ao LOCATÁRIO o imóvel situado à: ${data.endereco_imovel || '____________________'}. Tipo: ${data.imovel_tipo || '__________'}. Descrição detalhada: ${data.imovel_descricao || '____________________'}.`);
+
+      let finalidadeText = `O imóvel será utilizado exclusivamente para fins ${data.imovel_tipo === 'Comercial' ? 'Comerciais' : 'Residenciais'}.`;
+      if (data.imovel_tipo === 'Comercial' && data.finalidade_atividade) finalidadeText += ` Atividade específica: ${data.finalidade_atividade}.`;
+      addClause('CLÁUSULA 2 — DA FINALIDADE', finalidadeText);
+
+      addClause('CLÁUSULA 3 — DO PRAZO', `O prazo da locação será de ${data.prazo_duracao || '___'} meses/anos, iniciando em ${formatDate(data.data_inicio)} e terminando em ${formatDate(data.data_termino)}.`);
+
+      const valorExtenso = numeroPorExtenso(data.valor_aluguel) ? ` (${numeroPorExtenso(data.valor_aluguel)})` : '';
+      addClause('CLÁUSULA 4 — DO VALOR DO ALUGUEL', `O aluguel mensal será de R$ ${data.valor_aluguel || '______'}${valorExtenso}, a ser pago até o dia ${data.dia_vencimento || '___'} de cada mês, por meio de: ${data.meio_pagamento || '__________'}.`);
+
+      addClause('CLÁUSULA 5 — DO REAJUSTE', `O aluguel será reajustado anualmente pelo índice legal vigente ou outro índice acordado: ${data.indice_reajuste || 'IGPM'}.`);
+
+      addClause('CLÁUSULA 6 — DOS ENCARGOS', `Serão de responsabilidade do LOCATÁRIO:\n• IPTU\n• Taxas de condomínio\n• Consumo de água, luz, gás e demais serviços\n• Taxas ordinárias`);
+
+      let garantiaText = `Tipo de garantia: ${data.tipo_garantia || '__________'}.`;
+      if (data.tipo_garantia === 'Caução') garantiaText += ` Valor: R$ ${data.valor_caucao || '______'}.`;
+      else if (data.tipo_garantia === 'Fiador') garantiaText += ` Dados do Fiador: ${data.dados_fiador || '____________________'}.`;
+      addClause('CLÁUSULA 7 — DA GARANTIA LOCATÍCIA', garantiaText);
+
+      addClause('CLÁUSULA 8 — DAS OBRIGAÇÕES DO LOCATÁRIO', `• Pagar pontualmente aluguel e encargos\n• Conservar o imóvel\n• Não realizar alterações sem autorização\n• Permitir vistoria mediante aviso prévio\n• Restituir o imóvel nas mesmas condições`);
+
+      addClause('CLÁUSULA 9 — DAS OBRIGAÇÕES DO LOCADOR', `• Entregar o imóvel em condições de uso\n• Garantir o uso pacífico\n• Realizar reparos estruturais necessários`);
+
+      addClause('CLÁUSULA 10 — DAS BENFEITORIAS', `Benfeitorias somente com autorização por escrito do LOCADOR, sem direito a retenção ou indenização salvo acordo expresso.`);
+
+      addClause('CLÁUSULA 11 — DA RESCISÃO', `Em caso de rescisão antecipada pelo LOCATÁRIO, poderá ser aplicada multa proporcional equivalente a ${data.multa_rescisao || '___'} meses de aluguel.`);
+
+      addClause('CLÁUSULA 12 — DA MULTA POR ATRASO', `O atraso no pagamento implicará multa de ${data.multa_atraso || '__'}%, juros de ${data.juros_mora || '__'}% ao mês e correção monetária.`);
+
+      addClause('CLÁUSULA 13 — DA VISTORIA', `Será realizado laudo de vistoria inicial e final, integrando este contrato.`);
+
+      addClause('CLÁUSULA 14 — DA SUBLOCAÇÃO', `É vedada a sublocação ou cessão sem autorização expressa do LOCADOR.`);
+
+      addClause('CLÁUSULA 15 — DO FORO', `Fica eleito o foro da comarca do imóvel para dirimir quaisquer controvérsias.`);
+
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPos, pageWidth - margin, yPos);
+      yPos += 10;
+
+      // Declarações Finais
+      doc.setFont('helvetica', 'bold');
+      doc.text('DECLARAÇÕES FINAIS', margin, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.text('As partes declaram que leram e concordam com todas as cláusulas.', margin, yPos);
+      yPos += 15;
+
+      let dateText = `${data.cidade || 'Local'}, ___ de ____________ de ______.`;
+      if (data.data_assinatura) {
+        const d = new Date(data.data_assinatura + 'T12:00:00');
+        dateText = `${data.cidade || 'Local'}, ${d.getDate()} de ${d.toLocaleString('pt-BR', { month: 'long' })} de ${d.getFullYear()}.`;
+      }
+      doc.text(dateText, margin, yPos);
       yPos += 20;
-      doc.text('__________________________', 20, yPos);
-      doc.text('Locador', 20, yPos + 5);
 
-      doc.text('__________________________', 120, yPos);
-      doc.text('Locatário', 120, yPos + 5);
+      // Assinaturas
+      if (yPos > 240) { doc.addPage(); yPos = 40; }
+
+      const drawSignatureLine = (label, x, y) => {
+        doc.line(x, y, x + 80, y);
+        doc.text(label, x + 40, y + 5, { align: 'center' });
+      };
+
+      drawSignatureLine(data.locador_nome || 'LOCADOR', margin, yPos);
+      drawSignatureLine(data.locatario_nome || 'LOCATÁRIO', pageWidth - margin - 80, yPos);
+      yPos += 25;
+
+      drawSignatureLine(`Testemunha 1: ${data.testemunha1_nome || ''}`, margin, yPos);
+      if (data.testemunha1_cpf) doc.text(`CPF: ${data.testemunha1_cpf}`, margin + 40, yPos + 10, { align: 'center' });
+
+      drawSignatureLine(`Testemunha 2: ${data.testemunha2_nome || ''}`, pageWidth - margin - 80, yPos);
+      if (data.testemunha2_cpf) doc.text(`CPF: ${data.testemunha2_cpf}`, pageWidth - margin - 40, yPos + 10, { align: 'center' });
+
+      // --- Termo de Vistoria Anexo ---
+      if (data.incluir_vistoria) {
+        doc.addPage();
+        yPos = 20;
+        
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(14);
+        doc.text('ANEXO I - TERMO DE VISTORIA DE IMÓVEL', pageWidth / 2, yPos, { align: 'center' });
+        yPos += 15;
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        
+        const vistoriaIntro = `Este termo é parte integrante do Contrato de Locação do imóvel situado à ${data.endereco_imovel || '____________________'}, firmado entre as partes abaixo assinadas.`;
+        doc.text(doc.splitTextToSize(vistoriaIntro, maxLineWidth), margin, yPos);
+        yPos += 15;
+
+        doc.setFont('helvetica', 'bold');
+        doc.text('ESTADO DE CONSERVAÇÃO DOS ITENS:', margin, yPos);
+        yPos += 10;
+        
+        const defaultItems = ['Pintura (Paredes/Teto)', 'Pisos e Rodapés', 'Portas, Fechaduras e Chaves', 'Janelas e Vidros', 'Instalações Elétricas', 'Instalações Hidráulicas', 'Louças Sanitárias e Pias', 'Móveis e Armários'];
+        const items = (data.itens_vistoria && data.itens_vistoria.length > 0) ? data.itens_vistoria : defaultItems;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        items.forEach(item => {
+            doc.text(`${item}:`, margin, yPos);
+            doc.text('(__) Bom  (__) Regular  (__) Ruim', margin + 90, yPos);
+            yPos += 5;
+            doc.text('Obs: ______________________________________________________________________', margin, yPos);
+            yPos += 10;
+        });
+
+        yPos += 10;
+        doc.setFontSize(10);
+        doc.text("O LOCATÁRIO declara ter vistoriado o imóvel e conferido os itens acima, concordando com o estado de conservação descrito.", margin, yPos, { maxWidth: maxLineWidth });
+        yPos += 20;
+
+        drawSignatureLine('LOCADOR', margin, yPos);
+        drawSignatureLine('LOCATÁRIO', pageWidth - margin - 80, yPos);
+      }
 
       return doc;
     }
   },
-  // Adicione aqui os outros documentos (Curriculum, Vistoria, etc.) seguindo o mesmo padrão
   { 
     id: 'curriculo', 
     title: 'Curriculum Vitae', 
@@ -520,7 +742,10 @@ const documentModels = [
       let dateText = `${data.cidade || 'Cidade'} - ${data.estado || 'UF'}, ___ de ____________ de ______.`;
       if (data.data) {
           const d = new Date(data.data + 'T12:00:00');
-          dateText = `${data.cidade || 'Cidade'} - ${data.estado || 'UF'}, ${d.getDate()} de ${d.toLocaleString('pt-BR', { month: 'long' })} de ${d.getFullYear()}.`;
+          const day = d.getDate();
+          const month = d.toLocaleString('pt-BR', { month: 'long' });
+          const year = d.getFullYear();
+          dateText = `${data.cidade || 'Cidade'} - ${data.estado || 'UF'}, ${day} de ${month} de ${year}.`;
       }
       doc.text(dateText, margin, yPos);
 
@@ -968,10 +1193,7 @@ const documentModels = [
       let dateText = `${data.cidade || 'Local'} - ${data.estado || 'UF'}, ___ de ____________ de ______.`;
       if (data.data) {
           const d = new Date(data.data + 'T12:00:00');
-          const day = d.getDate();
-          const month = d.toLocaleString('pt-BR', { month: 'long' });
-          const year = d.getFullYear();
-          dateText = `${data.cidade || 'Local'} - ${data.estado || 'UF'}, ${day} de ${month} de ${year}.`;
+          dateText = `${data.cidade || 'Local'} - ${data.estado || 'UF'}, ${d.getDate()} de ${d.toLocaleString('pt-BR', { month: 'long' })} de ${d.getFullYear()}.`;
       }
       doc.text(dateText, margin, yPos);
       yPos += 20;
@@ -1402,7 +1624,7 @@ function App() {
             <div className="cv-section">
               <h3>Formação Acadêmica <button type="button" className="btn-add" onClick={() => addListItem('formacao', { instituicao: '', curso: '', periodo: '' })}>+</button></h3>
               {(formData.formacao || []).map((edu, index) => (
-                <div key={index} className="cv-list-item">
+                <div key={index} className="cvcv-item">
                   <button type="button" className="btn-icon delete" onClick={() => removeListItem('formacao', index)}>🗑️</button>
                   <div className="form-group"><label>Instituição</label><input type="text" value={edu.instituicao} onChange={(e) => updateListItem('formacao', index, 'instituicao', e.target.value)} /></div>
                   <div className="form-group"><label>Curso</label><input type="text" value={edu.curso} onChange={(e) => updateListItem('formacao', index, 'curso', e.target.value)} /></div>
@@ -1521,7 +1743,6 @@ function App() {
           {!selectedDoc ? (
             <div className="doc-grid">
               {documentModels.map(doc => (
-                <div key={doc.id}m>{d|<assName="doc-card-desc">{doc.description || 'Clique para criar este documento.'}</div>
                 <div key={doc.id} className="doc-card" onClick={() => handleDocSelect(doc.id)}>
                   <div className="doc-card-icon">{doc.icon || '📄'}</div>
                   <div className="doc-card-title">{doc.title}</div>
@@ -1541,71 +1762,99 @@ function App() {
               {selectedDoc.id === 'curriculo' ? (
                   renderCVForm()
               ) : selectedDoc.id === 'orcamento' ? (
-            <>
-              {visibleFieldGroups.length > 1 && (
-                <div className="tab-buttons">
-                  {visibleFieldGroups.map(group => (
-                    <button
-                      key={group.tab}
-                      className={`tab-button ${selectedDoc.fieldGroups[activeTab].tab === group.tab ? 'active' : ''}`}
-                      onClick={() => handleTabClick(group)}
-                    >
-                      {group.tab}
-                    </button>
-                  ))}
-                </div>
-              )}
+                  renderOrcamentoForm()
+              ) : (
+                <>
+                  {visibleFieldGroups.length > 1 && (
+                    <div className="tab-buttons">
+                      {visibleFieldGroups.map(group => (
+                        <button
+                          key={group.tab}
+                          className={`tab-button ${selectedDoc.fieldGroups[activeTab].tab === group.tab ? 'active' : ''}`}
+                          onClick={() => handleTabClick(group)}
+                        >
+                          {group.tab}
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-              <form onSubmit={(e) => e.preventDefault()}>
-                {currentFields.length > 0
-                  ? currentFields.map(field =>
-                      field.type === 'heading'
-                      ? <h3 className="form-heading" key={field.label}>{field.label}</h3>
-                      : (
-                        <div className={`form-group ${field.className || ''}`} key={field.name}>
-                          <label htmlFor={field.name}>{field.label}</label>
-                          {field.type === 'textarea' ? (
-                            <textarea
-                              id={field.name}
-                              name={field.name}
-                              value={formData[field.name] || ''}
-                              onChange={handleInputChange}
-                              rows="4"
-                            />
-                          ) : field.type === 'select' ? (
-                            <select
-                              id={field.name}
-                              name={field.name}
-                              value={formData[field.name] || ''}
-                              onChange={handleInputChange}
-                            >
-                              <option value="" disabled>Selecione...</option>
-                              {field.options.map(opt => (
-                                <option key={opt} value={opt}>{opt}</option>
-                              ))}
-                            </select>
-                          ) : (
-                            <>
-                            <input
-                              type={field.type}
-                              id={field.name}
-                              name={field.name}
-                              placeholder={field.placeholder || ''}
-                              {...(field.type !== 'file' ? { value: formData[field.name] || '' } : {})}
-                              {...(field.type === 'checkbox' ? { checked: formData[field.name] || false } : {})}
-                              onChange={handleInputChange}
-                              style={errors[field.name] ? { borderColor: '#e74c3c' } : {}}
-                            />
-                            {errors[field.name] && <span style={{ color: '#e74c3c', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>{errors[field.name]}</span>}
-                            </>
-                          )}
-                        </div>
-                      )
-                    ) : (
-                  <p>Este modelo estará disponível em breve.</p>
-                )}
-              </form>
-              </>
+                  <form onSubmit={(e) => e.preventDefault()}>
+                    {currentFields.length > 0
+                      ? currentFields.map(field =>
+                          field.type === 'heading'
+                          ? <h3 className="form-heading" key={field.label}>{field.label}</h3>
+                          : (
+                            <div className={`form-group ${field.className || ''}`} key={field.name}>
+                              <label htmlFor={field.name}>{field.label}</label>
+                              {field.type === 'textarea' ? (
+                                <textarea
+                                  id={field.name}
+                                  name={field.name}
+                                  value={formData[field.name] || ''}
+                                  onChange={handleInputChange}
+                                  rows="4"
+                                />
+                              ) : field.type === 'select' ? (
+                                <select
+                                  id={field.name}
+                                  name={field.name}
+                                  value={formData[field.name] || ''}
+                                  onChange={handleInputChange}
+                                >
+                                  <option value="" disabled>Selecione...</option>
+                                  {field.options.map(opt => (
+                                    <option key={opt} value={opt}>{opt}</option>
+                                  ))}
+                                </select>
+                              ) : field.type === 'dynamic_list' ? (
+                                <div className="dynamic-list-container">
+                                  {(formData[field.name] || field.defaultValues || []).map((item, idx) => (
+                                    <div key={idx} style={{ display: 'flex', gap: '10px', marginBottom: '5px', alignItems: 'center' }}>
+                                      <input 
+                                        type="text" 
+                                        value={item} 
+                                        onChange={(e) => {
+                                          const newList = [...(formData[field.name] || field.defaultValues || [])];
+                                          newList[idx] = e.target.value;
+                                          setFormData(prev => ({ ...prev, [field.name]: newList }));
+                                        }}
+                                      />
+                                      <button type="button" className="btn-icon delete" style={{position: 'static'}} onClick={() => {
+                                          const newList = [...(formData[field.name] || field.defaultValues || [])];
+                                          newList.splice(idx, 1);
+                                          setFormData(prev => ({ ...prev, [field.name]: newList }));
+                                      }}>🗑️</button>
+                                    </div>
+                                  ))}
+                                  <button type="button" className="btn-add" style={{marginLeft: 0, marginTop: '5px'}} onClick={() => {
+                                      const newList = [...(formData[field.name] || field.defaultValues || [])];
+                                      newList.push('');
+                                      setFormData(prev => ({ ...prev, [field.name]: newList }));
+                                  }}>+</button>
+                                </div>
+                              ) : (
+                                <>
+                                <input
+                                  type={field.type}
+                                  id={field.name}
+                                  name={field.name}
+                                  placeholder={field.placeholder || ''}
+                                  {...(field.type !== 'file' ? { value: formData[field.name] || '' } : {})}
+                                  {...(field.type === 'checkbox' ? { checked: formData[field.name] || false } : {})}
+                                  onChange={handleInputChange}
+                                  style={errors[field.name] ? { borderColor: '#e74c3c' } : {}}
+                                />
+                                {errors[field.name] && <span style={{ color: '#e74c3c', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>{errors[field.name]}</span>}
+                                </>
+                              )}
+                            </div>
+                          )
+                        ) : (
+                      <p>Este modelo estará disponível em breve.</p>
+                    )}
+                  </form>
+                </>
               )}
             <div className="button-group">
               <button type="button" onClick={handleDownload} className="btn-action btn-download">Baixar PDF</button>
@@ -1662,4 +1911,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
