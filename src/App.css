@@ -508,6 +508,7 @@ form {
   cursor: pointer;
   border: 1px solid #bdc3c7;
   font-size: 0.9rem;
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -530,4 +531,206 @@ form {
 .lang-row select {
   width: auto;
   margin-left: 10px;
+}
+
+/* --- Estilos para Modais de Pagamento --- */
+
+.welcome-modal {
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-modal .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 25px;
+  margin: -20px -20px 20px -20px;
+  text-align: center;
+  border-radius: 12px 12px 0 0;
+}
+
+.welcome-modal .modal-header h2 {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.price-table {
+  margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.price-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.price-table thead {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+}
+
+.price-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #ecf0f1;
+  font-size: 1rem;
+}
+
+.price-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.price-table tbody tr:hover {
+  background-color: #f1f5f9;
+  transform: scale(1.01);
+}
+
+.price-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.price-table .price {
+  text-align: right;
+  font-weight: bold;
+  color: #27ae60;
+  font-size: 1.2rem;
+  font-family: 'Courier New', monospace;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Modal PIX */
+
+.pix-modal {
+  max-width: 500px;
+}
+
+.pix-info {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+}
+
+.pix-info h4 {
+  margin: 0 0 10px 0;
+  font-size: 1.3rem;
+}
+
+.pix-price {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.pix-qrcode {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.qrcode-placeholder {
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+}
+
+.pix-code {
+  margin: 20px 0;
+}
+
+.pix-code label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.code-box {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-copy {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.btn-copy:hover {
+  background: #2980b9;
+}
+
+.pix-instructions {
+  background: #fff3cd;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+  margin: 20px 0;
+}
+
+.pix-instructions p {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  color: #856404;
+}
+
+.pix-instructions ol {
+  margin: 10px 0 0 20px;
+  color: #856404;
+}
+
+.pix-instructions li {
+  margin: 5px 0;
+}
+
+.test-buttons {
+  border-top: 2px dashed #ddd;
+  padding-top: 20px;
+  margin-top: 20px;
 }

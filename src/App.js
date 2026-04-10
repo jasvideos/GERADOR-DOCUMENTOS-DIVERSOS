@@ -94,6 +94,7 @@ const documentModels = [
     id: 'recibo',
     title: 'Recibo de Pagamento',
     icon: '📄',
+    price: 2.90,
     description: 'Gere recibos simples de pagamento com valor por extenso automático.',
     fieldGroups: [{ fields: [
       { name: 'logo', label: 'Logotipo (Opcional)', type: 'file' },
@@ -144,6 +145,7 @@ const documentModels = [
     id: 'recibo_aluguel',
     title: 'Recibo de Aluguel',
     icon: '🏠',
+    price: 2.90,
     description: 'Recibos detalhados para locação de imóveis residenciais ou comerciais.',
     fieldGroups: [{ fields: [
       { name: 'locador_nome', label: 'Nome do Locador (quem recebe)', type: 'text' },
@@ -204,6 +206,7 @@ const documentModels = [
     id: 'declaracao_residencia',
     title: 'Declaração de Residência',
     icon: '📍',
+    price: 3.90,
     description: 'Documento para comprovação de endereço residencial.',
     fieldGroups: [{ fields: [
       { name: 'nome', label: 'Seu Nome Completo', type: 'text' },
@@ -241,6 +244,7 @@ const documentModels = [
     id: 'contrato_locacao',
     title: 'Contrato de Locação',
     icon: '📝',
+    price: 9.90,
     description: 'Contrato completo (Residencial ou Comercial) com cláusulas detalhadas.',
     fieldGroups: [
       {
@@ -511,6 +515,7 @@ const documentModels = [
     id: 'curriculo', 
     title: 'Curriculum Vitae', 
     icon: '💼',
+    price: 2.90,
     description: 'Crie um currículo profissional, moderno e formatado.',
     isCustom: true, // Indica que usa renderização personalizada
     generatePDF: (data) => {
@@ -521,6 +526,52 @@ const documentModels = [
       let yPos = 20;
       let headerTextY = yPos;
       let headerTextMaxWidth = maxLineWidth;
+
+      // --- Espaço para Foto (canto superior direito) ---
+      const photoBoxWidth = 35;
+      const photoBoxHeight = 45;
+      const photoX = pageWidth - margin - photoBoxWidth;
+      const photoY = 20;
+      
+      if (data.foto) {
+        try {
+          // Detecta o formato da imagem
+          let format = 'JPEG';
+          if (data.foto.startsWith('data:image/png')) format = 'PNG';
+          else if (data.foto.startsWith('data:image/jpg') || data.foto.startsWith('data:image/jpeg')) format = 'JPEG';
+          
+          // Adiciona a imagem com proporção mantida
+          doc.addImage(data.foto, format, photoX, photoY, photoBoxWidth, photoBoxHeight);
+          
+          // Adiciona borda ao redor da foto
+          doc.setDrawColor(180);
+          doc.setLineWidth(0.3);
+          doc.rect(photoX, photoY, photoBoxWidth, photoBoxHeight);
+        } catch (e) {
+          // Se houver erro ao adicionar a foto, desenha um retângulo
+          console.error('Erro ao adicionar foto:', e);
+          doc.setDrawColor(200);
+          doc.setFillColor(250, 220, 220);
+          doc.rect(photoX, photoY, photoBoxWidth, photoBoxHeight, 'FD');
+          doc.setFontSize(7);
+          doc.setTextColor(150);
+          doc.text('Erro ao', photoX + photoBoxWidth / 2, photoY + photoBoxHeight / 2 - 2, { align: 'center' });
+          doc.text('carregar foto', photoX + photoBoxWidth / 2, photoY + photoBoxHeight / 2 + 2, { align: 'center' });
+          doc.setTextColor(0);
+        }
+      } else {
+        // Desenha um retângulo indicando onde colocar a foto
+        doc.setDrawColor(200);
+        doc.setFillColor(245, 245, 245);
+        doc.rect(photoX, photoY, photoBoxWidth, photoBoxHeight, 'FD');
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text('Foto 3x4', photoX + photoBoxWidth / 2, photoY + photoBoxHeight / 2, { align: 'center' });
+        doc.setTextColor(0);
+      }
+
+      // Ajusta a largura máxima do texto para não sobrepor a foto
+      headerTextMaxWidth = maxLineWidth - photoBoxWidth - 10;
 
       // --- Cabeçalho ---
       doc.setFontSize(22);
@@ -662,6 +713,7 @@ const documentModels = [
     id: 'orcamento',
     title: 'Orçamento de Serviços',
     icon: '💰',
+    price: 4.90,
     description: 'Crie orçamentos com lista de itens e cálculo automático de totais.',
     isCustom: true,
     generatePDF: (data) => {
@@ -756,6 +808,7 @@ const documentModels = [
     id: 'procuracao',
     title: 'Procuração Particular',
     icon: '⚖️',
+    price: 4.90,
     description: 'Instrumento legal para representação perante terceiros.',
     fieldGroups: [
       {
@@ -859,6 +912,7 @@ const documentModels = [
     id: 'uniao_estavel',
     title: 'Declaração de União Estável',
     icon: '💍',
+    price: 4.90,
     description: 'Formalize a convivência pública, contínua e duradoura.',
     fieldGroups: [
       {
@@ -971,6 +1025,7 @@ const documentModels = [
     id: 'viagem_menor',
     title: 'Aut. Viagem Menor',
     icon: '✈️',
+    price: 4.90,
     description: 'Autorização para viagem nacional de crianças e adolescentes.',
     fieldGroups: [
       {
@@ -1147,6 +1202,7 @@ const documentModels = [
     id: 'hipossuficiencia',
     title: 'Declaração de Hipossuficiência',
     icon: '🤝',
+    price: 4.90,
     description: 'Atestado de pobreza para gratuidade de justiça.',
     fieldGroups: [{ fields: [
       { name: 'nome', label: 'Nome Completo', type: 'text' },
@@ -1209,6 +1265,7 @@ const documentModels = [
     id: 'rpa',
     title: 'Recibo de Pagamento de Autônomo (RPA)',
     icon: '💼',
+    price: 4.90,
     description: 'Recibo oficial para autônomos com cálculo de impostos.',
     fieldGroups: [
       {
@@ -1323,7 +1380,11 @@ function App() {
   const [errors, setErrors] = useState({});
   const [activeTab, setActiveTab] = useState(0);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [activeModal, setActiveModal] = useState(null); // 'resumo', 'idiomas', 'habilidades'
+  const [activeModal, setActiveModal] = useState(null); // 'resumo', 'idiomas', 'habilidades', 'welcome', 'pix'
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [showPixModal, setShowPixModal] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
+  const [pixCode, setPixCode] = useState('');
 
   const selectedDoc = documentModels.find(d => d.id === selectedDocId);
 
@@ -1380,14 +1441,68 @@ function App() {
     }
 
     if (type === 'file' && files && files[0]) {
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        setFormData(prev => ({
-          ...prev,
-          [name]: evt.target.result
-        }));
-      };
-      reader.readAsDataURL(files[0]);
+      const file = files[0];
+      
+      // Se for upload de foto do currículo, redimensiona mantendo proporção
+      if (name === 'foto' && file.type.startsWith('image/')) {
+        const img = new Image();
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+          img.src = e.target.result;
+          
+          img.onload = () => {
+            // Cria um canvas para redimensionar a imagem
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Define dimensões proporcionais (3x4 ratio)
+            const maxWidth = 600;
+            const maxHeight = 800;
+            let width = img.width;
+            let height = img.height;
+            
+            // Calcula proporção mantendo aspect ratio
+            if (width > height) {
+              if (width > maxWidth) {
+                height = (height * maxWidth) / width;
+                width = maxWidth;
+              }
+            } else {
+              if (height > maxHeight) {
+                width = (width * maxHeight) / height;
+                height = maxHeight;
+              }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Desenha a imagem redimensionada
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Converte para base64 com qualidade otimizada
+            const resizedImageData = canvas.toDataURL('image/jpeg', 0.85);
+            
+            setFormData(prev => ({
+              ...prev,
+              [name]: resizedImageData
+            }));
+          };
+        };
+        
+        reader.readAsDataURL(file);
+      } else {
+        // Processamento padrão para outros arquivos
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          setFormData(prev => ({
+            ...prev,
+            [name]: evt.target.result
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
     } else if (type === 'checkbox') {
       setFormData(prev => ({
         ...prev,
@@ -1419,11 +1534,19 @@ function App() {
   };
 
   const handleDownload = () => {
+    if (!isPaid) {
+      handleRequestPayment();
+      return;
+    }
     const doc = generateDoc();
     if (doc) doc.save(`${selectedDoc.id}.pdf`);
   };
 
   const handlePrint = () => {
+    if (!isPaid) {
+      handleRequestPayment();
+      return;
+    }
     const doc = generateDoc();
     if (doc) {
       doc.autoPrint();
@@ -1432,6 +1555,10 @@ function App() {
   };
 
   const handleShare = async () => {
+    if (!isPaid) {
+      handleRequestPayment();
+      return;
+    }
     const doc = generateDoc();
     if (doc) {
       const blob = doc.output('blob');
@@ -1450,6 +1577,20 @@ function App() {
         alert("O compartilhamento direto não é suportado neste navegador/dispositivo. Por favor, baixe o PDF e envie manualmente.");
       }
     }
+  };
+
+  const handleRequestPayment = () => {
+    // Gera um código PIX mockup (em produção, viria da API do Mercado Pago/Stripe)
+    const mockPixCode = '00020126580014br.gov.bcb.pix0136' + Math.random().toString(36).substr(2, 32) + '5204000053039865802BR5925Anix Copiadora LTDA6009Sao Paulo62070503***6304' + Math.random().toString(16).substr(2, 4).toUpperCase();
+    setPixCode(mockPixCode);
+    setShowPixModal(true);
+  };
+
+  const handlePaymentConfirmed = () => {
+    // Em produção, isso seria confirmado via webhook
+    setIsPaid(true);
+    setShowPixModal(false);
+    alert('✅ Pagamento confirmado! Você já pode baixar, imprimir ou compartilhar seu documento.');
   };
 
   const visibleFieldGroups = selectedDoc?.fieldGroups?.filter(g => g.showIf ? g.showIf(formData) : true) || [];
@@ -1575,6 +1716,59 @@ function App() {
           {activeTab === 0 && (
             <div className="cv-section">
               <h3>Dados Pessoais</h3>
+              <div className="form-group" style={{ marginBottom: '15px' }}>
+                <label>Foto 3x4 (Opcional)</label>
+                <input 
+                  type="file" 
+                  name="foto" 
+                  accept="image/*"
+                  onChange={handleInputChange}
+                />
+                {formData.foto && (
+                  <div style={{ marginTop: '10px', position: 'relative', display: 'inline-block' }}>
+                    <img 
+                      src={formData.foto} 
+                      alt="Preview da Foto" 
+                      style={{ 
+                        width: '120px', 
+                        height: '160px', 
+                        objectFit: 'cover', 
+                        border: '2px solid #3498db', 
+                        borderRadius: '4px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, foto: null }))}
+                      style={{
+                        position: 'absolute',
+                        top: '-8px',
+                        right: '-8px',
+                        background: '#e74c3c',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '24px',
+                        height: '24px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                      }}
+                      title="Remover foto"
+                    >
+                      ×
+                    </button>
+                    <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '5px' }}>
+                      Proporção 3x4 - A foto será ajustada automaticamente no PDF
+                    </p>
+                  </div>
+                )}
+              </div>
               <div className="form-group" style={{ marginBottom: '15px' }}><label>Nome Completo</label><input type="text" name="nome" value={formData.nome || ''} onChange={handleInputChange} /></div>
               <div style={{ display: 'flex', gap: '15px' }}>
                 <div className="form-group" style={{ flex: 2, marginBottom: '15px' }}><label>Cargo Pretendido</label><input type="text" name="cargo" value={formData.cargo || ''} onChange={handleInputChange} /></div>
@@ -1904,6 +2098,176 @@ function App() {
                   ))}
                 </ul>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- Modal de Boas-vindas com Tabela de Preços --- */}
+      {showWelcomeModal && (
+        <div className="modal-overlay">
+          <div className="modal-content welcome-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 style={{margin: 0, fontSize: '2rem', fontWeight: 'bold'}}>
+                Bem-vindo ao Gerador de Documentos! 📄✨
+              </h2>
+              <p style={{margin: '10px 0 0 0', fontSize: '1.1rem', opacity: 0.95}}>
+                Crie documentos profissionais em minutos
+              </p>
+            </div>
+            <div className="modal-body">
+              <div style={{
+                background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
+                padding: '15px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                border: '2px solid #667eea',
+                textAlign: 'center'
+              }}>
+                <p style={{margin: 0, fontSize: '1rem', color: '#2c3e50', fontWeight: '500'}}>
+                  🎯 <strong>Como funciona:</strong> Escolha o documento → Preencha os dados → Pague via PIX → Baixe instantaneamente!
+                </p>
+              </div>
+              
+              <h3 style={{textAlign: 'center', color: '#2c3e50', marginBottom: '15px', fontSize: '1.3rem'}}>
+                📋 Documentos Disponíveis
+              </h3>
+              
+              <div className="price-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Documento</th>
+                      <th>Preço</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {documentModels.map(doc => (
+                      <tr key={doc.id}>
+                        <td>
+                          <span style={{fontSize: '1.3rem', marginRight: '8px'}}>{doc.icon}</span>
+                          <strong>{doc.title}</strong>
+                        </td>
+                        <td className="price">R$ {doc.price?.toFixed(2).replace('.', ',')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div style={{
+                background: '#fff3cd',
+                padding: '12px',
+                borderRadius: '6px',
+                marginTop: '15px',
+                marginBottom: '15px',
+                borderLeft: '4px solid #ffc107',
+                fontSize: '0.95rem',
+                color: '#856404'
+              }}>
+                <strong>💡 Dica:</strong> Todos os documentos são gerados instantaneamente em PDF de alta qualidade!
+              </div>
+              
+              <button 
+                className="btn-primary" 
+                style={{
+                  width: '100%', 
+                  marginTop: '10px', 
+                  padding: '15px', 
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
+                }}
+                onClick={() => setShowWelcomeModal(false)}
+              >
+                🚀 Começar Agora
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- Modal de Pagamento PIX --- */}
+      {showPixModal && selectedDoc && (
+        <div className="modal-overlay">
+          <div className="modal-content pix-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Pagamento via PIX</h3>
+              <button className="modal-close" onClick={() => setShowPixModal(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              <div className="pix-info">
+                <h4>{selectedDoc.icon} {selectedDoc.title}</h4>
+                <p className="pix-price">R$ {selectedDoc.price?.toFixed(2)}</p>
+              </div>
+              
+              <div className="pix-qrcode">
+                <div className="qrcode-placeholder">
+                  <svg width="200" height="200" viewBox="0 0 200 200" style={{background: 'white', padding: '10px'}}>
+                    <rect width="200" height="200" fill="white"/>
+                    <rect x="20" y="20" width="40" height="40" fill="black"/>
+                    <rect x="70" y="20" width="10" height="10" fill="black"/>
+                    <rect x="90" y="20" width="20" height="20" fill="black"/>
+                    <rect x="140" y="20" width="40" height="40" fill="black"/>
+                    <rect x="20" y="70" width="10" height="10" fill="black"/>
+                    <rect x="50" y="70" width="10" height="10" fill="black"/>
+                    <rect x="80" y="70" width="30" height="30" fill="black"/>
+                    <rect x="130" y="70" width="10" height="10" fill="black"/>
+                    <rect x="160" y="70" width="20" height="20" fill="black"/>
+                    <rect x="20" y="140" width="40" height="40" fill="black"/>
+                    <rect x="80" y="140" width="10" height="10" fill="black"/>
+                    <rect x="100" y="140" width="30" height="30" fill="black"/>
+                    <rect x="140" y="140" width="10" height="10" fill="black"/>
+                    <rect x="160" y="160" width="20" height="20" fill="black"/>
+                  </svg>
+                  <p style={{fontSize: '0.85rem', color: '#666', marginTop: '10px'}}>QR Code PIX (Teste)</p>
+                </div>
+              </div>
+
+              <div className="pix-code">
+                <label>Código PIX Copia e Cola:</label>
+                <div className="code-box">
+                  <input 
+                    type="text" 
+                    value={pixCode} 
+                    readOnly 
+                    style={{flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px'}}
+                  />
+                  <button 
+                    className="btn-copy"
+                    onClick={() => {
+                      navigator.clipboard.writeText(pixCode);
+                      alert('Código PIX copiado!');
+                    }}
+                  >
+                    📋 Copiar
+                  </button>
+                </div>
+              </div>
+
+              <div className="pix-instructions">
+                <p><strong>Como pagar:</strong></p>
+                <ol>
+                  <li>Abra o app do seu banco</li>
+                  <li>Escolha a opção PIX</li>
+                  <li>Escaneie o QR Code ou cole o código acima</li>
+                  <li>Confirme o pagamento</li>
+                </ol>
+              </div>
+
+              <div className="test-buttons">
+                <button 
+                  className="btn-primary"
+                  onClick={handlePaymentConfirmed}
+                  style={{width: '100%', padding: '12px', fontSize: '1rem', marginTop: '15px'}}
+                >
+                  ✅ SIMULAR PAGAMENTO CONFIRMADO (TESTE)
+                </button>
+                <p style={{fontSize: '0.8rem', color: '#999', textAlign: 'center', marginTop: '10px'}}>
+                  Em produção, a confirmação será automática via webhook
+                </p>
+              </div>
             </div>
           </div>
         </div>
