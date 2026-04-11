@@ -2357,8 +2357,7 @@ function App() {
         <div className="right-panel" onContextMenu={(e) => e.preventDefault()}>
           {previewUrl ? (
             <div className="preview-container">
-              <iframe src={previewUrl} className="preview-frame" title="Preview do Documento" />
-              <div className="preview-overlay" onContextMenu={(e) => e.preventDefault()}></div>
+              <iframe src={previewUrl} className="preview-frame" title="Preview do Documento" onContextMenu={(e) => e.preventDefault()} />
             </div>
           ) : (
             <div className="preview-placeholder">
