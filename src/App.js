@@ -1706,6 +1706,19 @@ function App() {
     }
   }, [formData, selectedDoc]);
 
+  // Bloqueia clique direito no painel de preview
+  useEffect(() => {
+    const handleContextMenu = (e) => {
+      const rightPanel = document.querySelector('.right-panel');
+      if (rightPanel && rightPanel.contains(e.target)) {
+        e.preventDefault();
+        return false;
+      }
+    };
+    document.addEventListener('contextmenu', handleContextMenu);
+    return () => document.removeEventListener('contextmenu', handleContextMenu);
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value, type, files, checked } = e.target;
 
@@ -2356,8 +2369,8 @@ function App() {
         {/* --- Painel Direito (Preview) --- */}
         <div className="right-panel" onContextMenu={(e) => e.preventDefault()}>
           {previewUrl ? (
-            <div className="preview-container">
-              <iframe src={previewUrl} className="preview-frame" title="Preview do Documento" onContextMenu={(e) => e.preventDefault()} />
+            <div className="preview-container" onContextMenu={(e) => e.preventDefault()}>
+              <embed src={`${previewUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`} className="preview-frame" type="application/pdf" />
             </div>
           ) : (
             <div className="preview-placeholder">
