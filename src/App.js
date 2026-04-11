@@ -705,9 +705,303 @@ const documentModels = [
   { id: 'vistoria', 
     title: 'Termo de Vistoria', 
     icon: '🔍',
-    description: 'Registre o estado de conservação de um imóvel. (Em Breve)',
-    fieldGroups: [], 
-    generatePDF: () => alert('Em desenvolvimento') 
+    price: 3.90,
+    description: 'Registre o estado de conservação de um imóvel para entrada ou saída.',
+    fieldGroups: [
+      {
+        tab: 'Imóvel',
+        fields: [
+          { name: 'tipo_vistoria', label: 'Tipo de Vistoria', type: 'select', options: ['Entrada', 'Saída', 'Conferência'], className: 'half-width' },
+          { name: 'data_vistoria', label: 'Data da Vistoria', type: 'date', className: 'half-width' },
+          { name: 'endereco_imovel', label: 'Endereço Completo do Imóvel', type: 'text' },
+          { name: 'tipo_imovel', label: 'Tipo de Imóvel', type: 'select', options: ['Apartamento', 'Casa', 'Sala Comercial', 'Galpão', 'Loja', 'Kitnet', 'Outro'], className: 'half-width' },
+          { name: 'area_imovel', label: 'Área (m²)', type: 'text', className: 'half-width' },
+        ]
+      },
+      {
+        tab: 'Locador',
+        fields: [
+          { name: 'locador_nome', label: 'Nome Completo', type: 'text' },
+          { name: 'locador_cpf', label: 'CPF/CNPJ', type: 'text', className: 'half-width' },
+          { name: 'locador_telefone', label: 'Telefone', type: 'text', className: 'half-width' },
+        ]
+      },
+      {
+        tab: 'Locatário',
+        fields: [
+          { name: 'locatario_nome', label: 'Nome Completo', type: 'text' },
+          { name: 'locatario_cpf', label: 'CPF/CNPJ', type: 'text', className: 'half-width' },
+          { name: 'locatario_telefone', label: 'Telefone', type: 'text', className: 'half-width' },
+        ]
+      },
+      {
+        tab: 'Vistoria',
+        fields: [
+          { type: 'heading', label: 'Marque os cômodos a serem vistoriados' },
+          { name: 'comodo_sala', label: 'Sala', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_quarto1', label: 'Quarto 1', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_quarto2', label: 'Quarto 2', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_quarto3', label: 'Quarto 3', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_cozinha', label: 'Cozinha', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_banheiro1', label: 'Banheiro 1', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_banheiro2', label: 'Banheiro 2', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_lavanderia', label: 'Área de Serviço', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_varanda', label: 'Varanda', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_garagem', label: 'Garagem', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_quintal', label: 'Quintal', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_outro', label: 'Outro', type: 'checkbox', className: 'third-width' },
+          { name: 'comodo_outro_nome', label: 'Nome do outro cômodo', type: 'text', showIf: (data) => data.comodo_outro },
+          
+          { type: 'heading', label: 'Estado Geral dos Itens' },
+          { name: 'estado_pintura', label: 'Pintura (Paredes/Teto)', type: 'select', options: ['Ótimo', 'Bom', 'Regular', 'Ruim', 'N/A'], className: 'half-width' },
+          { name: 'obs_pintura', label: 'Obs. Pintura', type: 'text', className: 'half-width' },
+          { name: 'estado_pisos', label: 'Pisos e Rodapés', type: 'select', options: ['Ótimo', 'Bom', 'Regular', 'Ruim', 'N/A'], className: 'half-width' },
+          { name: 'obs_pisos', label: 'Obs. Pisos', type: 'text', className: 'half-width' },
+          { name: 'estado_portas', label: 'Portas e Fechaduras', type: 'select', options: ['Ótimo', 'Bom', 'Regular', 'Ruim', 'N/A'], className: 'half-width' },
+          { name: 'obs_portas', label: 'Obs. Portas', type: 'text', className: 'half-width' },
+          { name: 'estado_janelas', label: 'Janelas e Vidros', type: 'select', options: ['Ótimo', 'Bom', 'Regular', 'Ruim', 'N/A'], className: 'half-width' },
+          { name: 'obs_janelas', label: 'Obs. Janelas', type: 'text', className: 'half-width' },
+          { name: 'estado_eletrica', label: 'Instalação Elétrica', type: 'select', options: ['Ótimo', 'Bom', 'Regular', 'Ruim', 'N/A'], className: 'half-width' },
+          { name: 'obs_eletrica', label: 'Obs. Elétrica', type: 'text', className: 'half-width' },
+          { name: 'estado_hidraulica', label: 'Instalação Hidráulica', type: 'select', options: ['Ótimo', 'Bom', 'Regular', 'Ruim', 'N/A'], className: 'half-width' },
+          { name: 'obs_hidraulica', label: 'Obs. Hidráulica', type: 'text', className: 'half-width' },
+          { name: 'estado_loucas', label: 'Louças Sanitárias', type: 'select', options: ['Ótimo', 'Bom', 'Regular', 'Ruim', 'N/A'], className: 'half-width' },
+          { name: 'obs_loucas', label: 'Obs. Louças', type: 'text', className: 'half-width' },
+          { name: 'estado_moveis', label: 'Móveis/Armários Embutidos', type: 'select', options: ['Ótimo', 'Bom', 'Regular', 'Ruim', 'N/A'], className: 'half-width' },
+          { name: 'obs_moveis', label: 'Obs. Móveis', type: 'text', className: 'half-width' },
+        ]
+      },
+      {
+        tab: 'Medidores',
+        fields: [
+          { type: 'heading', label: 'Leituras dos Medidores' },
+          { name: 'leitura_luz', label: 'Leitura Luz (kWh)', type: 'text', className: 'half-width' },
+          { name: 'leitura_agua', label: 'Leitura Água (m³)', type: 'text', className: 'half-width' },
+          { name: 'leitura_gas', label: 'Leitura Gás (m³)', type: 'text', className: 'half-width' },
+          { name: 'qtd_chaves', label: 'Quantidade de Chaves Entregues', type: 'number', className: 'half-width' },
+          { name: 'qtd_controles', label: 'Quantidade de Controles (portão/garagem)', type: 'number', className: 'half-width' },
+        ]
+      },
+      {
+        tab: 'Observações',
+        fields: [
+          { name: 'observacoes_gerais', label: 'Observações Gerais', type: 'textarea', placeholder: 'Descreva qualquer dano, avaria ou situação relevante encontrada na vistoria...' },
+          { name: 'cidade', label: 'Cidade', type: 'text', className: 'half-width' },
+          { name: 'data_assinatura', label: 'Data da Assinatura', type: 'date', className: 'half-width' },
+        ]
+      }
+    ], 
+    generatePDF: (data) => {
+      const doc = new jsPDF();
+      const margin = 20;
+      const pageWidth = 210;
+      const maxLineWidth = pageWidth - (margin * 2);
+      let yPos = 20;
+
+      const checkNewPage = (requiredSpace = 25) => {
+        if (yPos + requiredSpace > 280) {
+          doc.addPage();
+          yPos = 20;
+        }
+      };
+
+      // Cabeçalho
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`TERMO DE VISTORIA DE ${(data.tipo_vistoria || 'ENTRADA').toUpperCase()}`, pageWidth / 2, yPos, { align: 'center' });
+      yPos += 8;
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Data da Vistoria: ${data.data_vistoria || '___/___/______'}`, pageWidth / 2, yPos, { align: 'center' });
+      yPos += 15;
+
+      // Dados do Imóvel
+      doc.setFillColor(52, 73, 94);
+      doc.rect(margin, yPos - 5, maxLineWidth, 8, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text('IDENTIFICAÇÃO DO IMÓVEL', margin + 3, yPos);
+      yPos += 8;
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(`Endereço: ${data.endereco_imovel || ''}`, margin, yPos);
+      yPos += 5;
+      doc.text(`Tipo: ${data.tipo_imovel || ''}     Área: ${data.area_imovel || ''} m²`, margin, yPos);
+      yPos += 12;
+
+      // Partes
+      doc.setFillColor(52, 73, 94);
+      doc.rect(margin, yPos - 5, maxLineWidth, 8, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.text('PARTES ENVOLVIDAS', margin + 3, yPos);
+      yPos += 8;
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`LOCADOR: ${data.locador_nome || ''}`, margin, yPos);
+      doc.text(`CPF/CNPJ: ${data.locador_cpf || ''}`, 120, yPos);
+      yPos += 5;
+      doc.text(`LOCATÁRIO: ${data.locatario_nome || ''}`, margin, yPos);
+      doc.text(`CPF/CNPJ: ${data.locatario_cpf || ''}`, 120, yPos);
+      yPos += 12;
+
+      // Cômodos Vistoriados
+      const comodos = [];
+      if (data.comodo_sala) comodos.push('Sala');
+      if (data.comodo_quarto1) comodos.push('Quarto 1');
+      if (data.comodo_quarto2) comodos.push('Quarto 2');
+      if (data.comodo_quarto3) comodos.push('Quarto 3');
+      if (data.comodo_cozinha) comodos.push('Cozinha');
+      if (data.comodo_banheiro1) comodos.push('Banheiro 1');
+      if (data.comodo_banheiro2) comodos.push('Banheiro 2');
+      if (data.comodo_lavanderia) comodos.push('Área de Serviço');
+      if (data.comodo_varanda) comodos.push('Varanda');
+      if (data.comodo_garagem) comodos.push('Garagem');
+      if (data.comodo_quintal) comodos.push('Quintal');
+      if (data.comodo_outro && data.comodo_outro_nome) comodos.push(data.comodo_outro_nome);
+
+      if (comodos.length > 0) {
+        doc.setFillColor(52, 73, 94);
+        doc.rect(margin, yPos - 5, maxLineWidth, 8, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.text('CÔMODOS VISTORIADOS', margin + 3, yPos);
+        yPos += 8;
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        doc.text(comodos.join(' • '), margin, yPos);
+        yPos += 12;
+      }
+
+      // Tabela de Estado dos Itens
+      checkNewPage(60);
+      doc.setFillColor(52, 73, 94);
+      doc.rect(margin, yPos - 5, maxLineWidth, 8, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ESTADO DE CONSERVAÇÃO', margin + 3, yPos);
+      yPos += 10;
+      doc.setTextColor(0, 0, 0);
+
+      // Cabeçalho da tabela
+      doc.setFillColor(236, 240, 241);
+      doc.rect(margin, yPos - 4, maxLineWidth, 7, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text('ITEM', margin + 2, yPos);
+      doc.text('ESTADO', 90, yPos);
+      doc.text('OBSERVAÇÕES', 120, yPos);
+      yPos += 6;
+
+      const itens = [
+        { nome: 'Pintura (Paredes/Teto)', estado: data.estado_pintura, obs: data.obs_pintura },
+        { nome: 'Pisos e Rodapés', estado: data.estado_pisos, obs: data.obs_pisos },
+        { nome: 'Portas e Fechaduras', estado: data.estado_portas, obs: data.obs_portas },
+        { nome: 'Janelas e Vidros', estado: data.estado_janelas, obs: data.obs_janelas },
+        { nome: 'Instalação Elétrica', estado: data.estado_eletrica, obs: data.obs_eletrica },
+        { nome: 'Instalação Hidráulica', estado: data.estado_hidraulica, obs: data.obs_hidraulica },
+        { nome: 'Louças Sanitárias', estado: data.estado_loucas, obs: data.obs_loucas },
+        { nome: 'Móveis/Armários', estado: data.estado_moveis, obs: data.obs_moveis },
+      ];
+
+      doc.setFont('helvetica', 'normal');
+      itens.forEach((item, index) => {
+        checkNewPage(8);
+        if (index % 2 === 0) {
+          doc.setFillColor(249, 249, 249);
+          doc.rect(margin, yPos - 4, maxLineWidth, 7, 'F');
+        }
+        doc.text(item.nome, margin + 2, yPos);
+        doc.text(item.estado || '-', 90, yPos);
+        const obsText = item.obs ? doc.splitTextToSize(item.obs, 65) : ['-'];
+        doc.text(obsText[0], 120, yPos);
+        yPos += 7;
+      });
+      yPos += 8;
+
+      // Medidores
+      checkNewPage(35);
+      doc.setFillColor(52, 73, 94);
+      doc.rect(margin, yPos - 5, maxLineWidth, 8, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text('LEITURAS E CHAVES', margin + 3, yPos);
+      yPos += 10;
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Luz: ${data.leitura_luz || '___'} kWh     Água: ${data.leitura_agua || '___'} m³     Gás: ${data.leitura_gas || '___'} m³`, margin, yPos);
+      yPos += 6;
+      doc.text(`Chaves entregues: ${data.qtd_chaves || '___'}     Controles entregues: ${data.qtd_controles || '___'}`, margin, yPos);
+      yPos += 12;
+
+      // Observações
+      if (data.observacoes_gerais) {
+        checkNewPage(30);
+        doc.setFillColor(52, 73, 94);
+        doc.rect(margin, yPos - 5, maxLineWidth, 8, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.text('OBSERVAÇÕES GERAIS', margin + 3, yPos);
+        yPos += 10;
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        const obsLines = doc.splitTextToSize(data.observacoes_gerais, maxLineWidth);
+        obsLines.forEach(line => {
+          checkNewPage(6);
+          doc.text(line, margin, yPos);
+          yPos += 5;
+        });
+        yPos += 8;
+      }
+
+      // Declaração
+      checkNewPage(50);
+      doc.setFillColor(241, 196, 15);
+      doc.rect(margin, yPos - 3, maxLineWidth, 15, 'F');
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(9);
+      const declaracao = `Declaro que vistoriei o imóvel acima descrito e concordo que as informações aqui registradas correspondem fielmente ao estado de conservação encontrado na data desta vistoria.`;
+      const declLines = doc.splitTextToSize(declaracao, maxLineWidth - 6);
+      declLines.forEach(line => {
+        doc.text(line, margin + 3, yPos);
+        yPos += 4;
+      });
+      yPos += 15;
+
+      // Assinaturas
+      checkNewPage(50);
+      const colWidth = maxLineWidth / 2 - 5;
+      doc.setFontSize(10);
+      
+      // Locador
+      doc.line(margin, yPos, margin + colWidth, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'bold');
+      doc.text('LOCADOR', margin + colWidth / 2, yPos, { align: 'center' });
+      yPos += 4;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text(data.locador_nome || '', margin + colWidth / 2, yPos, { align: 'center' });
+      
+      // Locatário
+      const col2Start = margin + colWidth + 10;
+      doc.line(col2Start, yPos - 9, col2Start + colWidth, yPos - 9);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text('LOCATÁRIO', col2Start + colWidth / 2, yPos - 4, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text(data.locatario_nome || '', col2Start + colWidth / 2, yPos, { align: 'center' });
+      
+      yPos += 15;
+      doc.setFontSize(9);
+      doc.text(`${data.cidade || '____________'}, ${data.data_assinatura || '___/___/______'}`, pageWidth / 2, yPos, { align: 'center' });
+
+      return doc;
+    }
   },
   {
     id: 'orcamento',
