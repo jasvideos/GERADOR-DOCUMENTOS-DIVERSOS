@@ -2074,10 +2074,6 @@ function App() {
           )}
         </div>
       </div>
-      <footer className="app-footer">
-        <p>© {new Date().getFullYear()} Anix Copiadora. Todos os direitos reservados.</p>
-        <p>Contato: (XX) 99999-9999 | contato@anixcopiadora.com.br</p>
-      </footer>
 
       {/* --- Modais --- */}
       {activeModal && (

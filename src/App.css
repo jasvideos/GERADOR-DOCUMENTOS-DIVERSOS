@@ -38,7 +38,6 @@ body {
   display: flex;
   flex: 1;
   overflow: hidden;
-  padding-bottom: 50px; /* Adiciona espaço para o rodapé */
 }
 
 .left-panel {
@@ -298,20 +297,6 @@ form {
   .left-panel, .right-panel {
     max-width: 100%;
   }
-}
-
-/* --- Footer --- */
-.app-footer {
-  background-color: #2c3e50;
-  color: #bdc3c7;
-  text-align: center;
-  padding: 10px;
-  font-size: 0.9rem;
-  border-top: 1px solid #34495e;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 100;
 }
 
 /* Estilos para as Abas */
