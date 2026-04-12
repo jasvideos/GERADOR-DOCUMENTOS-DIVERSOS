@@ -2992,13 +2992,20 @@ function App() {
         </div>
 
         {/* --- Painel Direito (Preview) --- */}
-        <div className="right-panel">
+        <div className="right-panel" onContextMenu={(e) => e.preventDefault()}>
           {previewUrl ? (
             <div className="preview-container">
               <iframe 
                 src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
                 className="preview-frame"
                 title="Preview do Documento"
+              />
+              {/* Camada de bloqueio para evitar interação com o PDF */}
+              <div 
+                className="preview-blocker"
+                onContextMenu={(e) => e.preventDefault()}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => e.preventDefault()}
               />
             </div>
           ) : (
