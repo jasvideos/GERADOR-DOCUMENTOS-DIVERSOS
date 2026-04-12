@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import './App.css';
+import Admin from './pages/Admin';
+import { trackPageView, trackDocumentView, trackDocumentGeneration, trackPayment } from './services/analytics';
 
 // --- Funções Utilitárias ---
 const numeroPorExtenso = (valor) => {
@@ -2181,6 +2183,11 @@ const documentModels = [
 ];
 
 function App() {
+  // Verifica se está na página de admin
+  if (window.location.pathname === '/admin') {
+    return <Admin />;
+  }
+
   const [selectedDocId, setSelectedDocId] = useState(null);
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
@@ -2193,6 +2200,18 @@ function App() {
   const [pixCode, setPixCode] = useState('');
 
   const selectedDoc = documentModels.find(d => d.id === selectedDocId);
+
+  // Registra visualização da página ao carregar
+  useEffect(() => {
+    trackPageView('home');
+  }, []);
+
+  // Registra visualização de documento selecionado
+  useEffect(() => {
+    if (selectedDoc) {
+      trackDocumentView(selectedDoc.id, selectedDoc.title);
+    }
+  }, [selectedDoc]);
 
   // Atualiza o preview automaticamente quando os dados mudam
   useEffect(() => {
@@ -2393,7 +2412,10 @@ function App() {
       return;
     }
     const doc = generateDoc();
-    if (doc) doc.save(`${selectedDoc.id}.pdf`);
+    if (doc) {
+      doc.save(`${selectedDoc.id}.pdf`);
+      trackDocumentGeneration(selectedDoc.id, selectedDoc.title, 'download');
+    }
   };
 
   const handlePrint = () => {
@@ -2405,6 +2427,7 @@ function App() {
     if (doc) {
       doc.autoPrint();
       window.open(doc.output('bloburl'), '_blank');
+      trackDocumentGeneration(selectedDoc.id, selectedDoc.title, 'print');
     }
   };
 
@@ -2424,6 +2447,7 @@ function App() {
             title: selectedDoc.title,
             text: 'Segue o documento gerado.'
           });
+          trackDocumentGeneration(selectedDoc.id, selectedDoc.title, 'share');
         } catch (err) {
           console.error("Erro ao compartilhar", err);
         }
@@ -2444,6 +2468,10 @@ function App() {
     // Em produção, isso seria confirmado via webhook
     setIsPaid(true);
     setShowPixModal(false);
+    // Registra o pagamento
+    if (selectedDoc) {
+      trackPayment(selectedDoc.id, selectedDoc.title, selectedDoc.price || 0, 'pix');
+    }
     alert('✅ Pagamento confirmado! Você já pode baixar, imprimir ou compartilhar seu documento.');
   };
 
