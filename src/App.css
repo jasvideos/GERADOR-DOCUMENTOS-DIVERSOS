@@ -144,12 +144,12 @@ body {
   border-radius: 4px;
 }
 
-/* Bloqueia interação com o preview */
+/* Bloqueia interação com o preview mas permite scroll */
 .preview-blocker {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
+  right: 15px; /* Deixa espaço para a barra de rolagem */
   bottom: 0;
   z-index: 10;
   cursor: default;
