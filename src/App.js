@@ -2183,11 +2183,6 @@ const documentModels = [
 ];
 
 function App() {
-  // Verifica se está na página de admin
-  if (window.location.pathname === '/admin') {
-    return <Admin />;
-  }
-
   const [selectedDocId, setSelectedDocId] = useState(null);
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
@@ -2198,6 +2193,11 @@ function App() {
   const [showPixModal, setShowPixModal] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [pixCode, setPixCode] = useState('');
+
+  // Verifica se está na página de admin - DEVE vir após os hooks
+  if (window.location.pathname === '/admin') {
+    return <Admin />;
+  }
 
   const selectedDoc = documentModels.find(d => d.id === selectedDocId);
 
