@@ -2563,25 +2563,43 @@ function App() {
     return (
       <div className="cv-form">
         {/* Seletor de Modelo */}
-        <div className="modelo-selector" style={{ marginBottom: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '8px' }}>
-          <label style={{ fontWeight: 'bold', marginBottom: '10px', display: 'block' }}>Escolha o Modelo do Currículo:</label>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+        <div className="modelo-selector" style={{ marginBottom: '20px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
+          <label style={{ fontWeight: 'bold', marginBottom: '15px', display: 'block', fontSize: '16px' }}>Escolha o Modelo do Currículo:</label>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(3, 1fr)', 
+            gap: '12px',
+            maxWidth: '100%'
+          }}>
             {modelosCurriculo.map(modelo => (
               <div 
                 key={modelo.id}
                 onClick={() => setFormData(prev => ({ ...prev, modelo_curriculo: modelo.id }))}
                 style={{
-                  padding: '12px 16px',
-                  border: formData.modelo_curriculo === modelo.id ? '2px solid #3498db' : '2px solid #ddd',
-                  borderRadius: '8px',
+                  padding: '15px',
+                  border: formData.modelo_curriculo === modelo.id ? '2px solid #3498db' : '2px solid #e0e0e0',
+                  borderRadius: '10px',
                   cursor: 'pointer',
                   background: formData.modelo_curriculo === modelo.id ? '#e8f4fc' : 'white',
-                  transition: 'all 0.2s',
-                  minWidth: '150px'
+                  transition: 'all 0.2s ease',
+                  textAlign: 'center',
+                  boxShadow: formData.modelo_curriculo === modelo.id ? '0 4px 12px rgba(52, 152, 219, 0.3)' : '0 2px 4px rgba(0,0,0,0.05)'
+                }}
+                onMouseEnter={(e) => {
+                  if (formData.modelo_curriculo !== modelo.id) {
+                    e.currentTarget.style.borderColor = '#aaa';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (formData.modelo_curriculo !== modelo.id) {
+                    e.currentTarget.style.borderColor = '#e0e0e0';
+                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                  }
                 }}
               >
-                <strong style={{ display: 'block', color: formData.modelo_curriculo === modelo.id ? '#2980b9' : '#333' }}>{modelo.nome}</strong>
-                <small style={{ color: '#666' }}>{modelo.desc}</small>
+                <strong style={{ display: 'block', color: formData.modelo_curriculo === modelo.id ? '#2980b9' : '#333', marginBottom: '5px', fontSize: '14px' }}>{modelo.nome}</strong>
+                <small style={{ color: '#777', fontSize: '12px', lineHeight: '1.3', display: 'block' }}>{modelo.desc}</small>
               </div>
             ))}
           </div>
