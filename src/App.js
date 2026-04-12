@@ -516,187 +516,699 @@ const documentModels = [
     title: 'Curriculum Vitae', 
     icon: '💼',
     price: 2.90,
-    description: 'Crie um currículo profissional, moderno e formatado.',
-    isCustom: true, // Indica que usa renderização personalizada
+    description: 'Crie um currículo profissional com 5 modelos diferentes.',
+    isCustom: true,
     generatePDF: (data) => {
       const doc = new jsPDF();
       const margin = 20;
       const pageWidth = 210;
+      const pageHeight = 297;
       const maxLineWidth = pageWidth - (margin * 2);
       let yPos = 20;
-      let headerTextY = yPos;
-      let headerTextMaxWidth = maxLineWidth;
 
-      // --- Espaço para Foto (canto superior direito) ---
-      const photoBoxWidth = 35;
-      const photoBoxHeight = 45;
-      const photoX = pageWidth - margin - photoBoxWidth;
-      const photoY = 20;
-      
-      if (data.foto) {
-        try {
-          // Detecta o formato da imagem
-          let format = 'JPEG';
-          if (data.foto.startsWith('data:image/png')) format = 'PNG';
-          else if (data.foto.startsWith('data:image/jpg') || data.foto.startsWith('data:image/jpeg')) format = 'JPEG';
-          
-          // Adiciona a imagem com proporção mantida
-          doc.addImage(data.foto, format, photoX, photoY, photoBoxWidth, photoBoxHeight);
-          
-          // Adiciona borda ao redor da foto
-          doc.setDrawColor(180);
-          doc.setLineWidth(0.3);
-          doc.rect(photoX, photoY, photoBoxWidth, photoBoxHeight);
-        } catch (e) {
-          // Se houver erro ao adicionar a foto, desenha um retângulo
-          console.error('Erro ao adicionar foto:', e);
-          doc.setDrawColor(200);
-          doc.setFillColor(250, 220, 220);
-          doc.rect(photoX, photoY, photoBoxWidth, photoBoxHeight, 'FD');
-          doc.setFontSize(7);
-          doc.setTextColor(150);
-          doc.text('Erro ao', photoX + photoBoxWidth / 2, photoY + photoBoxHeight / 2 - 2, { align: 'center' });
-          doc.text('carregar foto', photoX + photoBoxWidth / 2, photoY + photoBoxHeight / 2 + 2, { align: 'center' });
-          doc.setTextColor(0);
+      // Funções auxiliares
+      const checkNewPage = (space = 20) => {
+        if (yPos + space > pageHeight - 20) {
+          doc.addPage();
+          yPos = 20;
         }
-      } else {
-        // Desenha um retângulo indicando onde colocar a foto
-        doc.setDrawColor(200);
-        doc.setFillColor(245, 245, 245);
-        doc.rect(photoX, photoY, photoBoxWidth, photoBoxHeight, 'FD');
-        doc.setFontSize(8);
-        doc.setTextColor(150);
-        doc.text('Foto 3x4', photoX + photoBoxWidth / 2, photoY + photoBoxHeight / 2, { align: 'center' });
+      };
+
+      const addPhoto = (x, y, w, h) => {
+        if (data.foto) {
+          try {
+            let format = 'JPEG';
+            if (data.foto.startsWith('data:image/png')) format = 'PNG';
+            doc.addImage(data.foto, format, x, y, w, h);
+            doc.setDrawColor(180);
+            doc.setLineWidth(0.3);
+            doc.rect(x, y, w, h);
+          } catch (e) {
+            doc.setDrawColor(200);
+            doc.setFillColor(245, 245, 245);
+            doc.rect(x, y, w, h, 'FD');
+          }
+        }
+      };
+
+      const modelo = data.modelo_curriculo || 'classico';
+
+      // ===================== MODELO CLÁSSICO =====================
+      if (modelo === 'classico') {
+        const photoBoxWidth = 35;
+        const photoBoxHeight = 45;
+        const photoX = pageWidth - margin - photoBoxWidth;
+        let headerTextMaxWidth = maxLineWidth - photoBoxWidth - 10;
+
+        addPhoto(photoX, 20, photoBoxWidth, photoBoxHeight);
+
+        doc.setFontSize(22);
+        doc.setFont('helvetica', 'bold');
+        doc.text((data.nome || 'SEU NOME').toUpperCase(), margin, 28);
+        yPos = 35;
+
+        doc.setFontSize(14);
+        doc.setTextColor(80);
+        doc.text((data.cargo || '').toUpperCase(), margin, yPos);
+        yPos += 8;
         doc.setTextColor(0);
-      }
 
-      // Ajusta a largura máxima do texto para não sobrepor a foto
-      headerTextMaxWidth = maxLineWidth - photoBoxWidth - 10;
-
-      // --- Cabeçalho ---
-      doc.setFontSize(22);
-      doc.setFont('helvetica', 'bold');
-      const nomeLines = doc.splitTextToSize((data.nome || 'SEU NOME').toUpperCase(), headerTextMaxWidth);
-      doc.text(nomeLines, margin, headerTextY + 8);
-      headerTextY += (nomeLines.length * 8);
-
-      doc.setFontSize(14);
-      doc.setTextColor(100);
-      doc.setTextColor(0, 0, 0);
-      const cargoLines = doc.splitTextToSize((data.cargo || 'Cargo Pretendido').toUpperCase(), headerTextMaxWidth);
-      doc.text(cargoLines, margin, headerTextY + 6);
-      headerTextY += (cargoLines.length * 5) + 5;
-      doc.setTextColor(0, 0, 0);
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      const personalInfo = [
-        data.estado_civil ? `${data.estado_civil}, ${data.idade || ''} anos` : (data.idade ? `${data.idade} anos` : null),
-        data.endereco,
-        `${data.cidade || ''}${data.estado ? ', ' + data.estado : ''}`,
-        data.telefone ? `Telefone: ${data.telefone}` : null,
-        data.email ? `E-mail: ${data.email}` : null
-      ].filter(Boolean);
-
-      personalInfo.forEach(line => {
-        const splitLine = doc.splitTextToSize(line, headerTextMaxWidth);
-        doc.text(splitLine, margin, headerTextY);
-        headerTextY += (splitLine.length * 5);
-      });
-      
-      yPos = Math.max(yPos, headerTextY);
-
-      doc.setLineWidth(0.5);
-      doc.line(margin, yPos, pageWidth - margin, yPos);
-      yPos += 10;
-
-      // --- Resumo ---
-      if (data.resumo) {
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.text('RESUMO PROFISSIONAL', margin, yPos);
-        yPos += 6;
-        doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
-        const splitResumo = doc.splitTextToSize(data.resumo, maxLineWidth);
-        doc.text(splitResumo, margin, yPos);
-        yPos += (splitResumo.length * 5) + 5;
-      }
+        doc.setFont('helvetica', 'normal');
+        const info = [
+          data.estado_civil ? `${data.estado_civil}, ${data.idade || ''} anos` : '',
+          data.endereco || '',
+          `${data.cidade || ''}${data.estado ? ' - ' + data.estado : ''}`,
+          data.telefone ? `Tel: ${data.telefone}` : '',
+          data.email || ''
+        ].filter(Boolean);
+        info.forEach(line => { doc.text(line, margin, yPos); yPos += 5; });
 
-      // --- Experiência ---
-      if (data.experiencias && data.experiencias.length > 0) {
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.text('EXPERIÊNCIA PROFISSIONAL', margin, yPos);
-        yPos += 6;
-        data.experiencias.forEach(exp => {
-          doc.setFontSize(11);
+        yPos = Math.max(yPos, 70);
+        doc.setLineWidth(0.5);
+        doc.line(margin, yPos, pageWidth - margin, yPos);
+        yPos += 10;
+
+        // Resumo
+        if (data.resumo) {
           doc.setFont('helvetica', 'bold');
-          doc.text(exp.empresa || 'Empresa', margin, yPos);
+          doc.setFontSize(12);
+          doc.text('RESUMO PROFISSIONAL', margin, yPos);
+          yPos += 6;
           doc.setFont('helvetica', 'normal');
           doc.setFontSize(10);
-          doc.text(exp.cargo || 'Cargo', margin, yPos + 5);
-          if (exp.periodo) {
-            doc.text(exp.periodo, margin, yPos + 10);
-            yPos += 17;
-          } else {
-            yPos += 12;
-          }
-        });
-        yPos += 5;
-      }
+          const lines = doc.splitTextToSize(data.resumo, maxLineWidth);
+          doc.text(lines, margin, yPos);
+          yPos += lines.length * 5 + 8;
+        }
 
-      // --- Formação ---
-      if (data.formacao && data.formacao.length > 0) {
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.text('FORMAÇÃO ACADÊMICA', margin, yPos);
-        yPos += 6;
-        data.formacao.forEach(edu => {
-          doc.setFontSize(11);
+        // Experiência
+        if (data.experiencias?.length > 0) {
+          checkNewPage(30);
           doc.setFont('helvetica', 'bold');
-          doc.text(edu.instituicao || 'Instituição', margin, yPos);
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(10);
-          doc.text(edu.curso || 'Curso', margin, yPos + 5);
-          if (edu.periodo) {
-            doc.text(edu.periodo, margin, yPos + 10);
-            yPos += 17;
-          } else {
-            yPos += 12;
-          }
-        });
-        yPos += 5;
-      }
-
-      // --- Idiomas e Habilidades (Lado a Lado se couber, ou sequencial) ---
-      // Sequencial para simplificar
-      if (data.idiomas && data.idiomas.length > 0) {
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.text('IDIOMAS', margin, yPos);
-        yPos += 6;
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        data.idiomas.forEach(lang => {
-          doc.text(`• ${lang.idioma} - ${lang.nivel}`, margin + 5, yPos);
+          doc.setFontSize(12);
+          doc.text('EXPERIÊNCIA PROFISSIONAL', margin, yPos);
+          yPos += 7;
+          data.experiencias.forEach(exp => {
+            checkNewPage(20);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.text(exp.empresa || '', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(`${exp.cargo || ''} | ${exp.periodo || ''}`, margin, yPos + 5);
+            yPos += 14;
+          });
           yPos += 5;
-        });
-        yPos += 5;
+        }
+
+        // Formação
+        if (data.formacao?.length > 0) {
+          checkNewPage(30);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.text('FORMAÇÃO ACADÊMICA', margin, yPos);
+          yPos += 7;
+          data.formacao.forEach(edu => {
+            checkNewPage(15);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.text(edu.instituicao || '', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(`${edu.curso || ''} | ${edu.periodo || ''}`, margin, yPos + 5);
+            yPos += 14;
+          });
+          yPos += 5;
+        }
+
+        // Idiomas
+        if (data.idiomas?.length > 0) {
+          checkNewPage(20);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.text('IDIOMAS', margin, yPos);
+          yPos += 6;
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          data.idiomas.forEach(lang => {
+            doc.text(`• ${lang.idioma} - ${lang.nivel}`, margin + 3, yPos);
+            yPos += 5;
+          });
+          yPos += 5;
+        }
+
+        // Habilidades
+        if (data.habilidades?.length > 0) {
+          checkNewPage(20);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.text('HABILIDADES', margin, yPos);
+          yPos += 6;
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          const skills = doc.splitTextToSize(data.habilidades.join(' • '), maxLineWidth);
+          doc.text(skills, margin, yPos);
+        }
       }
 
-      if (data.habilidades && data.habilidades.length > 0) {
-        doc.setFontSize(12);
+      // ===================== MODELO MODERNO (Duas Colunas) =====================
+      else if (modelo === 'moderno') {
+        const sidebarWidth = 65;
+        const sidebarColor = [41, 128, 185]; // Azul
+
+        // Sidebar
+        doc.setFillColor(...sidebarColor);
+        doc.rect(0, 0, sidebarWidth, pageHeight, 'F');
+
+        // Foto na sidebar
+        if (data.foto) {
+          addPhoto(12, 15, 40, 50);
+        }
+
+        // Nome na sidebar
+        doc.setTextColor(255, 255, 255);
         doc.setFont('helvetica', 'bold');
-        doc.text('HABILIDADES', margin, yPos);
-        yPos += 6;
-        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(14);
+        const nomeLines = doc.splitTextToSize((data.nome || '').toUpperCase(), sidebarWidth - 10);
+        doc.text(nomeLines, sidebarWidth / 2, 75, { align: 'center' });
+
+        // Contato na sidebar
+        yPos = 95;
         doc.setFontSize(10);
-        // Lista separada por vírgulas ou bullets
-        const skillsText = data.habilidades.join(', ');
-        const splitSkills = doc.splitTextToSize(skillsText, maxLineWidth);
-        doc.text(splitSkills, margin, yPos);
-        yPos += (splitSkills.length * 5) + 5;
+        doc.setFont('helvetica', 'bold');
+        doc.text('CONTATO', 8, yPos);
+        yPos += 8;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        if (data.telefone) { doc.text(data.telefone, 8, yPos); yPos += 6; }
+        if (data.email) { 
+          const emailLines = doc.splitTextToSize(data.email, sidebarWidth - 12);
+          doc.text(emailLines, 8, yPos); 
+          yPos += emailLines.length * 5 + 3; 
+        }
+        if (data.cidade) { doc.text(`${data.cidade}${data.estado ? '/' + data.estado : ''}`, 8, yPos); yPos += 10; }
+
+        // Idiomas na sidebar
+        if (data.idiomas?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(10);
+          doc.text('IDIOMAS', 8, yPos);
+          yPos += 7;
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          data.idiomas.forEach(lang => {
+            doc.text(`${lang.idioma}: ${lang.nivel}`, 8, yPos);
+            yPos += 6;
+          });
+          yPos += 8;
+        }
+
+        // Habilidades na sidebar
+        if (data.habilidades?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(10);
+          doc.text('HABILIDADES', 8, yPos);
+          yPos += 7;
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          data.habilidades.forEach(skill => {
+            if (yPos < pageHeight - 20) {
+              doc.text(`• ${skill}`, 8, yPos);
+              yPos += 6;
+            }
+          });
+        }
+
+        // Conteúdo principal (direita)
+        doc.setTextColor(0, 0, 0);
+        const contentX = sidebarWidth + 10;
+        const contentWidth = pageWidth - sidebarWidth - margin;
+        yPos = 25;
+
+        // Cargo
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.setTextColor(...sidebarColor);
+        doc.text((data.cargo || 'CARGO PRETENDIDO').toUpperCase(), contentX, yPos);
+        yPos += 12;
+        doc.setTextColor(0);
+
+        // Resumo
+        if (data.resumo) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.text('PERFIL PROFISSIONAL', contentX, yPos);
+          yPos += 6;
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          const lines = doc.splitTextToSize(data.resumo, contentWidth);
+          doc.text(lines, contentX, yPos);
+          yPos += lines.length * 5 + 10;
+        }
+
+        // Experiência
+        if (data.experiencias?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(...sidebarColor);
+          doc.text('EXPERIÊNCIA', contentX, yPos);
+          doc.setTextColor(0);
+          yPos += 7;
+          data.experiencias.forEach(exp => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text(exp.empresa || '', contentX, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.text(`${exp.cargo || ''} • ${exp.periodo || ''}`, contentX, yPos + 5);
+            yPos += 15;
+          });
+          yPos += 5;
+        }
+
+        // Formação
+        if (data.formacao?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(...sidebarColor);
+          doc.text('FORMAÇÃO', contentX, yPos);
+          doc.setTextColor(0);
+          yPos += 7;
+          data.formacao.forEach(edu => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text(edu.curso || '', contentX, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.text(`${edu.instituicao || ''} • ${edu.periodo || ''}`, contentX, yPos + 5);
+            yPos += 15;
+          });
+        }
+      }
+
+      // ===================== MODELO CRIATIVO =====================
+      else if (modelo === 'criativo') {
+        const accentColor = [231, 76, 60]; // Vermelho coral
+
+        // Header colorido
+        doc.setFillColor(...accentColor);
+        doc.rect(0, 0, pageWidth, 50, 'F');
+
+        // Foto circular (simulada com retângulo)
+        if (data.foto) {
+          addPhoto(margin, 10, 35, 35);
+        }
+
+        // Nome no header
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(24);
+        doc.text((data.nome || '').toUpperCase(), 65, 25);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text(data.cargo || '', 65, 38);
+
+        // Contato abaixo do header
+        yPos = 60;
+        doc.setTextColor(100);
+        doc.setFontSize(9);
+        const contato = [data.telefone, data.email, `${data.cidade || ''}${data.estado ? ' - ' + data.estado : ''}`].filter(Boolean).join(' | ');
+        doc.text(contato, pageWidth / 2, yPos, { align: 'center' });
+        yPos += 15;
+        doc.setTextColor(0);
+
+        // Linha decorativa
+        doc.setDrawColor(...accentColor);
+        doc.setLineWidth(1);
+        doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+
+        // Resumo
+        if (data.resumo) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...accentColor);
+          doc.text('SOBRE MIM', margin, yPos);
+          doc.setTextColor(0);
+          yPos += 7;
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          const lines = doc.splitTextToSize(data.resumo, maxLineWidth);
+          doc.text(lines, margin, yPos);
+          yPos += lines.length * 5 + 12;
+        }
+
+        // Layout em duas colunas para experiência e formação
+        const colWidth = (maxLineWidth - 10) / 2;
+
+        // Experiência (esquerda)
+        let leftY = yPos;
+        if (data.experiencias?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...accentColor);
+          doc.text('EXPERIÊNCIA', margin, leftY);
+          doc.setTextColor(0);
+          leftY += 7;
+          data.experiencias.forEach(exp => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text(exp.empresa || '', margin, leftY);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.text(exp.cargo || '', margin, leftY + 5);
+            doc.setTextColor(150);
+            doc.text(exp.periodo || '', margin, leftY + 10);
+            doc.setTextColor(0);
+            leftY += 18;
+          });
+        }
+
+        // Formação (direita)
+        let rightY = yPos;
+        const rightX = margin + colWidth + 10;
+        if (data.formacao?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...accentColor);
+          doc.text('FORMAÇÃO', rightX, rightY);
+          doc.setTextColor(0);
+          rightY += 7;
+          data.formacao.forEach(edu => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text(edu.curso || '', rightX, rightY);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.text(edu.instituicao || '', rightX, rightY + 5);
+            doc.setTextColor(150);
+            doc.text(edu.periodo || '', rightX, rightY + 10);
+            doc.setTextColor(0);
+            rightY += 18;
+          });
+        }
+
+        yPos = Math.max(leftY, rightY) + 10;
+
+        // Habilidades em tags
+        if (data.habilidades?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...accentColor);
+          doc.text('HABILIDADES', margin, yPos);
+          doc.setTextColor(0);
+          yPos += 8;
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'normal');
+          let xPos = margin;
+          data.habilidades.forEach(skill => {
+            const skillWidth = doc.getTextWidth(skill) + 8;
+            if (xPos + skillWidth > pageWidth - margin) {
+              xPos = margin;
+              yPos += 10;
+            }
+            doc.setFillColor(240, 240, 240);
+            doc.roundedRect(xPos, yPos - 4, skillWidth, 8, 2, 2, 'F');
+            doc.text(skill, xPos + 4, yPos + 1);
+            xPos += skillWidth + 5;
+          });
+        }
+      }
+
+      // ===================== MODELO EXECUTIVO =====================
+      else if (modelo === 'executivo') {
+        const headerColor = [44, 62, 80]; // Azul escuro
+
+        // Header elegante
+        doc.setFillColor(...headerColor);
+        doc.rect(0, 0, pageWidth, 45, 'F');
+
+        // Nome grande no header
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(26);
+        doc.text((data.nome || '').toUpperCase(), margin, 25);
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'normal');
+        doc.text(data.cargo || '', margin, 38);
+
+        // Foto no canto direito do header
+        if (data.foto) {
+          addPhoto(pageWidth - margin - 30, 8, 30, 35);
+        }
+
+        // Dados de contato
+        yPos = 55;
+        doc.setTextColor(0);
+        doc.setFontSize(10);
+        const contatoLine = [data.telefone, data.email, data.cidade].filter(Boolean).join('  •  ');
+        doc.text(contatoLine, margin, yPos);
+        yPos += 15;
+
+        // Linha dupla
+        doc.setDrawColor(...headerColor);
+        doc.setLineWidth(0.5);
+        doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+        doc.line(margin, yPos - 3, pageWidth - margin, yPos - 3);
+
+        // Resumo executivo
+        if (data.resumo) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...headerColor);
+          doc.text('RESUMO EXECUTIVO', margin, yPos);
+          yPos += 7;
+          doc.setTextColor(0);
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          const lines = doc.splitTextToSize(data.resumo, maxLineWidth);
+          doc.text(lines, margin, yPos);
+          yPos += lines.length * 5 + 10;
+        }
+
+        // Experiência com destaques
+        if (data.experiencias?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...headerColor);
+          doc.text('TRAJETÓRIA PROFISSIONAL', margin, yPos);
+          yPos += 8;
+          doc.setTextColor(0);
+          data.experiencias.forEach(exp => {
+            checkNewPage(25);
+            doc.setFillColor(245, 245, 245);
+            doc.rect(margin, yPos - 3, maxLineWidth, 18, 'F');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.text(exp.empresa || '', margin + 3, yPos + 3);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(exp.cargo || '', margin + 3, yPos + 10);
+            doc.setTextColor(100);
+            doc.text(exp.periodo || '', pageWidth - margin - 3, yPos + 3, { align: 'right' });
+            doc.setTextColor(0);
+            yPos += 22;
+          });
+          yPos += 5;
+        }
+
+        // Formação
+        if (data.formacao?.length > 0) {
+          checkNewPage(30);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...headerColor);
+          doc.text('FORMAÇÃO ACADÊMICA', margin, yPos);
+          yPos += 8;
+          doc.setTextColor(0);
+          data.formacao.forEach(edu => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text(edu.curso || '', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.text(`${edu.instituicao || ''} | ${edu.periodo || ''}`, margin, yPos + 5);
+            yPos += 13;
+          });
+          yPos += 8;
+        }
+
+        // Idiomas e Habilidades lado a lado
+        const halfWidth = (maxLineWidth - 10) / 2;
+        let leftY = yPos;
+        if (data.idiomas?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(...headerColor);
+          doc.text('IDIOMAS', margin, leftY);
+          leftY += 6;
+          doc.setTextColor(0);
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          data.idiomas.forEach(lang => {
+            doc.text(`${lang.idioma}: ${lang.nivel}`, margin, leftY);
+            leftY += 5;
+          });
+        }
+
+        let rightY = yPos;
+        if (data.habilidades?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(...headerColor);
+          doc.text('COMPETÊNCIAS', margin + halfWidth + 10, rightY);
+          rightY += 6;
+          doc.setTextColor(0);
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          data.habilidades.slice(0, 6).forEach(skill => {
+            doc.text(`✓ ${skill}`, margin + halfWidth + 10, rightY);
+            rightY += 5;
+          });
+        }
+      }
+
+      // ===================== MODELO PRIMEIRO EMPREGO =====================
+      else if (modelo === 'primeiro_emprego') {
+        const youthColor = [46, 204, 113]; // Verde
+
+        // Header simples e jovem
+        doc.setFillColor(245, 245, 245);
+        doc.rect(0, 0, pageWidth, 55, 'F');
+        
+        // Linha colorida no topo
+        doc.setFillColor(...youthColor);
+        doc.rect(0, 0, pageWidth, 5, 'F');
+
+        // Foto
+        if (data.foto) {
+          addPhoto(margin, 15, 35, 35);
+        }
+
+        // Nome e objetivo
+        doc.setTextColor(0);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(20);
+        doc.text(data.nome || '', 65, 28);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...youthColor);
+        doc.text(data.cargo || 'Em busca de oportunidade', 65, 40);
+        doc.setTextColor(100);
+        doc.setFontSize(10);
+        doc.text([data.telefone, data.email].filter(Boolean).join(' | '), 65, 50);
+
+        yPos = 65;
+        doc.setTextColor(0);
+
+        // Objetivo
+        if (data.resumo) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...youthColor);
+          doc.text('OBJETIVO', margin, yPos);
+          yPos += 7;
+          doc.setTextColor(0);
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          const lines = doc.splitTextToSize(data.resumo, maxLineWidth);
+          doc.text(lines, margin, yPos);
+          yPos += lines.length * 5 + 10;
+        }
+
+        // Formação (destaque principal)
+        if (data.formacao?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...youthColor);
+          doc.text('FORMAÇÃO ACADÊMICA', margin, yPos);
+          yPos += 8;
+          doc.setTextColor(0);
+          data.formacao.forEach(edu => {
+            doc.setFillColor(240, 255, 245);
+            doc.rect(margin, yPos - 3, maxLineWidth, 15, 'F');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.text(edu.curso || '', margin + 3, yPos + 3);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(`${edu.instituicao || ''} • ${edu.periodo || ''}`, margin + 3, yPos + 9);
+            yPos += 18;
+          });
+          yPos += 5;
+        }
+
+        // Habilidades (destaque)
+        if (data.habilidades?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...youthColor);
+          doc.text('HABILIDADES E COMPETÊNCIAS', margin, yPos);
+          yPos += 8;
+          doc.setTextColor(0);
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          
+          // Grid de habilidades
+          const colW = maxLineWidth / 2;
+          data.habilidades.forEach((skill, i) => {
+            const col = i % 2;
+            const x = margin + (col * colW);
+            doc.text(`● ${skill}`, x, yPos);
+            if (col === 1) yPos += 7;
+          });
+          if (data.habilidades.length % 2 === 1) yPos += 7;
+          yPos += 8;
+        }
+
+        // Idiomas
+        if (data.idiomas?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...youthColor);
+          doc.text('IDIOMAS', margin, yPos);
+          yPos += 7;
+          doc.setTextColor(0);
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          data.idiomas.forEach(lang => {
+            doc.text(`${lang.idioma}: ${lang.nivel}`, margin, yPos);
+            yPos += 6;
+          });
+          yPos += 8;
+        }
+
+        // Experiência (se houver)
+        if (data.experiencias?.length > 0) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(...youthColor);
+          doc.text('EXPERIÊNCIAS (Estágio/Voluntariado)', margin, yPos);
+          yPos += 7;
+          doc.setTextColor(0);
+          data.experiencias.forEach(exp => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text(exp.empresa || '', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.text(`${exp.cargo || ''} - ${exp.periodo || ''}`, margin, yPos + 5);
+            yPos += 13;
+          });
+        }
+
+        // Dados adicionais
+        yPos += 5;
+        doc.setTextColor(120);
+        doc.setFontSize(9);
+        const dadosExtra = [];
+        if (data.estado_civil) dadosExtra.push(data.estado_civil);
+        if (data.idade) dadosExtra.push(`${data.idade} anos`);
+        if (data.endereco) dadosExtra.push(data.endereco);
+        if (data.cidade) dadosExtra.push(`${data.cidade}${data.estado ? '/' + data.estado : ''}`);
+        if (dadosExtra.length > 0) {
+          doc.text(dadosExtra.join(' | '), margin, yPos);
+        }
       }
 
       return doc;
@@ -2040,8 +2552,41 @@ function App() {
   const renderCVForm = () => {
     const cvTabs = ['Dados Pessoais', 'Resumo', 'Experiência', 'Formação', 'Idiomas', 'Habilidades'];
 
+    const modelosCurriculo = [
+      { id: 'classico', nome: 'Clássico', desc: 'Layout tradicional, ideal para áreas formais' },
+      { id: 'moderno', nome: 'Moderno', desc: 'Duas colunas com design atual' },
+      { id: 'criativo', nome: 'Criativo', desc: 'Visual diferenciado com cores' },
+      { id: 'executivo', nome: 'Executivo', desc: 'Elegante para cargos de liderança' },
+      { id: 'primeiro_emprego', nome: 'Primeiro Emprego', desc: 'Focado em formação e habilidades' },
+    ];
+
     return (
       <div className="cv-form">
+        {/* Seletor de Modelo */}
+        <div className="modelo-selector" style={{ marginBottom: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '8px' }}>
+          <label style={{ fontWeight: 'bold', marginBottom: '10px', display: 'block' }}>Escolha o Modelo do Currículo:</label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {modelosCurriculo.map(modelo => (
+              <div 
+                key={modelo.id}
+                onClick={() => setFormData(prev => ({ ...prev, modelo_curriculo: modelo.id }))}
+                style={{
+                  padding: '12px 16px',
+                  border: formData.modelo_curriculo === modelo.id ? '2px solid #3498db' : '2px solid #ddd',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  background: formData.modelo_curriculo === modelo.id ? '#e8f4fc' : 'white',
+                  transition: 'all 0.2s',
+                  minWidth: '150px'
+                }}
+              >
+                <strong style={{ display: 'block', color: formData.modelo_curriculo === modelo.id ? '#2980b9' : '#333' }}>{modelo.nome}</strong>
+                <small style={{ color: '#666' }}>{modelo.desc}</small>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="tab-buttons">
           {cvTabs.map((tab, index) => (
             <button
