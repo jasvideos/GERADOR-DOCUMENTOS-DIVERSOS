@@ -1698,25 +1698,44 @@ function App() {
       const timer = setTimeout(() => {
         const doc = selectedDoc.generatePDF(formData);
         if (doc) {
-          const blob = doc.output('bloburl');
-          setPreviewUrl(blob + '#toolbar=0');
+          // Adiciona marca d'água "PREVIEW" em todas as páginas
+          const pageCount = doc.internal.getNumberOfPages();
+          for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setTextColor(200, 200, 200);
+            doc.setFontSize(60);
+            doc.setFont('helvetica', 'bold');
+            // Texto diagonal no centro da página
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            doc.text('PREVIEW', pageWidth / 2, pageHeight / 2, { 
+              align: 'center', 
+              angle: 45,
+              renderingMode: 'fill'
+            });
+          }
+          const dataUri = doc.output('datauristring');
+          setPreviewUrl(dataUri);
         }
-      }, 800); // Atualiza a cada 800ms após parar de digitar
+      }, 800);
       return () => clearTimeout(timer);
     }
   }, [formData, selectedDoc]);
 
-  // Bloqueia clique direito no painel de preview
+  // Bloqueia atalhos de teclado (Ctrl+P, Ctrl+S, etc) no preview
   useEffect(() => {
-    const handleContextMenu = (e) => {
+    const handleKeyDown = (e) => {
       const rightPanel = document.querySelector('.right-panel');
-      if (rightPanel && rightPanel.contains(e.target)) {
-        e.preventDefault();
-        return false;
+      if (rightPanel && rightPanel.contains(document.activeElement)) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's' || e.key === 'P' || e.key === 'S')) {
+          e.preventDefault();
+          alert('Use os botões abaixo para baixar ou imprimir o documento.');
+          return false;
+        }
       }
     };
-    document.addEventListener('contextmenu', handleContextMenu);
-    return () => document.removeEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   const handleInputChange = (e) => {
@@ -2367,10 +2386,17 @@ function App() {
         </div>
 
         {/* --- Painel Direito (Preview) --- */}
-        <div className="right-panel" onContextMenu={(e) => e.preventDefault()}>
+        <div 
+          className="right-panel" 
+          onContextMenu={(e) => e.preventDefault()}
+        >
           {previewUrl ? (
-            <div className="preview-container" onContextMenu={(e) => e.preventDefault()}>
-              <embed src={`${previewUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`} className="preview-frame" type="application/pdf" />
+            <div className="preview-container">
+              <iframe 
+                src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
+                className="preview-frame" 
+                title="Preview do Documento"
+              />
             </div>
           ) : (
             <div className="preview-placeholder">
