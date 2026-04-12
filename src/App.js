@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import './App.css';
+import Admin from './pages/Admin';
 
 // Analytics desativado temporariamente
 const trackPageView = () => {};
@@ -2219,6 +2220,11 @@ const documentModels = [
 ];
 
 function App() {
+  // Se a URL contém '/admin', mostra o painel administrativo
+  if (window.location.pathname === '/admin') {
+    return <Admin />;
+  }
+
   const [selectedDocId, setSelectedDocId] = useState(null);
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
