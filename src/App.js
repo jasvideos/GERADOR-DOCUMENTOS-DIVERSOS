@@ -2229,6 +2229,7 @@ function App() {
   const [showPixModal, setShowPixModal] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [pixCode, setPixCode] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const selectedDoc = documentModels.find(d => d.id === selectedDocId);
 
@@ -2524,7 +2525,7 @@ function App() {
     if (selectedDoc) {
       trackPayment(selectedDoc.id, selectedDoc.title, selectedDoc.price || 0, 'pix');
     }
-    alert('✅ Pagamento confirmado! Você já pode baixar, imprimir ou compartilhar seu documento.');
+    setShowSuccessModal(true);
   };
 
   const visibleFieldGroups = selectedDoc?.fieldGroups?.filter(g => g.showIf ? g.showIf(formData) : true) || [];
@@ -3278,6 +3279,31 @@ function App() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Sucesso */}
+      {showSuccessModal && (
+        <div className="modal-overlay" onClick={() => setShowSuccessModal(false)}>
+          <div className="success-modal" onClick={e => e.stopPropagation()}>
+            <div className="success-icon">✅</div>
+            <h2>Pagamento Confirmado!</h2>
+            <p>Seu documento está pronto. Agora você pode:</p>
+            <div className="success-actions">
+              <button className="success-btn download" onClick={() => { setShowSuccessModal(false); handleDownload(); }}>
+                <span>📥</span> Baixar PDF
+              </button>
+              <button className="success-btn print" onClick={() => { setShowSuccessModal(false); handlePrint(); }}>
+                <span>🖨️</span> Imprimir
+              </button>
+              <button className="success-btn share" onClick={() => { setShowSuccessModal(false); handleShare(); }}>
+                <span>📤</span> Compartilhar
+              </button>
+            </div>
+            <button className="success-close" onClick={() => setShowSuccessModal(false)}>
+              Fechar
+            </button>
           </div>
         </div>
       )}
