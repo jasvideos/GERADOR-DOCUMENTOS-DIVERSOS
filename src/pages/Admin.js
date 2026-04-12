@@ -28,7 +28,7 @@ const Admin = () => {
   const [editingPrice, setEditingPrice] = useState(null);
 
   // Senha do admin (em produção, use autenticação adequada)
-  const ADMIN_PASSWORD = process.env.REACT_APP_ADMIN_PASSWORD || 'admin123';
+  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -141,8 +141,8 @@ const Admin = () => {
           <h2>⚠️ Supabase não configurado</h2>
           <p>Para usar o painel administrativo, configure as variáveis de ambiente:</p>
           <code style={styles.code}>
-            REACT_APP_SUPABASE_URL=sua_url_aqui<br/>
-            REACT_APP_SUPABASE_ANON_KEY=sua_chave_aqui
+            VITE_SUPABASE_URL=sua_url_aqui<br/>
+            VITE_SUPABASE_ANON_KEY=sua_chave_aqui
           </code>
           <p style={{ marginTop: '20px' }}>
             Consulte o arquivo <strong>ADMIN_SETUP.md</strong> para instruções completas.
