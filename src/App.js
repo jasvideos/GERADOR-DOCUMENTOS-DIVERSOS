@@ -212,7 +212,7 @@ const documentModels = [
     id: 'declaracao_residencia',
     title: 'Declaração de Residência',
     icon: '📍',
-    price: 3.90,
+    price: 2.90,
     description: 'Documento para comprovação de endereço residencial.',
     fieldGroups: [{ fields: [
       { name: 'nome', label: 'Seu Nome Completo', type: 'text' },
@@ -250,7 +250,7 @@ const documentModels = [
     id: 'contrato_locacao',
     title: 'Contrato de Locação',
     icon: '📝',
-    price: 9.90,
+    price: 5.90,
     description: 'Contrato completo (Residencial ou Comercial) com cláusulas detalhadas.',
     fieldGroups: [
       {
@@ -1223,7 +1223,7 @@ const documentModels = [
   { id: 'vistoria', 
     title: 'Termo de Vistoria', 
     icon: '🔍',
-    price: 3.90,
+    price: 2.90,
     description: 'Registre o estado de conservação de um imóvel para entrada ou saída.',
     fieldGroups: [
       {
@@ -1525,7 +1525,7 @@ const documentModels = [
     id: 'orcamento',
     title: 'Orçamento de Serviços',
     icon: '💰',
-    price: 4.90,
+    price: 2.90,
     description: 'Crie orçamentos com lista de itens e cálculo automático de totais.',
     isCustom: true,
     generatePDF: (data) => {
@@ -1620,7 +1620,7 @@ const documentModels = [
     id: 'procuracao',
     title: 'Procuração Particular',
     icon: '⚖️',
-    price: 4.90,
+    price: 3.90,
     description: 'Instrumento legal para representação perante terceiros.',
     fieldGroups: [
       {
@@ -1724,7 +1724,7 @@ const documentModels = [
     id: 'uniao_estavel',
     title: 'Declaração de União Estável',
     icon: '💍',
-    price: 4.90,
+    price: 2.90,
     description: 'Formalize a convivência pública, contínua e duradoura.',
     fieldGroups: [
       {
@@ -1837,7 +1837,7 @@ const documentModels = [
     id: 'viagem_menor',
     title: 'Aut. Viagem Menor',
     icon: '✈️',
-    price: 4.90,
+    price: 2.90,
     description: 'Autorização para viagem nacional de crianças e adolescentes.',
     fieldGroups: [
       {
@@ -2014,7 +2014,7 @@ const documentModels = [
     id: 'hipossuficiencia',
     title: 'Declaração de Hipossuficiência',
     icon: '🤝',
-    price: 4.90,
+    price: 2.90,
     description: 'Atestado de pobreza para gratuidade de justiça.',
     fieldGroups: [{ fields: [
       { name: 'nome', label: 'Nome Completo', type: 'text' },
@@ -2077,7 +2077,7 @@ const documentModels = [
     id: 'rpa',
     title: 'Recibo de Pagamento de Autônomo (RPA)',
     icon: '💼',
-    price: 4.90,
+    price: 2.90,
     description: 'Recibo oficial para autônomos com cálculo de impostos.',
     fieldGroups: [
       {
