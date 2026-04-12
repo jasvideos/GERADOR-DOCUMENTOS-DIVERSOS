@@ -1698,22 +1698,6 @@ function App() {
       const timer = setTimeout(() => {
         const doc = selectedDoc.generatePDF(formData);
         if (doc) {
-          // Adiciona marca d'água "PREVIEW" em todas as páginas
-          const pageCount = doc.internal.getNumberOfPages();
-          for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            doc.setTextColor(200, 200, 200);
-            doc.setFontSize(60);
-            doc.setFont('helvetica', 'bold');
-            // Texto diagonal no centro da página
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            doc.text('PREVIEW', pageWidth / 2, pageHeight / 2, { 
-              align: 'center', 
-              angle: 45,
-              renderingMode: 'fill'
-            });
-          }
           const dataUri = doc.output('datauristring');
           setPreviewUrl(dataUri);
         }
@@ -1722,21 +1706,53 @@ function App() {
     }
   }, [formData, selectedDoc]);
 
-  // Bloqueia atalhos de teclado (Ctrl+P, Ctrl+S, etc) no preview
+  // Bloqueia atalhos de teclado (Ctrl+P, Ctrl+S, etc)
   useEffect(() => {
     const handleKeyDown = (e) => {
-      const rightPanel = document.querySelector('.right-panel');
-      if (rightPanel && rightPanel.contains(document.activeElement)) {
-        if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's' || e.key === 'P' || e.key === 'S')) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's' || e.key === 'P' || e.key === 'S')) {
+        const rightPanel = document.querySelector('.right-panel');
+        if (rightPanel && (rightPanel.contains(e.target) || rightPanel.contains(document.activeElement))) {
           e.preventDefault();
-          alert('Use os botões abaixo para baixar ou imprimir o documento.');
           return false;
         }
       }
     };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
   }, []);
+
+  // Bloqueia clique direito no preview
+  useEffect(() => {
+    if (!previewUrl) return;
+    
+    const handleContextMenu = (e) => {
+      const rightPanel = document.querySelector('.right-panel');
+      if (rightPanel && rightPanel.contains(e.target)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    };
+    
+    const handleMouseDown = (e) => {
+      const rightPanel = document.querySelector('.right-panel');
+      if (rightPanel && rightPanel.contains(e.target)) {
+        if (e.button === 2) { // Botão direito
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      }
+    };
+
+    document.addEventListener('contextmenu', handleContextMenu, true);
+    document.addEventListener('mousedown', handleMouseDown, true);
+    
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu, true);
+      document.removeEventListener('mousedown', handleMouseDown, true);
+    };
+  }, [previewUrl]);
 
   const handleInputChange = (e) => {
     const { name, value, type, files, checked } = e.target;
@@ -2386,15 +2402,12 @@ function App() {
         </div>
 
         {/* --- Painel Direito (Preview) --- */}
-        <div 
-          className="right-panel" 
-          onContextMenu={(e) => e.preventDefault()}
-        >
+        <div className="right-panel">
           {previewUrl ? (
             <div className="preview-container">
               <iframe 
                 src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
-                className="preview-frame" 
+                className="preview-frame"
                 title="Preview do Documento"
               />
             </div>
