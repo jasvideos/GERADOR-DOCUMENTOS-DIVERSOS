@@ -2932,10 +2932,6 @@ function App() {
             </div>
           ) : (
             <>
-              <button className="btn-back" onClick={() => {
-                setSelectedDocId(null);
-                setPreviewUrl(null);
-              }}>← Voltar para o Menu</button>
               <h1>{selectedDoc.title}</h1>
               <p>Preencha os dados abaixo. O preview será atualizado ao lado.</p>
               
