@@ -94,6 +94,30 @@ const validarCpfCnpj = (val) => {
   return false;
 };
 
+// --- Busca de CEP (ViaCEP API) ---
+const buscarCEP = async (cep) => {
+  const cepLimpo = cep.replace(/\D/g, '');
+  if (cepLimpo.length !== 8) return null;
+  
+  try {
+    const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+    const data = await response.json();
+    
+    if (data.erro) return null;
+    
+    return {
+      cidade: data.localidade,
+      estado: data.uf,
+      endereco: data.logradouro ? `${data.logradouro}, ${data.bairro}` : '',
+      bairro: data.bairro,
+      logradouro: data.logradouro
+    };
+  } catch (error) {
+    console.error('Erro ao buscar CEP:', error);
+    return null;
+  }
+};
+
 // --- Configuração dos Modelos de Documentos ---
 const documentModels = [
   {
@@ -109,8 +133,9 @@ const documentModels = [
       { name: 'referente', label: 'Referente a', type: 'text', placeholder: 'Ex: Aluguel de Março' },
       { name: 'beneficiario', label: 'Nome do Beneficiário', type: 'text', placeholder: 'Quem recebeu' },
       { name: 'cpf_cnpj', label: 'CPF/CNPJ do Beneficiário', type: 'text' },
-      { name: 'cidade', label: 'Cidade', type: 'text', className: 'half-width' },
-      { name: 'estado', label: 'Estado (UF)', type: 'text', className: 'half-width' },
+      { name: 'cep', label: 'CEP', type: 'text', placeholder: 'Digite o CEP para auto-completar', className: 'third-width' },
+      { name: 'cidade', label: 'Cidade', type: 'text', className: 'third-width' },
+      { name: 'estado', label: 'UF', type: 'text', className: 'third-width' },
       { name: 'data', label: 'Data', type: 'date' }
     ]}],
     generatePDF: (data) => {
@@ -161,8 +186,9 @@ const documentModels = [
       { name: 'endereco_imovel', label: 'Endereço do Imóvel', type: 'text' },
       { name: 'valor_aluguel', label: 'Valor do Aluguel (R$)', type: 'number' },
       { name: 'mes_referencia', label: 'Mês de Referência', type: 'text', placeholder: 'Ex: Janeiro de 2024' },
-      { name: 'cidade', label: 'Cidade', type: 'text', className: 'half-width' },
-      { name: 'estado', label: 'Estado (UF)', type: 'text', className: 'half-width' },
+      { name: 'cep', label: 'CEP', type: 'text', placeholder: 'Digite o CEP', className: 'third-width' },
+      { name: 'cidade', label: 'Cidade', type: 'text', className: 'third-width' },
+      { name: 'estado', label: 'UF', type: 'text', className: 'third-width' },
       { name: 'data', label: 'Data do Pagamento', type: 'date' }
     ]}],
     generatePDF: (data) => {
@@ -220,9 +246,10 @@ const documentModels = [
       { name: 'estado_civil', label: 'Estado Civil', type: 'text', className: 'half-width' },
       { name: 'rg', label: 'RG', type: 'text', className: 'half-width' },
       { name: 'cpf', label: 'CPF', type: 'text', className: 'half-width' },
+      { name: 'cep', label: 'CEP', type: 'text', placeholder: 'Digite o CEP para auto-completar' },
       { name: 'endereco', label: 'Endereço Completo', type: 'text' },
       { name: 'cidade', label: 'Cidade', type: 'text', className: 'half-width' },
-      { name: 'estado', label: 'Estado (UF)', type: 'text', className: 'half-width' },
+      { name: 'estado', label: 'UF', type: 'text', className: 'half-width' },
       { name: 'data', label: 'Data', type: 'date' }
     ]}],
     generatePDF: (data) => {
@@ -314,8 +341,10 @@ const documentModels = [
       {
         tab: 'Finalização',
         fields: [
-          { name: 'cidade', label: 'Cidade', type: 'text', className: 'half-width' },
-          { name: 'data_assinatura', label: 'Data da Assinatura', type: 'date', className: 'half-width' },
+          { name: 'cep', label: 'CEP', type: 'text', placeholder: 'Digite o CEP', className: 'third-width' },
+          { name: 'cidade', label: 'Cidade', type: 'text', className: 'third-width' },
+          { name: 'estado', label: 'UF', type: 'text', className: 'third-width' },
+          { name: 'data_assinatura', label: 'Data da Assinatura', type: 'date' },
           { name: 'testemunha1_nome', label: 'Nome Testemunha 1', type: 'text', className: 'half-width' },
           { name: 'testemunha1_cpf', label: 'CPF Testemunha 1', type: 'text', className: 'half-width' },
           { name: 'testemunha2_nome', label: 'Nome Testemunha 2', type: 'text', className: 'half-width' },
@@ -1304,8 +1333,10 @@ const documentModels = [
         tab: 'Observações',
         fields: [
           { name: 'observacoes_gerais', label: 'Observações Gerais', type: 'textarea', placeholder: 'Descreva qualquer dano, avaria ou situação relevante encontrada na vistoria...' },
-          { name: 'cidade', label: 'Cidade', type: 'text', className: 'half-width' },
-          { name: 'data_assinatura', label: 'Data da Assinatura', type: 'date', className: 'half-width' },
+          { name: 'cep', label: 'CEP', type: 'text', placeholder: 'Digite o CEP', className: 'third-width' },
+          { name: 'cidade', label: 'Cidade', type: 'text', className: 'third-width' },
+          { name: 'estado', label: 'UF', type: 'text', className: 'third-width' },
+          { name: 'data_assinatura', label: 'Data da Assinatura', type: 'date' },
         ]
       }
     ], 
@@ -2026,9 +2057,10 @@ const documentModels = [
       { name: 'pais', label: 'País de Residência', type: 'text', className: 'half-width' },
       { name: 'telefone', label: 'Telefone', type: 'text', className: 'half-width' },
       { name: 'email', label: 'E-mail', type: 'email' },
+      { name: 'cep', label: 'CEP', type: 'text', placeholder: 'Digite o CEP para auto-completar' },
       { name: 'endereco', label: 'Endereço Completo', type: 'text' },
       { name: 'cidade', label: 'Cidade', type: 'text', className: 'half-width' },
-      { name: 'estado', label: 'Estado (UF)', type: 'text', className: 'half-width' },
+      { name: 'estado', label: 'UF', type: 'text', className: 'half-width' },
       { name: 'data', label: 'Data da Assinatura', type: 'date' }
     ]}],
     generatePDF: (data) => {
@@ -2385,6 +2417,27 @@ function App() {
         ...prev,
         [name]: value
       }));
+      
+      // Auto-complete de CEP
+      if (name === 'cep' || name.endsWith('_cep')) {
+        const cepLimpo = value.replace(/\D/g, '');
+        if (cepLimpo.length === 8) {
+          buscarCEP(cepLimpo).then(dados => {
+            if (dados) {
+              // Define o prefixo para campos relacionados (ex: locador_cep -> locador_cidade)
+              const prefixo = name.endsWith('_cep') ? name.replace('_cep', '_') : '';
+              
+              setFormData(prev => ({
+                ...prev,
+                [`${prefixo}cidade`]: dados.cidade,
+                [`${prefixo}estado`]: dados.estado,
+                ...(dados.endereco && { [`${prefixo}endereco`]: dados.endereco }),
+                ...(dados.bairro && { [`${prefixo}bairro`]: dados.bairro })
+              }));
+            }
+          });
+        }
+      }
     }
   };
 
