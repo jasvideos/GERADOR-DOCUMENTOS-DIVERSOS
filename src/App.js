@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import './App.css';
-import { trackPageView, trackDocumentView, trackDocumentGeneration, trackPayment } from './services/analytics';
+
+// Analytics desativado temporariamente
+const trackPageView = () => {};
+const trackDocumentView = () => {};
+const trackDocumentGeneration = () => {};
+const trackPayment = () => {};
 
 // --- Funções Utilitárias ---
 const numeroPorExtenso = (valor) => {
