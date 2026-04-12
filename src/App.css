@@ -127,7 +127,45 @@ body {
 .preview-placeholder h2 {
   margin-top: 0;
   color: #34495e;
+  font-size: 1.5rem;
 }
+
+.preview-placeholder p {
+  color: #7f8c8d;
+  margin-bottom: 25px;
+  max-width: 300px;
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  margin-bottom: 15px;
+  opacity: 0.6;
+}
+
+.placeholder-features {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 10px 16px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  font-size: 0.9rem;
+  color: #34495e;
+}
+
+.feature-icon {
+  font-size: 1.1rem;
+}
+
 /* --- Preview Frame --- */
 .preview-container {
   position: relative;

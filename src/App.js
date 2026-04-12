@@ -3063,8 +3063,23 @@ function App() {
             </div>
           ) : (
             <div className="preview-placeholder">
-              <h2>Visualização do Documento</h2>
-              <p>Selecione um documento no menu à esquerda para gerar uma pré-visualização.</p>
+              <div className="placeholder-icon">📄</div>
+              <h2>Pré-visualização do Documento</h2>
+              <p>Escolha um documento no menu à esquerda e preencha os dados para ver a prévia em tempo real.</p>
+              <div className="placeholder-features">
+                <div className="feature-item">
+                  <span className="feature-icon">✨</span>
+                  <span>Preview instantâneo</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">🔒</span>
+                  <span>Dados seguros</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">📱</span>
+                  <span>PDF profissional</span>
+                </div>
+              </div>
             </div>
           )}
         </div>
