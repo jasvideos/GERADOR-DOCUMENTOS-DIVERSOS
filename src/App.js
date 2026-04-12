@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import './App.css';
-import Admin from './pages/Admin';
 import { trackPageView, trackDocumentView, trackDocumentGeneration, trackPayment } from './services/analytics';
 
 // --- Funções Utilitárias ---
@@ -2193,11 +2192,6 @@ function App() {
   const [showPixModal, setShowPixModal] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [pixCode, setPixCode] = useState('');
-
-  // Verifica se está na página de admin - DEVE vir após os hooks
-  if (window.location.pathname === '/admin') {
-    return <Admin />;
-  }
 
   const selectedDoc = documentModels.find(d => d.id === selectedDocId);
 
