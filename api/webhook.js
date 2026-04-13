@@ -40,33 +40,38 @@ export default async function handler(req, res) {
     }
 
     if (topic === 'payment' || topic === 'payment.created' || topic === 'payment.updated') {
-      
-      // Busca status verdadeiro diretamente da API do MercadoPago (Prevenção de fraude de webhook)
-      const paymentData = await paymentClient.get({ id });
-      
-      if (paymentData && paymentData.status === 'approved') {
-         const externalRef = paymentData.external_reference;
-         
-         if (externalRef) {
-            // Atualizar o Supabase!
-            const { error } = await supabaseClient
-              .from('payments')
-              .update({ status: 'completed' })
-              .eq('id', externalRef);
-              
-            if (error) {
-              console.error("Supabase Erro na atualização:", error);
-            } else {
-              console.log(`Pagamento ${externalRef} auto-aprovado com sucesso no DB!`);
-            }
-         }
+      try {
+        // Busca status verdadeiro diretamente da API do MercadoPago (Prevenção de fraude de webhook)
+        const paymentData = await paymentClient.get({ id });
+        
+        if (paymentData && paymentData.status === 'approved') {
+           const externalRef = paymentData.external_reference;
+           
+           if (externalRef) {
+              // Atualizar o Supabase!
+              const { error } = await supabaseClient
+                .from('payments')
+                .update({ status: 'completed' })
+                .eq('id', externalRef);
+                
+              if (error) {
+                console.error("Supabase Erro na atualização:", error);
+              } else {
+                console.log(`Pagamento ${externalRef} auto-aprovado com sucesso no DB!`);
+              }
+           }
+        }
+      } catch (mpError) {
+        // Se der erro 404 ao buscar o pagamento, é provalmente o "Teste de Webhook" do MercadoPago que manda um ID falso (ex: 123456)
+        console.warn(`Aviso: Pagamento ${id} não encontrado na API do MercadoPago. Ignorando.`);
+        return res.status(200).send('Webhook de teste ignorado ou pagamento inexistente: ' + mpError.message);
       }
     }
 
     // MP exige retorno 200 rápido para confirmar que recebemos.
     return res.status(200).send('OK');
   } catch (err) {
-    console.error("Erro no processamento do Webhook:", err);
+    console.error("Erro no processamento do Webhook principal:", err);
     return res.status(500).send('Erro interno do servidor');
   }
 }
