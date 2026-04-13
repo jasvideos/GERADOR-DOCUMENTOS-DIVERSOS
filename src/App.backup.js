@@ -2230,13 +2230,12 @@ function App() {
   const [errors, setErrors] = useState({});
   const [activeTab, setActiveTab] = useState(0);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [activeModal, setActiveModal] = useState(null); // 'resumo', 'idiomas', 'habilidades', 'welcome', 'pix', 'preview'
+  const [activeModal, setActiveModal] = useState(null); // 'resumo', 'idiomas', 'habilidades', 'welcome', 'pix'
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const [showPixModal, setShowPixModal] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [pixCode, setPixCode] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   const selectedDoc = documentModels.find(d => d.id === selectedDocId);
 
@@ -2456,25 +2455,6 @@ function App() {
     setPreviewUrl(null);
     setActiveTab(0);
     setActiveModal(null);
-  };
-
-  const handleBackToHome = () => {
-    setSelectedDocId(null);
-    setFormData({});
-    setErrors({});
-    setPreviewUrl(null);
-    setActiveTab(0);
-  };
-
-  const handlePreview = () => {
-    if (selectedDoc && selectedDoc.generatePDF) {
-      const doc = selectedDoc.generatePDF(formData);
-      if (doc) {
-        const dataUri = doc.output('datauristring');
-        setPreviewUrl(dataUri);
-        setShowPreviewModal(true);
-      }
-    }
   };
 
   const generateDoc = () => {
@@ -2950,10 +2930,7 @@ function App() {
             <div className="doc-grid">
               {documentModels.map(doc => (
                 <div key={doc.id} className="doc-card" onClick={() => handleDocSelect(doc.id)}>
-                  <div className="doc-card-header">
-                    <div className="doc-card-icon">{doc.icon || '📄'}</div>
-                    <div className="doc-card-price">R$ {doc.price?.toFixed(2).replace('.', ',')}</div>
-                  </div>
+                  <div className="doc-card-icon">{doc.icon || '📄'}</div>
                   <div className="doc-card-title">{doc.title}</div>
                   <div className="doc-card-desc">{doc.description || 'Clique para criar este documento.'}</div>
                 </div>
@@ -3153,13 +3130,13 @@ function App() {
             <div className="modal-body">
               <div style={{
                 background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
-                padding: '20px',
-                borderRadius: '10px',
+                padding: '15px',
+                borderRadius: '8px',
                 marginBottom: '20px',
                 border: '2px solid #667eea',
                 textAlign: 'center'
               }}>
-                <p style={{margin: 0, fontSize: '1.15rem', color: '#2c3e50', fontWeight: '600', lineHeight: '1.6'}}>
+                <p style={{margin: 0, fontSize: '1rem', color: '#2c3e50', fontWeight: '500'}}>
                   🎯 <strong>Como funciona:</strong> Escolha o documento → Preencha os dados → Pague via PIX → Baixe instantaneamente!
                 </p>
               </div>
