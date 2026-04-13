@@ -3142,6 +3142,14 @@ function App() {
       {showPreviewModal && (
         <div className="preview-modal-overlay" onClick={() => setShowPreviewModal(false)}>
           <div className="preview-modal-content" onClick={e => e.stopPropagation()}>
+            {/* Botão de voltar para edição no preview mobile */}
+            <button 
+              className="btn-back-edit-mobile"
+              onClick={() => setShowPreviewModal(false)}
+              style={{display: 'block'}}
+            >
+              ← Voltar
+            </button>
             <div className="preview-modal-header">
               <h3>Pré-visualização</h3>
               <button className="modal-close" onClick={() => setShowPreviewModal(false)}>×</button>

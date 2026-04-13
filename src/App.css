@@ -25,6 +25,15 @@
     display: block;
   }
 }
+
+/* Botão de voltar específico para o modal de preview */
+.preview-modal-content .btn-back-edit-mobile {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1001; /* Acima do modal */
+  display: block !important; /* Sempre visível no modal */
+}
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f6f8;
