@@ -421,6 +421,96 @@ form {
     align-items: center;
     text-align: center;
   }
+  
+  /* Esconde preview lateral no mobile */
+  .right-panel {
+    display: none;
+  }
+  
+  /* Mostra botão flutuante no mobile */
+  .btn-preview-float {
+    display: flex;
+  }
+}
+
+/* --- Botão Flutuante de Preview --- */
+.btn-preview-float {
+  display: none; /* Escondido no desktop */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  z-index: 100;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-preview-float:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+/* --- Modal de Preview Fullscreen --- */
+.preview-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-modal-content {
+  background: white;
+  width: 95%;
+  height: 95%;
+  max-width: 800px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.preview-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.preview-modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.preview-modal-body {
+  flex: 1;
+  padding: 10px;
+  background: #f5f5f5;
+  overflow: hidden;
+}
+
+.preview-frame-modal {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: white;
+  border-radius: 4px;
 }
 
 /* Estilos para as Abas */

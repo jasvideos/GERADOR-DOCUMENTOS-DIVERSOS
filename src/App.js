@@ -3111,6 +3111,35 @@ function App() {
         </div>
       </div>
 
+      {/* --- Botão Flutuante para Preview (Mobile) --- */}
+      {selectedDoc && previewUrl && (
+        <button 
+          className="btn-preview-float"
+          onClick={() => setShowPreviewModal(true)}
+        >
+          👁️ Ver Preview
+        </button>
+      )}
+
+      {/* --- Modal de Preview Fullscreen (Mobile) --- */}
+      {showPreviewModal && previewUrl && (
+        <div className="preview-modal-overlay" onClick={() => setShowPreviewModal(false)}>
+          <div className="preview-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="preview-modal-header">
+              <h3>Pré-visualização</h3>
+              <button className="modal-close" onClick={() => setShowPreviewModal(false)}>×</button>
+            </div>
+            <div className="preview-modal-body">
+              <iframe 
+                src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
+                className="preview-frame-modal"
+                title="Preview do Documento"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* --- Modais --- */}
       {activeModal && (
         <div className="modal-overlay" onClick={() => setActiveModal(null)}>
