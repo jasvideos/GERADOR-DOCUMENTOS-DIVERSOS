@@ -3159,9 +3159,41 @@ function App() {
                 border: '2px solid #667eea',
                 textAlign: 'center'
               }}>
-                <p style={{margin: 0, fontSize: '1.25rem', color: '#2c3e50', fontWeight: '600', lineHeight: '1.8'}}>
-                  🎯 <strong>Como funciona:</strong> Escolha o documento → Preencha os dados → Pague via PIX → Baixe instantaneamente!
+                <p style={{margin: '0 0 15px 0', fontSize: '1.1rem', color: '#2c3e50', fontWeight: '700'}}>
+                  🎯 Como funciona:
                 </p>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '10px',
+                  fontSize: '1rem',
+                  color: '#34495e'
+                }}>
+                  <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                    <span style={{fontSize: '1.5rem'}}>📄</span>
+                    <span>Escolha o documento</span>
+                  </span>
+                  <span style={{fontSize: '1.2rem', color: '#667eea'}}>→</span>
+                  <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                    <span style={{fontSize: '1.5rem'}}>💳</span>
+                    <span>Pague via PIX</span>
+                  </span>
+                  <span style={{fontSize: '1.2rem', color: '#667eea'}}>→</span>
+                  <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                    <span style={{fontSize: '1.5rem'}}>⬇️</span>
+                    <span>Baixe</span>
+                  </span>
+                  <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                    <span style={{fontSize: '1.5rem'}}>🖨️</span>
+                    <span>Imprima</span>
+                  </span>
+                  <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                    <span style={{fontSize: '1.5rem'}}>📱</span>
+                    <span>Compartilhe via WhatsApp</span>
+                  </span>
+                </div>
               </div>
               
               <button 
