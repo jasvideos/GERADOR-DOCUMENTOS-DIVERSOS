@@ -3146,7 +3146,16 @@ function App() {
       {selectedDoc && (
         <button 
           className="btn-preview-float"
-          onClick={handlePreview}
+          onClick={() => {
+            // Gera o PDF e abre em nova aba (funciona melhor no mobile)
+            if (selectedDoc.generatePDF) {
+              const doc = selectedDoc.generatePDF(formData);
+              if (doc) {
+                const blobUrl = doc.output('bloburl');
+                window.open(blobUrl, '_blank');
+              }
+            }
+          }}
         >
           👁️ Ver Preview
         </button>
@@ -3161,7 +3170,7 @@ function App() {
               className="btn-back-edit-mobile"
               onClick={() => setShowPreviewModal(false)}
             >
-              ← VOLTAR PARA CONTINUAR O CADASTRO
+              ← Voltar
             </button>
             <div className="preview-modal-header">
               <h3>Pré-visualização</h3>
