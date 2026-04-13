@@ -2605,7 +2605,7 @@ function App() {
         setPixData(data);
         setPixCode(data.qr_code);
       } else {
-        alert("Erro ao gerar PIX: " + (data.error || 'Desconhecido'));
+        alert(`Erro ao gerar PIX: ${data.error || 'Desconhecido'}\nDetalhes: ${data.details || 'Nenhum'}`);
         setShowPixModal(false);
       }
     } catch (e) {
