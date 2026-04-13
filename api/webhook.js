@@ -7,8 +7,7 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY; 
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
-const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN || '' });
-const paymentClient = new Payment(mpClient);
+// Clientes serão instanciados no handler
 
 export default async function handler(req, res) {
   // CORS
@@ -26,6 +25,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    const mpToken = process.env.MP_ACCESS_TOKEN ? process.env.MP_ACCESS_TOKEN.trim() : '';
+    if (!mpToken) return res.status(500).send('Token missing');
+    
+    const mpClient = new MercadoPagoConfig({ accessToken: mpToken });
+    const paymentClient = new Payment(mpClient);
+
     // MercadoPago envia topic e id na query param OU no body
     const topic = req.query.topic || req.query.type || req.body?.type;
     const id = req.query.data?.id || req.query.id || req.body?.data?.id;

@@ -6,8 +6,7 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
-const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN || '' });
-const paymentClient = new Payment(mpClient);
+// Clients serão inicializados dentro do handler para garantir leitura correta na Vercel
 
 export default async function handler(req, res) {
   // Configuração simples de CORS para Vercel Functions
@@ -31,9 +30,17 @@ export default async function handler(req, res) {
        return res.status(400).json({ error: 'Parâmetros obrigatórios ausentes.' });
     }
 
-    if (!process.env.MP_ACCESS_TOKEN) {
-       return res.status(500).json({ error: 'MercadoPago Access Token não configurado no servidor.' });
+    const mpToken = process.env.MP_ACCESS_TOKEN ? process.env.MP_ACCESS_TOKEN.trim() : '';
+    if (!mpToken) {
+       return res.status(500).json({ error: 'MercadoPago Access Token não está configurado na Vercel.', details: 'Verifique aba Environment Variables' });
     }
+
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ? process.env.SUPABASE_SERVICE_ROLE_KEY.trim() : process.env.VITE_SUPABASE_ANON_KEY;
+
+    // Inicialização atrasada para garantir leitura no momento que roda na Vercel
+    const supabaseClient = createClient(process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL, supabaseKey);
+    const mpClient = new MercadoPagoConfig({ accessToken: mpToken });
+    const paymentClient = new Payment(mpClient);
 
     // 1. Criar transação pendente no nosso Supabase
     const { data: dbData, error: dbError } = await supabaseClient
