@@ -55,9 +55,9 @@ Aguarde alguns minutos enquanto o projeto é criado.
 Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-REACT_APP_SUPABASE_URL=https://seu-projeto.supabase.co
-REACT_APP_SUPABASE_ANON_KEY=sua-chave-anon-aqui
-REACT_APP_ADMIN_PASSWORD=sua-senha-admin-aqui
+VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+VITE_SUPABASE_ANON_KEY=sua-chave-anon-aqui
+VITE_ADMIN_PASSWORD=sua-senha-admin-aqui
 ```
 
 ⚠️ **IMPORTANTE:** Nunca compartilhe o arquivo `.env` ou commite no Git!
@@ -107,9 +107,9 @@ if (window.location.pathname === '/admin') {
 2. Importe o repositório do GitHub
 3. Vá em **Settings** → **Environment Variables**
 4. Adicione:
-   - `REACT_APP_SUPABASE_URL`
-   - `REACT_APP_SUPABASE_ANON_KEY`
-   - `REACT_APP_ADMIN_PASSWORD`
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+   - `VITE_ADMIN_PASSWORD`
 5. Clique em **Deploy**
 
 ### URL do painel
@@ -139,7 +139,7 @@ https://seu-app.vercel.app/admin
 ### Recomendações para produção:
 
 1. **Autenticação:** Considere usar Supabase Auth para login mais seguro
-2. **Senha forte:** Use uma senha complexa no `REACT_APP_ADMIN_PASSWORD`
+2. **Senha forte:** Use uma senha complexa no `VITE_ADMIN_PASSWORD`
 3. **RLS:** As políticas de Row Level Security já estão configuradas
 4. **HTTPS:** A Vercel já fornece HTTPS automaticamente
 

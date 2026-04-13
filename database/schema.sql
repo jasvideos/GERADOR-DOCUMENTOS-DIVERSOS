@@ -93,20 +93,37 @@ ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE document_prices ENABLE ROW LEVEL SECURITY;
 
 -- Política para permitir INSERT anônimo (para rastreamento)
+DROP POLICY IF EXISTS "Allow anonymous inserts" ON page_views;
 CREATE POLICY "Allow anonymous inserts" ON page_views FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anonymous inserts" ON document_views;
 CREATE POLICY "Allow anonymous inserts" ON document_views FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anonymous inserts" ON document_generations;
 CREATE POLICY "Allow anonymous inserts" ON document_generations FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anonymous inserts" ON payments;
 CREATE POLICY "Allow anonymous inserts" ON payments FOR INSERT WITH CHECK (true);
 
 -- Política para permitir SELECT apenas para usuários autenticados (admin)
 -- Nota: Para produção, configure autenticação adequada no Supabase
+DROP POLICY IF EXISTS "Allow authenticated select" ON page_views;
 CREATE POLICY "Allow authenticated select" ON page_views FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow authenticated select" ON document_views;
 CREATE POLICY "Allow authenticated select" ON document_views FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow authenticated select" ON document_generations;
 CREATE POLICY "Allow authenticated select" ON document_generations FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow authenticated select" ON payments;
 CREATE POLICY "Allow authenticated select" ON payments FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow authenticated select" ON document_prices;
 CREATE POLICY "Allow authenticated select" ON document_prices FOR SELECT USING (true);
 
 -- Política para preços (upsert)
+DROP POLICY IF EXISTS "Allow price upsert" ON document_prices;
 CREATE POLICY "Allow price upsert" ON document_prices FOR ALL USING (true) WITH CHECK (true);
 
 -- ==============================================

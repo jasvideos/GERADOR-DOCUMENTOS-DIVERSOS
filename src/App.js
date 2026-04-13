@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import './App.css';
 import Admin from './pages/Admin';
+import { 
+  trackPageView, 
+  trackDocumentView, 
+  trackDocumentGeneration, 
+  trackPayment 
+} from './services/analytics';
 
-// Analytics desativado temporariamente
-const trackPageView = () => {};
-const trackDocumentView = () => {};
-const trackDocumentGeneration = () => {};
-const trackPayment = () => {};
 
 // --- Funções Utilitárias ---
 const numeroPorExtenso = (valor) => {
@@ -2225,10 +2226,20 @@ function App() {
     return <Admin />;
   }
 
-  const [selectedDocId, setSelectedDocId] = useState(null);
-  const [formData, setFormData] = useState({});
+  // Estados com inicialização síncrona via localStorage para evitar perda de dados no reload
+  const [selectedDocId, setSelectedDocId] = useState(() =>
+    localStorage.getItem('anixdocs_selectedDocId') || null
+  );
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem('anixdocs_formData');
+    try {
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) {
+      return {};
+    }
+  });
   const [errors, setErrors] = useState({});
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(() => parseInt(localStorage.getItem('anixdocs_activeTab'), 10) || 0);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [activeModal, setActiveModal] = useState(null); // 'resumo', 'idiomas', 'habilidades', 'welcome', 'pix', 'preview'
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
@@ -2261,6 +2272,18 @@ function App() {
       }
     }
   }, [formData, activeTab, selectedDoc]);
+
+  // Salva rascunho automaticamente sempre que formData mudar
+  useEffect(() => {
+    localStorage.setItem('anixdocs_formData', JSON.stringify(formData));
+  }, [formData]);
+
+  // Salva estado da navegação (documento selecionado e aba ativa) para persistência entre reloads
+  useEffect(() => {
+    if (selectedDocId) localStorage.setItem('anixdocs_selectedDocId', selectedDocId);
+    else localStorage.removeItem('anixdocs_selectedDocId');
+    localStorage.setItem('anixdocs_activeTab', activeTab.toString());
+  }, [selectedDocId, activeTab]);
 
   useEffect(() => {
     if (selectedDoc && selectedDoc.generatePDF) {
@@ -3123,16 +3146,7 @@ function App() {
       {selectedDoc && (
         <button 
           className="btn-preview-float"
-          onClick={() => {
-            // Gera o PDF e abre em nova aba (funciona melhor no mobile)
-            if (selectedDoc.generatePDF) {
-              const doc = selectedDoc.generatePDF(formData);
-              if (doc) {
-                const blobUrl = doc.output('bloburl');
-                window.open(blobUrl, '_blank');
-              }
-            }
-          }}
+          onClick={handlePreview}
         >
           👁️ Ver Preview
         </button>
@@ -3147,7 +3161,7 @@ function App() {
               className="btn-back-edit-mobile"
               onClick={() => setShowPreviewModal(false)}
             >
-              ← Voltar
+              ← VOLTAR PARA CONTINUAR O CADASTRO
             </button>
             <div className="preview-modal-header">
               <h3>Pré-visualização</h3>

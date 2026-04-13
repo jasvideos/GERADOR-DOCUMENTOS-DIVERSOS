@@ -25,10 +25,14 @@
 /* Botão de voltar específico para o modal de preview */
 .preview-modal-content .btn-back-edit-mobile {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  text-align: center;
   z-index: 1001; /* Acima do modal */
   display: block !important; /* Sempre visível no modal */
+  background-color: #e74c3c;
 }
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
