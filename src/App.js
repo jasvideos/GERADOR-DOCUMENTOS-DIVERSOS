@@ -3116,15 +3116,14 @@ function App() {
         <button 
           className="btn-preview-float"
           onClick={() => {
-            // Gera o preview antes de abrir o modal
+            // Gera o PDF e abre em nova aba (funciona melhor no mobile)
             if (selectedDoc.generatePDF) {
               const doc = selectedDoc.generatePDF(formData);
               if (doc) {
-                const dataUri = doc.output('datauristring');
-                setPreviewUrl(dataUri);
+                const blobUrl = doc.output('bloburl');
+                window.open(blobUrl, '_blank');
               }
             }
-            setShowPreviewModal(true);
           }}
         >
           👁️ Ver Preview
