@@ -3138,7 +3138,7 @@ function App() {
         </div>
       )}
 
-      {/* --- Modal de Boas-vindas com Tabela de Preços --- */}
+      {/* --- Modal de Boas-vindas --- */}
       {showWelcomeModal && (
         <div className="modal-overlay">
           <div className="modal-content welcome-modal" onClick={e => e.stopPropagation()}>
@@ -3153,54 +3153,15 @@ function App() {
             <div className="modal-body">
               <div style={{
                 background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
-                padding: '20px',
-                borderRadius: '10px',
-                marginBottom: '20px',
+                padding: '25px 20px',
+                borderRadius: '12px',
+                marginBottom: '25px',
                 border: '2px solid #667eea',
                 textAlign: 'center'
               }}>
-                <p style={{margin: 0, fontSize: '1.15rem', color: '#2c3e50', fontWeight: '600', lineHeight: '1.6'}}>
+                <p style={{margin: 0, fontSize: '1.25rem', color: '#2c3e50', fontWeight: '600', lineHeight: '1.8'}}>
                   🎯 <strong>Como funciona:</strong> Escolha o documento → Preencha os dados → Pague via PIX → Baixe instantaneamente!
                 </p>
-              </div>
-              
-              <h3 style={{textAlign: 'center', color: '#2c3e50', marginBottom: '15px', fontSize: '1.3rem'}}>
-                📋 Documentos Disponíveis
-              </h3>
-              
-              <div className="price-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Documento</th>
-                      <th>Preço</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {documentModels.map(doc => (
-                      <tr key={doc.id}>
-                        <td>
-                          <span style={{fontSize: '1.3rem', marginRight: '8px'}}>{doc.icon}</span>
-                          <strong>{doc.title}</strong>
-                        </td>
-                        <td className="price">R$ {doc.price?.toFixed(2).replace('.', ',')}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              
-              <div style={{
-                background: '#fff3cd',
-                padding: '12px',
-                borderRadius: '6px',
-                marginTop: '15px',
-                marginBottom: '15px',
-                borderLeft: '4px solid #ffc107',
-                fontSize: '0.95rem',
-                color: '#856404'
-              }}>
-                <strong>💡 Dica:</strong> Todos os documentos são gerados instantaneamente em PDF de alta qualidade!
               </div>
               
               <button 
