@@ -1,7 +1,7 @@
 /* Botão de voltar para edição no preview (mobile only) */
 /* Botão de voltar para edição no preview (mobile only) */
 .btn-back-edit-mobile {
-  display: none;
+  display: block;
   position: fixed;
   top: 16px;
   left: 16px;
@@ -20,11 +20,7 @@
   outline: none;
 }
 
-@media (max-width: 900px) {
-  .btn-back-edit-mobile {
-    display: block;
-  }
-}
+/* Removed media query to always show the button */
 
 /* Botão de voltar específico para o modal de preview */
 .preview-modal-content .btn-back-edit-mobile {
