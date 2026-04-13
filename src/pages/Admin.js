@@ -10,6 +10,7 @@ import {
   updateDocumentPrice
 } from '../services/analytics';
 import { isSupabaseConfigured } from '../lib/supabase';
+import { jsPDF } from 'jspdf';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -103,6 +104,184 @@ const Admin = () => {
     localStorage.removeItem('admin_auth');
   };
 
+  const handleGeneratePoster = () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = 210;
+    
+    // Fundo do Header (Gradiente simulado)
+    doc.setFillColor(102, 126, 234);
+    doc.rect(0, 0, pageWidth, 55, 'F');
+    
+    // Nome e Slogan
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(42);
+    doc.setFont('helvetica', 'bold');
+    doc.text('AnixDocs', pageWidth / 2, 30, { align: 'center' });
+    
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Faca voce mesmo! E muito facil, rapido e profissional.', pageWidth / 2, 42, { align: 'center' });
+
+    // Como Funciona
+    doc.setDrawColor(102, 126, 234);
+    doc.setLineWidth(0.8);
+    doc.roundedRect(20, 65, 170, 30, 5, 5, 'D');
+    
+    doc.setTextColor(44, 62, 80);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Como Funciona?', pageWidth / 2, 75, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('1. Escolha o documento  -  2. Preencha os dados  -  3. Pague via PIX  -  4. Baixe na hora!', pageWidth / 2, 85, { align: 'center' });
+
+    // Lista de Serviços
+    const services = [
+      { n: 'Recibo Pagamento', p: 'R$ 2,90' },
+      { n: 'Recibo Aluguel', p: 'R$ 2,90' },
+      { n: 'Contrato Locacao', p: 'R$ 5,90' },
+      { n: 'Curriculo Profissional', p: 'R$ 2,90' },
+      { n: 'Declaracao Residencia', p: 'R$ 2,90' },
+      { n: 'Termo de Vistoria', p: 'R$ 2,90' },
+      { n: 'Orcamento Servicos', p: 'R$ 2,90' },
+      { n: 'Procuracao Particular', p: 'R$ 3,90' },
+      { n: 'Uniao Estavel', p: 'R$ 2,90' },
+      { n: 'Aut. Viagem Menor', p: 'R$ 2,90' },
+      { n: 'Hipossuficiencia', p: 'R$ 2,90' },
+      { n: 'Recibo RPA', p: 'R$ 2,90' }
+    ];
+
+    let startX = 20;
+    let startY = 110;
+    let col = 0;
+    
+    services.forEach((s, i) => {
+      const x = startX + (col * 58);
+      const y = startY + (Math.floor(i / 3) * 18);
+      
+      doc.setFillColor(248, 249, 250);
+      doc.roundedRect(x, y, 54, 14, 2, 2, 'F');
+      doc.setDrawColor(230, 230, 230);
+      doc.roundedRect(x, y, 54, 14, 2, 2, 'D');
+      
+      doc.setTextColor(44, 62, 80);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      doc.text(s.n, x + 2, y + 6);
+      
+      doc.setTextColor(39, 174, 96);
+      doc.setFontSize(9);
+      doc.text(s.p, x + 52, y + 11, { align: 'right' });
+      
+      col = (col + 1) % 3;
+    });
+
+    // QR Code Section
+    doc.setFillColor(102, 126, 234);
+    doc.roundedRect(65, 190, 80, 55, 8, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.text('Escaneie e Acesse!', 105, 202, { align: 'center' });
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(14);
+    doc.text('anixdocs.vercel.app', 105, 235, { align: 'center' });
+
+    // Benefícios
+    doc.setTextColor(127, 140, 141);
+    doc.setFontSize(10);
+    doc.text('Instantaneo   |   100% Seguro   |   Pague via PIX   |   Acesse do Celular', pageWidth / 2, 260, { align: 'center' });
+
+    // Footer
+    doc.setFillColor(44, 62, 80);
+    doc.rect(0, 275, pageWidth, 22, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.text('AnixDocs', 20, 289);
+    doc.setFontSize(10);
+    doc.text('Documentos profissionais em segundos', pageWidth - 20, 289, { align: 'right' });
+
+    doc.save('cartaz-anixdocs.pdf');
+  };
+
+  const handleGenerateFlyer = () => {
+    const doc = new jsPDF('p', 'mm', 'a5');
+    const pageWidth = 148;
+
+    // Header
+    doc.setFillColor(44, 62, 80);
+    doc.rect(0, 0, pageWidth, 40, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(28);
+    doc.setFont('helvetica', 'bold');
+    doc.text('AnixDocs', pageWidth / 2, 20, { align: 'center' });
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Muito Facil! Faca voce mesmo em minutos.', pageWidth / 2, 30, { align: 'center' });
+
+    // Highlight Box
+    doc.setDrawColor(102, 126, 234);
+    doc.setFillColor(227, 242, 253);
+    doc.roundedRect(10, 50, 128, 20, 3, 3, 'FD');
+    doc.setTextColor(44, 62, 80);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Simples e Rapido!', pageWidth / 2, 58, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Escolha o documento -> Preencha os dados -> Pague via PIX -> Baixe na hora!', pageWidth / 2, 64, { align: 'center' });
+
+    // Services
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Documentos Disponiveis', pageWidth / 2, 80, { align: 'center' });
+
+    const services = [
+      { n: 'Recibo Pagamento', p: 'R$ 2,90' },
+      { n: 'Recibo Aluguel', p: 'R$ 2,90' },
+      { n: 'Contrato Locacao', p: 'R$ 5,90' },
+      { n: 'Curriculo Profissional', p: 'R$ 2,90' },
+      { n: 'Declaracao Residencia', p: 'R$ 2,90' },
+      { n: 'Termo de Vistoria', p: 'R$ 2,90' },
+      { n: 'Orcamento Servicos', p: 'R$ 2,90' }
+    ];
+
+    let y = 90;
+    services.forEach(s => {
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(s.n, 15, y);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(39, 174, 96);
+      doc.text(s.p, 133, y, { align: 'right' });
+      doc.setDrawColor(238, 238, 238);
+      doc.line(15, y + 2, 133, y + 2);
+      y += 8;
+      doc.setTextColor(44, 62, 80);
+    });
+
+    // QR Code Section
+    doc.setFillColor(248, 249, 250);
+    doc.roundedRect(44, 150, 60, 40, 5, 5, 'F');
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Escaneie e Acesse!', pageWidth / 2, 158, { align: 'center' });
+    doc.setTextColor(102, 126, 234);
+    doc.text('anixdocs.vercel.app', pageWidth / 2, 185, { align: 'center' });
+
+    // Footer
+    doc.setFillColor(44, 62, 80);
+    doc.rect(0, 195, pageWidth, 15, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.text('AnixDocs', 15, 205);
+    doc.setFontSize(8);
+    doc.text('Pratico, Rapido e Profissional', 133, 205, { align: 'right' });
+
+    doc.save('flyer-anixdocs-a5.pdf');
+  };
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
   };
@@ -157,7 +336,11 @@ const Admin = () => {
       {/* Header */}
       <header style={styles.header}>
         <h1 style={styles.title}>📊 Painel Administrativo</h1>
-        <button onClick={handleLogout} style={styles.logoutButton}>Sair</button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={handleGeneratePoster} style={styles.posterButton}>🖨️ Gerar Cartaz A4</button>
+          <button onClick={handleGenerateFlyer} style={styles.flyerButton}>📄 Gerar Flyer A5</button>
+          <button onClick={handleLogout} style={styles.logoutButton}>Sair</button>
+        </div>
       </header>
 
       {/* Navegação */}
@@ -460,6 +643,24 @@ const styles = {
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer'
+  },
+  posterButton: {
+    padding: '8px 16px',
+    backgroundColor: '#27ae60',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  flyerButton: {
+    padding: '8px 16px',
+    backgroundColor: '#3498db',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
   },
   nav: {
     backgroundColor: 'white',

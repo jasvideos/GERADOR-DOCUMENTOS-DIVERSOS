@@ -2939,8 +2939,8 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Gerador de Documentos Diversos</h1>
-        <h2>Anix Copiadora</h2>
+        <h1>AnixDocs</h1>
+        <h2>Faça você mesmo • Rápido e Profissional</h2>
       </header>
 
       <div className="main-container">

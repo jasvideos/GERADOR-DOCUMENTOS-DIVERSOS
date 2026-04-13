@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cartaz A4 - Gerador de Documentos | Anix Copiadora</title>
+  <title>AnixDocs - Documentos Profissionais</title>
   <style>
     * {
       margin: 0;
@@ -53,14 +53,15 @@
     }
     
     .poster-header h1 {
-      font-size: 3rem;
+      font-size: 3.5rem;
       margin-bottom: 10px;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
     
     .poster-header p {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       opacity: 0.95;
+      font-weight: 600;
     }
     
     .poster-body {
@@ -130,7 +131,7 @@
     
     .services-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 15px;
     }
     
@@ -145,22 +146,24 @@
     }
     
     .service-card-icon {
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
     
     .service-card-info {
       flex: 1;
+      min-width: 0;
     }
     
     .service-card-name {
       font-weight: 700;
       color: #2c3e50;
-      font-size: 1rem;
+      font-size: 0.85rem;
       margin-bottom: 3px;
+      line-height: 1.2;
     }
     
     .service-card-desc {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: #7f8c8d;
     }
     
@@ -169,8 +172,8 @@
       color: white;
       padding: 6px 14px;
       border-radius: 20px;
-      font-weight: 700;
-      font-size: 1rem;
+      font-weight: 800;
+      font-size: 0.9rem;
     }
     
     .qr-section {
@@ -196,8 +199,8 @@
     }
     
     .qr-box img {
-      width: 180px;
-      height: 180px;
+      width: 150px;
+      height: 150px;
     }
     
     .qr-url {
@@ -239,7 +242,7 @@
     }
     
     .footer-brand h4 {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       margin-bottom: 5px;
     }
     
@@ -280,8 +283,8 @@
 <body>
   <div class="poster">
     <div class="poster-header">
-      <h1>📄 Gerador de Documentos</h1>
-      <p>Crie documentos profissionais em minutos!</p>
+      <h1>📄 AnixDocs</h1>
+      <p>Faça você mesmo! É muito fácil, rápido e profissional.</p>
     </div>
     
     <div class="poster-body">
@@ -359,10 +362,64 @@
             </div>
             
             <div class="service-card">
-              <span class="service-card-icon">💼</span>
+              <span class="service-card-icon">🔍</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Termo de Vistoria</div>
+                <div class="service-card-desc">Entrada ou Saída</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+
+            <div class="service-card">
+              <span class="service-card-icon">💰</span>
               <div class="service-card-info">
                 <div class="service-card-name">Orçamento Serviços</div>
-                <div class="service-card-desc">Cálculo automático</div>
+                <div class="service-card-desc">Com cálculo automático</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+
+            <div class="service-card">
+              <span class="service-card-icon">⚖️</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Procuração Particular</div>
+                <div class="service-card-desc">Poderes amplos</div>
+              </div>
+              <span class="service-card-price">R$ 3,90</span>
+            </div>
+
+            <div class="service-card">
+              <span class="service-card-icon">💍</span>
+              <div class="service-card-info">
+                <div class="service-card-name">União Estável</div>
+                <div class="service-card-desc">Declaração de convivência</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+
+            <div class="service-card">
+              <span class="service-card-icon">✈️</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Aut. Viagem Menor</div>
+                <div class="service-card-desc">Nacional</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+
+            <div class="service-card">
+              <span class="service-card-icon">🤝</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Hipossuficiência</div>
+                <div class="service-card-desc">Gratuidade de justiça</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+
+            <div class="service-card">
+              <span class="service-card-icon">💼</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Recibo RPA</div>
+                <div class="service-card-desc">Para autônomos</div>
               </div>
               <span class="service-card-price">R$ 2,90</span>
             </div>
@@ -374,9 +431,9 @@
             <h3>📱 Escaneie e Acesse!</h3>
             <div class="qr-box">
               <!-- Substitua a URL abaixo pela URL real do seu site -->
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://gerador-documentos-diversos.vercel.app" alt="QR Code">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://anixdocs.vercel.app" alt="QR Code">
             </div>
-            <p class="qr-url">gerador-documentos-diversos.vercel.app</p>
+            <p class="qr-url">anixdocs.vercel.app</p>
           </div>
         </div>
       </div>
@@ -407,8 +464,8 @@
     
     <div class="poster-footer">
       <div class="footer-brand">
-        <h4>Anix Copiadora</h4>
-        <p>Documentos profissionais ao seu alcance</p>
+        <h4>AnixDocs</h4>
+        <p>Documentos profissionais em segundos</p>
       </div>
       <div class="footer-cta">
         🚀 Acesse Agora!
