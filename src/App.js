@@ -3077,26 +3077,8 @@ function App() {
               {/* Botão de voltar para edição (mobile only) */}
               <button
                 className="btn-back-edit-mobile"
-                style={{
-                  display: 'block',
-                  position: 'fixed',
-                  top: 10,
-                  left: 10,
-                  zIndex: 1001,
-                  background: '#2c3e50',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '20px',
-                  padding: '10px 18px',
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                  cursor: 'pointer',
-                  opacity: 0.95,
-                  // Só mostra em telas pequenas
-                  display: window.innerWidth <= 700 ? 'block' : 'none'
-                }}
                 onClick={handleBackToHome}
+                tabIndex={0}
               >
                 ← Voltar para edição
               </button>
