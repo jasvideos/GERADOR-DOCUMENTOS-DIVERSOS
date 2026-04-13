@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Cards - Gerador de Documentos | Anix Copiadora</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    @page {
+      size: A4;
+      margin: 10mm;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+    
+    .instructions {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .instructions h2 {
+      color: #856404;
+      margin-bottom: 10px;
+    }
+    
+    .instructions p {
+      color: #856404;
+      font-size: 0.95rem;
+    }
+    
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .mini-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border: 1px dashed #ccc;
+    }
+    
+    .mini-card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 15px;
+      text-align: center;
+    }
+    
+    .mini-card-header h3 {
+      font-size: 1rem;
+      margin-bottom: 3px;
+    }
+    
+    .mini-card-header p {
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+    
+    .mini-card-body {
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .qr-small {
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+    }
+    
+    .qr-small img {
+      width: 100%;
+      height: 100%;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+    }
+    
+    .card-info {
+      flex: 1;
+      text-align: center;
+    }
+    
+    .card-info p {
+      font-size: 0.85rem;
+      color: #34495e;
+      margin-bottom: 8px;
+    }
+    
+    .card-url {
+      font-size: 0.7rem;
+      color: #667eea;
+      font-weight: 600;
+      word-break: break-all;
+    }
+    
+    .mini-card-footer {
+      background: #2c3e50;
+      color: white;
+      padding: 8px;
+      text-align: center;
+      font-size: 0.75rem;
+    }
+    
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .instructions {
+        display: none;
+      }
+      .mini-card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="instructions">
+    <h2>🖨️ Mini Cards para Impressão</h2>
+    <p>Imprima esta página e recorte os cards. Ideal para distribuir como mini-flyers ou colar em locais estratégicos!</p>
+  </div>
+  
+  <div class="cards-grid">
+    <!-- Card 1 -->
+    <div class="mini-card">
+      <div class="mini-card-header">
+        <h3>📄 Gerador de Documentos</h3>
+        <p>Recibos • Contratos • Currículos</p>
+      </div>
+      <div class="mini-card-body">
+        <div class="qr-small">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://gerador-documentos-diversos.vercel.app" alt="QR Code">
+        </div>
+        <div class="card-info">
+          <p>Escaneie o QR Code e crie documentos profissionais em PDF!</p>
+          <span class="card-url">gerador-documentos-diversos.vercel.app</span>
+        </div>
+      </div>
+      <div class="mini-card-footer">
+        Anix Copiadora | A partir de R$ 2,90
+      </div>
+    </div>
+    
+    <!-- Card 2 -->
+    <div class="mini-card">
+      <div class="mini-card-header">
+        <h3>📄 Gerador de Documentos</h3>
+        <p>Recibos • Contratos • Currículos</p>
+      </div>
+      <div class="mini-card-body">
+        <div class="qr-small">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://gerador-documentos-diversos.vercel.app" alt="QR Code">
+        </div>
+        <div class="card-info">
+          <p>Escaneie o QR Code e crie documentos profissionais em PDF!</p>
+          <span class="card-url">gerador-documentos-diversos.vercel.app</span>
+        </div>
+      </div>
+      <div class="mini-card-footer">
+        Anix Copiadora | A partir de R$ 2,90
+      </div>
+    </div>
+    
+    <!-- Card 3 -->
+    <div class="mini-card">
+      <div class="mini-card-header">
+        <h3>📄 Gerador de Documentos</h3>
+        <p>Recibos • Contratos • Currículos</p>
+      </div>
+      <div class="mini-card-body">
+        <div class="qr-small">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://gerador-documentos-diversos.vercel.app" alt="QR Code">
+        </div>
+        <div class="card-info">
+          <p>Escaneie o QR Code e crie documentos profissionais em PDF!</p>
+          <span class="card-url">gerador-documentos-diversos.vercel.app</span>
+        </div>
+      </div>
+      <div class="mini-card-footer">
+        Anix Copiadora | A partir de R$ 2,90
+      </div>
+    </div>
+    
+    <!-- Card 4 -->
+    <div class="mini-card">
+      <div class="mini-card-header">
+        <h3>📄 Gerador de Documentos</h3>
+        <p>Recibos • Contratos • Currículos</p>
+      </div>
+      <div class="mini-card-body">
+        <div class="qr-small">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://gerador-documentos-diversos.vercel.app" alt="QR Code">
+        </div>
+        <div class="card-info">
+          <p>Escaneie o QR Code e crie documentos profissionais em PDF!</p>
+          <span class="card-url">gerador-documentos-diversos.vercel.app</span>
+        </div>
+      </div>
+      <div class="mini-card-footer">
+        Anix Copiadora | A partir de R$ 2,90
+      </div>
+    </div>
+    
+    <!-- Card 5 -->
+    <div class="mini-card">
+      <div class="mini-card-header">
+        <h3>📄 Gerador de Documentos</h3>
+        <p>Recibos • Contratos • Currículos</p>
+      </div>
+      <div class="mini-card-body">
+        <div class="qr-small">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://gerador-documentos-diversos.vercel.app" alt="QR Code">
+        </div>
+        <div class="card-info">
+          <p>Escaneie o QR Code e crie documentos profissionais em PDF!</p>
+          <span class="card-url">gerador-documentos-diversos.vercel.app</span>
+        </div>
+      </div>
+      <div class="mini-card-footer">
+        Anix Copiadora | A partir de R$ 2,90
+      </div>
+    </div>
+    
+    <!-- Card 6 -->
+    <div class="mini-card">
+      <div class="mini-card-header">
+        <h3>📄 Gerador de Documentos</h3>
+        <p>Recibos • Contratos • Currículos</p>
+      </div>
+      <div class="mini-card-body">
+        <div class="qr-small">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://gerador-documentos-diversos.vercel.app" alt="QR Code">
+        </div>
+        <div class="card-info">
+          <p>Escaneie o QR Code e crie documentos profissionais em PDF!</p>
+          <span class="card-url">gerador-documentos-diversos.vercel.app</span>
+        </div>
+      </div>
+      <div class="mini-card-footer">
+        Anix Copiadora | A partir de R$ 2,90
+      </div>
+    </div>
+  </div>
+</body>
+</html>

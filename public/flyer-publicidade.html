@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flyer Publicitário - Gerador de Documentos | Anix Copiadora</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    @page {
+      size: A5;
+      margin: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .flyer {
+      background: white;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .flyer-header {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      padding: 30px 25px;
+      text-align: center;
+    }
+    
+    .flyer-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+    
+    .flyer-header p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    .flyer-body {
+      padding: 25px;
+    }
+    
+    .highlight-box {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+      border: 2px solid #667eea;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .highlight-box h2 {
+      color: #2c3e50;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+    
+    .highlight-box p {
+      color: #34495e;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .services-list {
+      margin-bottom: 25px;
+    }
+    
+    .services-list h3 {
+      color: #2c3e50;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .service-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .service-item:last-child {
+      border-bottom: none;
+    }
+    
+    .service-icon {
+      font-size: 1.5rem;
+    }
+    
+    .service-info {
+      flex: 1;
+    }
+    
+    .service-name {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    .service-price {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    
+    .qr-section {
+      text-align: center;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .qr-section h3 {
+      color: #2c3e50;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+    
+    .qr-code {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 15px;
+      border: 3px solid #667eea;
+      border-radius: 10px;
+      padding: 5px;
+      background: white;
+    }
+    
+    .qr-code img {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .url-text {
+      font-size: 0.9rem;
+      color: #667eea;
+      font-weight: 600;
+      word-break: break-all;
+    }
+    
+    .benefits {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .benefit {
+      text-align: center;
+      flex: 1;
+      min-width: 80px;
+    }
+    
+    .benefit-icon {
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+    
+    .benefit-text {
+      font-size: 0.8rem;
+      color: #7f8c8d;
+    }
+    
+    .flyer-footer {
+      background: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .flyer-footer h4 {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+    
+    .flyer-footer p {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      margin-top: 15px;
+    }
+    
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .flyer {
+        box-shadow: none;
+        max-width: 100%;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="flyer">
+    <div class="flyer-header">
+      <h1>📄 Gerador de Documentos</h1>
+      <p>Crie documentos profissionais em minutos!</p>
+    </div>
+    
+    <div class="flyer-body">
+      <div class="highlight-box">
+        <h2>🎯 Simples e Rápido!</h2>
+        <p>Escolha o documento → Preencha os dados → Pague via PIX → Baixe na hora!</p>
+      </div>
+      
+      <div class="services-list">
+        <h3>📋 Documentos Disponíveis</h3>
+        
+        <div class="service-item">
+          <span class="service-icon">📄</span>
+          <span class="service-info">
+            <span class="service-name">Recibo de Pagamento</span>
+          </span>
+          <span class="service-price">R$ 2,90</span>
+        </div>
+        
+        <div class="service-item">
+          <span class="service-icon">🏠</span>
+          <span class="service-info">
+            <span class="service-name">Recibo de Aluguel</span>
+          </span>
+          <span class="service-price">R$ 2,90</span>
+        </div>
+        
+        <div class="service-item">
+          <span class="service-icon">📝</span>
+          <span class="service-info">
+            <span class="service-name">Contrato de Locação</span>
+          </span>
+          <span class="service-price">R$ 5,90</span>
+        </div>
+        
+        <div class="service-item">
+          <span class="service-icon">📋</span>
+          <span class="service-info">
+            <span class="service-name">Currículo Profissional</span>
+          </span>
+          <span class="service-price">R$ 2,90</span>
+        </div>
+        
+        <div class="service-item">
+          <span class="service-icon">📍</span>
+          <span class="service-info">
+            <span class="service-name">Declarações Diversas</span>
+          </span>
+          <span class="service-price">R$ 2,90</span>
+        </div>
+      </div>
+      
+      <div class="qr-section">
+        <h3>📱 Escaneie e Acesse Agora!</h3>
+        <div class="qr-code">
+          <!-- Substitua a URL abaixo pela URL real do seu site -->
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://gerador-documentos-diversos.vercel.app" alt="QR Code">
+        </div>
+        <p class="url-text">gerador-documentos-diversos.vercel.app</p>
+      </div>
+      
+      <div class="benefits">
+        <div class="benefit">
+          <div class="benefit-icon">⚡</div>
+          <div class="benefit-text">Instantâneo</div>
+        </div>
+        <div class="benefit">
+          <div class="benefit-icon">🔒</div>
+          <div class="benefit-text">Seguro</div>
+        </div>
+        <div class="benefit">
+          <div class="benefit-icon">💳</div>
+          <div class="benefit-text">PIX</div>
+        </div>
+        <div class="benefit">
+          <div class="benefit-icon">📱</div>
+          <div class="benefit-text">Mobile</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flyer-footer">
+      <h4>Anix Copiadora</h4>
+      <p>Documentos profissionais ao seu alcance</p>
+    </div>
+  </div>
+</body>
+</html>

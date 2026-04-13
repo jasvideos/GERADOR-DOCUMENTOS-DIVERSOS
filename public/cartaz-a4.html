@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartaz A4 - Gerador de Documentos | Anix Copiadora</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: white;
+      display: flex;
+      justify-content: center;
+      padding: 0;
+    }
+    
+    .poster {
+      width: 210mm;
+      min-height: 297mm;
+      background: linear-gradient(180deg, #2c3e50 0%, #2c3e50 35%, white 35%);
+      position: relative;
+    }
+    
+    .poster-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .poster-header::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 40px solid transparent;
+      border-right: 40px solid transparent;
+      border-top: 30px solid #764ba2;
+    }
+    
+    .poster-header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .poster-header p {
+      font-size: 1.5rem;
+      opacity: 0.95;
+    }
+    
+    .poster-body {
+      padding: 60px 40px 40px;
+      background: white;
+    }
+    
+    .main-content {
+      display: flex;
+      gap: 40px;
+    }
+    
+    .left-column {
+      flex: 1.2;
+    }
+    
+    .right-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .how-it-works {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+      border: 3px solid #667eea;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+    
+    .how-it-works h2 {
+      color: #2c3e50;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+    
+    .step {
+      text-align: center;
+      flex: 1;
+    }
+    
+    .step-icon {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+    
+    .step-text {
+      font-size: 0.95rem;
+      color: #34495e;
+      font-weight: 600;
+    }
+    
+    .step-arrow {
+      font-size: 1.5rem;
+      color: #667eea;
+      display: flex;
+      align-items: center;
+    }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    
+    .service-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .service-card-icon {
+      font-size: 2rem;
+    }
+    
+    .service-card-info {
+      flex: 1;
+    }
+    
+    .service-card-name {
+      font-weight: 700;
+      color: #2c3e50;
+      font-size: 1rem;
+      margin-bottom: 3px;
+    }
+    
+    .service-card-desc {
+      font-size: 0.8rem;
+      color: #7f8c8d;
+    }
+    
+    .service-card-price {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    
+    .qr-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      color: white;
+      width: 100%;
+    }
+    
+    .qr-section h3 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+    
+    .qr-box {
+      background: white;
+      border-radius: 15px;
+      padding: 15px;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+    
+    .qr-box img {
+      width: 180px;
+      height: 180px;
+    }
+    
+    .qr-url {
+      font-size: 1.1rem;
+      font-weight: 600;
+      opacity: 0.95;
+    }
+    
+    .benefits-row {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+      padding: 25px 0;
+      border-top: 2px dashed #e0e0e0;
+    }
+    
+    .benefit-item {
+      text-align: center;
+    }
+    
+    .benefit-item-icon {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+    
+    .benefit-item-text {
+      font-size: 1rem;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    
+    .poster-footer {
+      background: #2c3e50;
+      color: white;
+      padding: 25px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .footer-brand h4 {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+    
+    .footer-brand p {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+    
+    .footer-cta {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    
+    @media print {
+      body {
+        padding: 0;
+      }
+      .poster {
+        box-shadow: none;
+      }
+    }
+    
+    @media screen {
+      body {
+        background: #ccc;
+        padding: 20px;
+      }
+      .poster {
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <div class="poster-header">
+      <h1>📄 Gerador de Documentos</h1>
+      <p>Crie documentos profissionais em minutos!</p>
+    </div>
+    
+    <div class="poster-body">
+      <div class="how-it-works">
+        <h2>🎯 Como Funciona?</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-icon">📄</div>
+            <div class="step-text">Escolha o<br>documento</div>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step">
+            <div class="step-icon">✏️</div>
+            <div class="step-text">Preencha<br>os dados</div>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step">
+            <div class="step-icon">💳</div>
+            <div class="step-text">Pague<br>via PIX</div>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step">
+            <div class="step-icon">⬇️</div>
+            <div class="step-text">Baixe<br>na hora!</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="main-content">
+        <div class="left-column">
+          <div class="services-grid">
+            <div class="service-card">
+              <span class="service-card-icon">📄</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Recibo de Pagamento</div>
+                <div class="service-card-desc">Com valor por extenso</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+            
+            <div class="service-card">
+              <span class="service-card-icon">🏠</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Recibo de Aluguel</div>
+                <div class="service-card-desc">Completo e detalhado</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+            
+            <div class="service-card">
+              <span class="service-card-icon">📝</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Contrato de Locação</div>
+                <div class="service-card-desc">Residencial ou Comercial</div>
+              </div>
+              <span class="service-card-price">R$ 5,90</span>
+            </div>
+            
+            <div class="service-card">
+              <span class="service-card-icon">📋</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Currículo Profissional</div>
+                <div class="service-card-desc">5 modelos diferentes</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+            
+            <div class="service-card">
+              <span class="service-card-icon">📍</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Declaração Residência</div>
+                <div class="service-card-desc">Comprovante de endereço</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+            
+            <div class="service-card">
+              <span class="service-card-icon">💼</span>
+              <div class="service-card-info">
+                <div class="service-card-name">Orçamento Serviços</div>
+                <div class="service-card-desc">Cálculo automático</div>
+              </div>
+              <span class="service-card-price">R$ 2,90</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="right-column">
+          <div class="qr-section">
+            <h3>📱 Escaneie e Acesse!</h3>
+            <div class="qr-box">
+              <!-- Substitua a URL abaixo pela URL real do seu site -->
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://gerador-documentos-diversos.vercel.app" alt="QR Code">
+            </div>
+            <p class="qr-url">gerador-documentos-diversos.vercel.app</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="benefits-row">
+        <div class="benefit-item">
+          <div class="benefit-item-icon">⚡</div>
+          <div class="benefit-item-text">Instantâneo</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-icon">🔒</div>
+          <div class="benefit-item-text">100% Seguro</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-icon">💳</div>
+          <div class="benefit-item-text">Pague via PIX</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-icon">📱</div>
+          <div class="benefit-item-text">Acesse do Celular</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-item-icon">🖨️</div>
+          <div class="benefit-item-text">Imprima ou Compartilhe</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="poster-footer">
+      <div class="footer-brand">
+        <h4>Anix Copiadora</h4>
+        <p>Documentos profissionais ao seu alcance</p>
+      </div>
+      <div class="footer-cta">
+        🚀 Acesse Agora!
+      </div>
+    </div>
+  </div>
+</body>
+</html>
