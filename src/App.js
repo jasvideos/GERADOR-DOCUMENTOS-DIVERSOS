@@ -3112,17 +3112,27 @@ function App() {
       </div>
 
       {/* --- Botão Flutuante para Preview (Mobile) --- */}
-      {selectedDoc && previewUrl && (
+      {selectedDoc && (
         <button 
           className="btn-preview-float"
-          onClick={() => setShowPreviewModal(true)}
+          onClick={() => {
+            // Gera o preview antes de abrir o modal
+            if (selectedDoc.generatePDF) {
+              const doc = selectedDoc.generatePDF(formData);
+              if (doc) {
+                const dataUri = doc.output('datauristring');
+                setPreviewUrl(dataUri);
+              }
+            }
+            setShowPreviewModal(true);
+          }}
         >
           👁️ Ver Preview
         </button>
       )}
 
       {/* --- Modal de Preview Fullscreen (Mobile) --- */}
-      {showPreviewModal && previewUrl && (
+      {showPreviewModal && (
         <div className="preview-modal-overlay" onClick={() => setShowPreviewModal(false)}>
           <div className="preview-modal-content" onClick={e => e.stopPropagation()}>
             <div className="preview-modal-header">
@@ -3130,11 +3140,17 @@ function App() {
               <button className="modal-close" onClick={() => setShowPreviewModal(false)}>×</button>
             </div>
             <div className="preview-modal-body">
-              <iframe 
-                src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
-                className="preview-frame-modal"
-                title="Preview do Documento"
-              />
+              {previewUrl ? (
+                <iframe 
+                  src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
+                  className="preview-frame-modal"
+                  title="Preview do Documento"
+                />
+              ) : (
+                <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#7f8c8d'}}>
+                  <p>Carregando preview...</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
