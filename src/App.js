@@ -3177,6 +3177,11 @@ function App() {
                   </span>
                   <span style={{fontSize: '1.2rem', color: '#667eea'}}>→</span>
                   <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+                    <span style={{fontSize: '1.5rem'}}>✏️</span>
+                    <span>Preencha os dados</span>
+                  </span>
+                  <span style={{fontSize: '1.2rem', color: '#667eea'}}>→</span>
+                  <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
                     <span style={{fontSize: '1.5rem'}}>💳</span>
                     <span>Pague via PIX</span>
                   </span>
