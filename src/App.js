@@ -8,6 +8,7 @@ import {
   trackDocumentGeneration, 
   trackPayment 
 } from './services/analytics';
+import { supabase } from './lib/supabase';
 
 
 // --- Funções Utilitárias ---
@@ -2246,6 +2247,8 @@ function App() {
   const [showPixModal, setShowPixModal] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [pixCode, setPixCode] = useState('');
+  const [pixData, setPixData] = useState(null);
+  const [isGeneratingPix, setIsGeneratingPix] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
@@ -2559,18 +2562,65 @@ function App() {
     }
   };
 
-  const handleRequestPayment = () => {
-    // Gera um código PIX mockup (em produção, viria da API do Mercado Pago/Stripe)
-    const mockPixCode = '00020126580014br.gov.bcb.pix0136' + Math.random().toString(36).substr(2, 32) + '5204000053039865802BR5925Anix Copiadora LTDA6009Sao Paulo62070503***6304' + Math.random().toString(16).substr(2, 4).toUpperCase();
-    setPixCode(mockPixCode);
+  // Trata o polling do Pix
+  useEffect(() => {
+    let intervalId;
+    if (showPixModal && pixData?.paymentId) {
+      intervalId = setInterval(async () => {
+        try {
+          const { data } = await supabase.from('payments').select('status').eq('id', pixData.paymentId).single();
+          if (data && data.status === 'completed') {
+            clearInterval(intervalId);
+            handlePaymentConfirmed();
+          }
+        } catch (e) {
+          console.error("Polling error:", e);
+        }
+      }, 3000);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [showPixModal, pixData]);
+
+  const handleRequestPayment = async () => {
+    setIsGeneratingPix(true);
     setShowPixModal(true);
+    setPixData(null);
+    setPixCode('');
+    
+    try {
+      const response = await fetch('/api/create-pix', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          document_id: selectedDoc.id,
+          document_title: selectedDoc.title,
+          amount: selectedDoc.price
+        })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setPixData(data);
+        setPixCode(data.qr_code);
+      } else {
+        alert("Erro ao gerar PIX: " + (data.error || 'Desconhecido'));
+        setShowPixModal(false);
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Falha de conexão ao gerar PIX.");
+      setShowPixModal(false);
+    } finally {
+      setIsGeneratingPix(false);
+    }
   };
 
   const handlePaymentConfirmed = () => {
-    // Em produção, isso seria confirmado via webhook
     setIsPaid(true);
     setShowPixModal(false);
-    // Registra o pagamento
+    // Registra analytics
     if (selectedDoc) {
       trackPayment(selectedDoc.id, selectedDoc.title, selectedDoc.price || 0, 'pix');
     }
@@ -3318,25 +3368,34 @@ function App() {
               </div>
               
               <div className="pix-qrcode">
-                <div className="qrcode-placeholder">
-                  <svg width="200" height="200" viewBox="0 0 200 200" style={{background: 'white', padding: '10px'}}>
-                    <rect width="200" height="200" fill="white"/>
-                    <rect x="20" y="20" width="40" height="40" fill="black"/>
-                    <rect x="70" y="20" width="10" height="10" fill="black"/>
-                    <rect x="90" y="20" width="20" height="20" fill="black"/>
-                    <rect x="140" y="20" width="40" height="40" fill="black"/>
-                    <rect x="20" y="70" width="10" height="10" fill="black"/>
-                    <rect x="50" y="70" width="10" height="10" fill="black"/>
-                    <rect x="80" y="70" width="30" height="30" fill="black"/>
-                    <rect x="130" y="70" width="10" height="10" fill="black"/>
-                    <rect x="160" y="70" width="20" height="20" fill="black"/>
-                    <rect x="20" y="140" width="40" height="40" fill="black"/>
-                    <rect x="80" y="140" width="10" height="10" fill="black"/>
-                    <rect x="100" y="140" width="30" height="30" fill="black"/>
-                    <rect x="140" y="140" width="10" height="10" fill="black"/>
-                    <rect x="160" y="160" width="20" height="20" fill="black"/>
-                  </svg>
-                  <p style={{fontSize: '0.85rem', color: '#666', marginTop: '10px'}}>QR Code PIX (Teste)</p>
+                {isGeneratingPix ? (
+                  <div className="qrcode-placeholder" style={{padding: '40px', textAlign: 'center'}}>
+                    <div style={{marginBottom: '15px'}}>Gerando PIX seguro...</div>
+                    {/* Simple spinner */}
+                    <svg width="40" height="40" viewBox="0 0 50 50" className="spinner">
+                      <circle cx="25" cy="25" r="20" fill="none" stroke="#2c3e50" strokeWidth="4" strokeDasharray="31.4 31.4" style={{animation: 'spin 1s linear infinite'}} />
+                    </svg>
+                  </div>
+                ) : pixData ? (
+                  <div className="qrcode-real" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <img 
+                      src={`data:image/jpeg;base64,${pixData.qr_code_base64}`} 
+                      alt="QR Code PIX" 
+                      style={{width: 200, height: 200, borderRadius: '8px', border: '1px solid #ddd'}}
+                    />
+                  </div>
+                ) : (
+                  <p>Aguardando...</p>
+                )}
+              </div>
+              <div className="pix-instructions" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px'}}>
+                <p style={{margin: '0 0 10px 0', fontSize: '1rem', fontWeight: 'bold'}}>
+                  Aguardando pagamento...
+                </p>
+                <div style={{display: 'flex', gap: '5px', height: '8px'}}>
+                  <div style={{width: '8px', height: '8px', backgroundColor: '#3498db', borderRadius: '50%', animation: 'pulse 1.5s infinite'}}></div>
+                  <div style={{width: '8px', height: '8px', backgroundColor: '#3498db', borderRadius: '50%', animation: 'pulse 1.5s infinite', animationDelay: '0.2s'}}></div>
+                  <div style={{width: '8px', height: '8px', backgroundColor: '#3498db', borderRadius: '50%', animation: 'pulse 1.5s infinite', animationDelay: '0.4s'}}></div>
                 </div>
               </div>
 
@@ -3345,15 +3404,17 @@ function App() {
                 <div className="code-box">
                   <input 
                     type="text" 
-                    value={pixCode} 
+                    value={pixCode || 'Carregando...'} 
                     readOnly 
                     style={{flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px'}}
                   />
                   <button 
                     className="btn-copy"
                     onClick={() => {
-                      navigator.clipboard.writeText(pixCode);
-                      alert('Código PIX copiado!');
+                      if (pixCode) {
+                        navigator.clipboard.writeText(pixCode);
+                        alert('Código PIX copiado!');
+                      }
                     }}
                   >
                     📋 Copiar
