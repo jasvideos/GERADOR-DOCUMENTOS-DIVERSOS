@@ -3146,7 +3146,6 @@ function App() {
             <button 
               className="btn-back-edit-mobile"
               onClick={() => setShowPreviewModal(false)}
-              style={{display: 'block'}}
             >
               ← Voltar
             </button>

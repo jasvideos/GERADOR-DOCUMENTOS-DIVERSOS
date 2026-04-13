@@ -28,7 +28,7 @@
 
 /* Botão de voltar específico para o modal de preview */
 .preview-modal-content .btn-back-edit-mobile {
-  position: fixed;
+  position: absolute;
   top: 16px;
   left: 16px;
   z-index: 1001; /* Acima do modal */
