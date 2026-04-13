@@ -331,6 +331,32 @@ form {
 .btn-share { background-color: #25D366; }
 .btn-share:hover { background-color: #128C7E; }
 
+/* --- Botão Flutuante de Preview (Base - Escondido no Desktop) --- */
+.btn-preview-float {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  z-index: 100;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-preview-float:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
 /* --- RESPONSIVIDADE MOBILE --- */
 @media (max-width: 768px) {
   .app {
@@ -431,32 +457,6 @@ form {
   .btn-preview-float {
     display: flex;
   }
-}
-
-/* --- Botão Flutuante de Preview --- */
-.btn-preview-float {
-  display: none; /* Escondido no desktop */
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 15px 20px;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  z-index: 100;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-}
-
-.btn-preview-float:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
 
 /* --- Modal de Preview Fullscreen --- */
