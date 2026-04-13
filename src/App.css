@@ -314,13 +314,95 @@ form {
 .btn-share { background-color: #25D366; }
 .btn-share:hover { background-color: #128C7E; }
 
+/* --- RESPONSIVIDADE MOBILE --- */
 @media (max-width: 768px) {
+  .app {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .app-header {
+    padding: 15px;
+  }
+  
+  .app-header h1 {
+    font-size: 1.3rem;
+  }
+  
+  .app-header h2 {
+    font-size: 0.85rem;
+  }
+  
   .main-container {
     flex-direction: column;
     height: auto;
+    overflow: visible;
   }
-  .left-panel, .right-panel {
+  
+  .left-panel {
     max-width: 100%;
+    padding: 15px;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .right-panel {
+    max-width: 100%;
+    padding: 15px;
+    min-height: 400px;
+  }
+  
+  .doc-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .doc-card {
+    min-height: auto;
+    padding: 12px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .btn-action {
+    min-width: 100%;
+  }
+  
+  .tab-buttons {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tab-button {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  
+  .budget-item-row {
+    flex-direction: column;
+  }
+  
+  .placeholder-features {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .preview-placeholder h2 {
+    font-size: 1.2rem;
+  }
+  
+  .cv-section h3 {
+    font-size: 1rem;
+  }
+  
+  .photo-upload-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 }
 
