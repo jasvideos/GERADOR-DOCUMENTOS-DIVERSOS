@@ -57,8 +57,10 @@ Crie um arquivo `.env` na raiz do projeto:
 ```env
 VITE_SUPABASE_URL=https://seu-projeto.supabase.co
 VITE_SUPABASE_ANON_KEY=sua-chave-anon-aqui
-VITE_ADMIN_PASSWORD=sua-senha-admin-aqui
+ADMIN_PASSWORD=sua-senha-admin-aqui
 ```
+
+⚠️ **IMPORTANTE:** Use `ADMIN_PASSWORD` (sem o prefixo VITE) para que a senha fique protegida no servidor e não seja exposta no navegador.
 
 ⚠️ **IMPORTANTE:** Nunca compartilhe o arquivo `.env` ou commite no Git!
 
@@ -109,7 +111,7 @@ if (window.location.pathname === '/admin') {
 4. Adicione:
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_ADMIN_PASSWORD`
+   - `ADMIN_PASSWORD` (Variável sensível/oculta)
 5. Clique em **Deploy**
 
 ### URL do painel

@@ -28,16 +28,35 @@ const Admin = () => {
   const [prices, setPrices] = useState([]);
   const [editingPrice, setEditingPrice] = useState(null);
 
-  // Senha do admin (em produção, use autenticação adequada)
-  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+  // O ADMIN_PASSWORD foi removido do frontend por segurança.
+  // A verificação agora ocorre no servidor via /api/login.
 
-  const handleLogin = (e) => {
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      localStorage.setItem('admin_auth', 'true');
-    } else {
-      alert('Senha incorreta!');
+    setIsLoggingIn(true);
+    
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setIsAuthenticated(true);
+        localStorage.setItem('admin_auth', 'true');
+      } else {
+        alert(data.error || 'Senha incorreta!');
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      alert('Erro ao conectar com o servidor.');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -399,7 +418,13 @@ const Admin = () => {
               onChange={(e) => setPassword(e.target.value)}
               style={styles.loginInput}
             />
-            <button type="submit" style={styles.loginButton}>Entrar</button>
+            <button 
+              type="submit" 
+              style={styles.loginButton} 
+              disabled={isLoggingIn}
+            >
+              {isLoggingIn ? 'Verificando...' : 'Entrar'}
+            </button>
           </form>
           <p style={styles.loginHint}>Acesso restrito aos administradores</p>
         </div>
