@@ -32,10 +32,13 @@ export default async function handler(req, res) {
     const paymentClient = new Payment(mpClient);
 
     // MercadoPago envia topic e id na query param OU no body
-    const topic = req.query.topic || req.query.type || req.body?.type;
-    const id = req.query.data?.id || req.query.id || req.body?.data?.id;
+    const topic = req.query.topic || req.query.type || req.body?.type || req.body?.action;
+    
+    // Na Vercel, querystrings como ?data.id=123 chegam como req.query['data.id']
+    const id = req.query['data.id'] || req.query.data?.id || req.query.id || req.body?.data?.id;
 
     if (!id) {
+      console.log("Webhook ignorado, Payload sem ID:", { query: req.query, body: req.body });
       return res.status(200).send('Ignorado - Sem ID');
     }
 

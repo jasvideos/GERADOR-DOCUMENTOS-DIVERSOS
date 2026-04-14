@@ -2562,6 +2562,8 @@ function App() {
     }
   };
 
+  const [isVerifying, setIsVerifying] = useState(false);
+
   // Trata o polling do Pix
   useEffect(() => {
     let intervalId;
@@ -2625,6 +2627,29 @@ function App() {
       trackPayment(selectedDoc.id, selectedDoc.title, selectedDoc.price || 0, 'pix');
     }
     setShowSuccessModal(true);
+  };
+
+  const verifyPaymentManually = async () => {
+    if (!pixData || isVerifying) return;
+    setIsVerifying(true);
+    try {
+      const resp = await fetch('/api/verify-pix', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentId: pixData.paymentId, mpPaymentId: pixData.mpPaymentId })
+      });
+      const data = await resp.json();
+      if (data.status === 'completed') {
+        handlePaymentConfirmed();
+      } else {
+        alert("O Mercado Pago ainda acusa pagamento pendente. Aguarde mais uns segundos.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao verificar manualmente.");
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const visibleFieldGroups = selectedDoc?.fieldGroups?.filter(g => g.showIf ? g.showIf(formData) : true) || [];
@@ -3392,11 +3417,20 @@ function App() {
                 <p style={{margin: '0 0 10px 0', fontSize: '1rem', fontWeight: 'bold'}}>
                   Aguardando pagamento...
                 </p>
-                <div style={{display: 'flex', gap: '5px', height: '8px'}}>
+                <div style={{display: 'flex', gap: '5px', height: '8px', marginBottom: '10px'}}>
                   <div style={{width: '8px', height: '8px', backgroundColor: '#3498db', borderRadius: '50%', animation: 'pulse 1.5s infinite'}}></div>
                   <div style={{width: '8px', height: '8px', backgroundColor: '#3498db', borderRadius: '50%', animation: 'pulse 1.5s infinite', animationDelay: '0.2s'}}></div>
                   <div style={{width: '8px', height: '8px', backgroundColor: '#3498db', borderRadius: '50%', animation: 'pulse 1.5s infinite', animationDelay: '0.4s'}}></div>
                 </div>
+                <button 
+                  onClick={verifyPaymentManually} 
+                  disabled={isVerifying}
+                  style={{
+                    background: 'none', border: '1px solid #ccc', borderRadius: '4px', padding: '5px 10px', 
+                    marginTop: '5px', cursor: 'pointer', fontSize: '12px', color: '#666'
+                  }}>
+                  {isVerifying ? 'Verificando...' : 'Já paguei (Verificar Novamente)'}
+                </button>
               </div>
 
               <div className="pix-code">
