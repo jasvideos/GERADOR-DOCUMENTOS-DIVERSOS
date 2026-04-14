@@ -104,184 +104,277 @@ const Admin = () => {
     localStorage.removeItem('admin_auth');
   };
 
-  const handleGeneratePoster = () => {
+  const handleGeneratePoster = async () => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = 210;
+    const pageHeight = 297;
     
-    // Fundo do Header (Gradiente simulado)
-    doc.setFillColor(102, 126, 234);
-    doc.rect(0, 0, pageWidth, 55, 'F');
-    
-    // Nome e Slogan
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(42);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Gerador de Documentos', pageWidth / 2, 28, { align: 'center' });
-    doc.setFontSize(28);
-    doc.text('Online Anix', pageWidth / 2, 40, { align: 'center' });
-    
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Faca voce mesmo! E muito facil, rapido e profissional.', pageWidth / 2, 42, { align: 'center' });
+    // Função auxiliar para carregar imagem como Base64
+    const getBase64Image = (url) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    };
 
-    // Como Funciona
-    doc.setDrawColor(102, 126, 234);
-    doc.setLineWidth(0.8);
-    doc.roundedRect(20, 65, 170, 30, 5, 5, 'D');
-    
-    doc.setTextColor(44, 62, 80);
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Como Funciona?', pageWidth / 2, 75, { align: 'center' });
-    
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text('1. Escolha o documento  -  2. Preencha os dados  -  3. Pague via PIX  -  4. Baixe na hora!', pageWidth / 2, 85, { align: 'center' });
+    try {
+      // Tenta carregar a logo e o QR Code
+      const [logoBase64, qrBase64] = await Promise.all([
+        getBase64Image('/favicon.png').catch(() => null),
+        getBase64Image('https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://anixdocs.vercel.app').catch(() => null)
+      ]);
 
-    // Lista de Serviços
-    const services = [
-      { n: 'Recibo Pagamento', p: 'R$ 2,90' },
-      { n: 'Recibo Aluguel', p: 'R$ 2,90' },
-      { n: 'Contrato Locacao', p: 'R$ 5,90' },
-      { n: 'Curriculo Profissional', p: 'R$ 2,90' },
-      { n: 'Declaracao Residencia', p: 'R$ 2,90' },
-      { n: 'Termo de Vistoria', p: 'R$ 2,90' },
-      { n: 'Orcamento Servicos', p: 'R$ 2,90' },
-      { n: 'Procuracao Particular', p: 'R$ 3,90' },
-      { n: 'Uniao Estavel', p: 'R$ 2,90' },
-      { n: 'Aut. Viagem Menor', p: 'R$ 2,90' },
-      { n: 'Hipossuficiencia', p: 'R$ 2,90' },
-      { n: 'Recibo RPA', p: 'R$ 2,90' }
-    ];
-
-    let startX = 20;
-    let startY = 110;
-    let col = 0;
-    
-    services.forEach((s, i) => {
-      const x = startX + (col * 58);
-      const y = startY + (Math.floor(i / 3) * 18);
+      // Fundo do Header (Azul Moderno)
+      doc.setFillColor(44, 62, 80);
+      doc.rect(0, 0, pageWidth, 60, 'F');
       
-      doc.setFillColor(248, 249, 250);
-      doc.roundedRect(x, y, 54, 14, 2, 2, 'F');
-      doc.setDrawColor(230, 230, 230);
-      doc.roundedRect(x, y, 54, 14, 2, 2, 'D');
-      
-      doc.setTextColor(44, 62, 80);
-      doc.setFontSize(8);
+      if (logoBase64) {
+        doc.addImage(logoBase64, 'PNG', 15, 12, 35, 35);
+      }
+
+      // Nome e Slogan
+      doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
-      doc.text(s.n, x + 2, y + 6);
+      doc.setFontSize(32);
+      doc.text('Gerador de Documentos', 60, 28);
       
-      doc.setTextColor(39, 174, 96);
-      doc.setFontSize(9);
-      doc.text(s.p, x + 52, y + 11, { align: 'right' });
+      doc.setFontSize(24);
+      doc.setTextColor(52, 152, 219); // Azul claro
+      doc.text('Online Anix', 60, 42);
       
-      col = (col + 1) % 3;
-    });
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(200, 200, 200);
+      doc.text('Faça você mesmo! É muito fácil, rápido e profissional.', 60, 52);
 
-    // QR Code Section
-    doc.setFillColor(102, 126, 234);
-    doc.roundedRect(65, 190, 80, 55, 8, 8, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(12);
-    doc.text('Escaneie e Acesse!', 105, 202, { align: 'center' });
-    
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(14);
-    doc.text('anixdocs.vercel.app', 105, 235, { align: 'center' });
+      // Faixa "Como Funciona"
+      doc.setFillColor(52, 152, 219);
+      doc.rect(0, 60, pageWidth, 25, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('COMO FUNCIONA?', pageWidth / 2, 70, { align: 'center' });
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('1. Escolha o documento  •  2. Preencha os dados  •  3. Pague via PIX  •  4. Baixe na hora!', pageWidth / 2, 78, { align: 'center' });
 
-    // Benefícios
-    doc.setTextColor(127, 140, 141);
-    doc.setFontSize(10);
-    doc.text('Instantaneo   |   100% Seguro   |   Pague via PIX   |   Acesse do Celular', pageWidth / 2, 260, { align: 'center' });
+      // Lista de Serviços
+      const services = [
+        { n: 'Recibo Pagamento', p: 'R$ 2,90' },
+        { n: 'Recibo Aluguel', p: 'R$ 2,90' },
+        { n: 'Contrato Locação', p: 'R$ 5,90' },
+        { n: 'Currículo Profissional', p: 'R$ 2,90' },
+        { n: 'Declaração Residência', p: 'R$ 2,90' },
+        { n: 'Termo de Vistoria', p: 'R$ 2,90' },
+        { n: 'Orçamento Serviços', p: 'R$ 2,90' },
+        { n: 'Procuração Particular', p: 'R$ 3,90' },
+        { n: 'União Estável', p: 'R$ 2,90' },
+        { n: 'Aut. Viagem Menor', p: 'R$ 2,90' },
+        { n: 'Hipossuficiência', p: 'R$ 2,90' },
+        { n: 'Recibo RPA', p: 'R$ 2,90' }
+      ];
 
-    // Footer
-    doc.setFillColor(44, 62, 80);
-    doc.rect(0, 275, pageWidth, 22, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(18);
-    doc.text('Gerador de Documentos Online Anix', 20, 289);
-    doc.setFontSize(10);
-    doc.text('Documentos profissionais em segundos', pageWidth - 20, 289, { align: 'right' });
+      doc.setTextColor(44, 62, 80);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('SERVIÇOS DISPONÍVEIS', pageWidth / 2, 100, { align: 'center' });
 
-    doc.save('cartaz-anixdocs.pdf');
-  };
+      let startX = 20;
+      let startY = 110;
+      let col = 0;
+      
+      services.forEach((s, i) => {
+        const x = startX + (col * 58);
+        const y = startY + (Math.floor(i / 3) * 22);
+        
+        doc.setFillColor(248, 249, 250);
+        doc.roundedRect(x, y, 54, 18, 2, 2, 'F');
+        doc.setDrawColor(200, 200, 200);
+        doc.roundedRect(x, y, 54, 18, 2, 2, 'D');
+        
+        doc.setTextColor(44, 62, 80);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.text(s.n, x + 3, y + 7);
+        
+        doc.setTextColor(39, 174, 96);
+        doc.setFontSize(10);
+        doc.text(s.p, x + 51, y + 14, { align: 'right' });
+        
+        col = (col + 1) % 3;
+      });
 
-  const handleGenerateFlyer = () => {
-    const doc = new jsPDF('p', 'mm', 'a5');
-    const pageWidth = 148;
+      // QR Code Section
+      const qrY = 205;
+      doc.setFillColor(248, 249, 250);
+      doc.roundedRect(55, qrY, 100, 55, 5, 5, 'F');
+      
+      if (qrBase64) {
+        doc.addImage(qrBase64, 'PNG', 115, qrY + 5, 35, 35);
+      }
 
-    // Header
-    doc.setFillColor(44, 62, 80);
-    doc.rect(0, 0, pageWidth, 40, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(28);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Gerador de Documentos Online Anix', pageWidth / 2, 20, { align: 'center' });
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Muito Facil! Faca voce mesmo em minutos.', pageWidth / 2, 30, { align: 'center' });
+      doc.setTextColor(44, 62, 80);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ACESSE AGORA!', 65, qrY + 15);
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Escaneie o QR Code', 65, qrY + 25);
+      doc.text('ao lado com seu celular', 65, qrY + 30);
+      
+      doc.setTextColor(52, 152, 219);
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.text('anixdocs.vercel.app', 65, qrY + 45);
 
-    // Highlight Box
-    doc.setDrawColor(102, 126, 234);
-    doc.setFillColor(227, 242, 253);
-    doc.roundedRect(10, 50, 128, 20, 3, 3, 'FD');
-    doc.setTextColor(44, 62, 80);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Simples e Rapido!', pageWidth / 2, 58, { align: 'center' });
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Escolha o documento -> Preencha os dados -> Pague via PIX -> Baixe na hora!', pageWidth / 2, 64, { align: 'center' });
+      // Benefícios
+      doc.setTextColor(127, 140, 141);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'italic');
+      doc.text('Instantâneo  •  100% Seguro  •  Pague via PIX  •  Acesse do Celular', pageWidth / 2, 275, { align: 'center' });
 
-    // Services
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Documentos Disponiveis', pageWidth / 2, 80, { align: 'center' });
-
-    const services = [
-      { n: 'Recibo Pagamento', p: 'R$ 2,90' },
-      { n: 'Recibo Aluguel', p: 'R$ 2,90' },
-      { n: 'Contrato Locacao', p: 'R$ 5,90' },
-      { n: 'Curriculo Profissional', p: 'R$ 2,90' },
-      { n: 'Declaracao Residencia', p: 'R$ 2,90' },
-      { n: 'Termo de Vistoria', p: 'R$ 2,90' },
-      { n: 'Orcamento Servicos', p: 'R$ 2,90' }
-    ];
-
-    let y = 90;
-    services.forEach(s => {
+      // Footer
+      doc.setFillColor(44, 62, 80);
+      doc.rect(0, 282, pageWidth, 15, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Gerador de Documentos Online Anix', 15, 292);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      doc.text(s.n, 15, y);
+      doc.text('Documentos profissionais em segundos', pageWidth - 15, 292, { align: 'right' });
+
+      doc.save('cartaz-gerador-anix.pdf');
+    } catch (e) {
+      console.error("Erro ao gerar poster:", e);
+      alert("Erro ao gerar o PDF. Verifique sua conexão.");
+    }
+  };
+
+  const handleGenerateFlyer = async () => {
+    const doc = new jsPDF('p', 'mm', 'a5');
+    const pageWidth = 148;
+    const pageHeight = 210;
+
+    const getBase64Image = (url) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+    };
+
+    try {
+      const [logoBase64, qrBase64] = await Promise.all([
+        getBase64Image('/favicon.png').catch(() => null),
+        getBase64Image('https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://anixdocs.vercel.app').catch(() => null)
+      ]);
+
+      // Header
+      doc.setFillColor(44, 62, 80);
+      doc.rect(0, 0, pageWidth, 45, 'F');
+      
+      if (logoBase64) {
+        doc.addImage(logoBase64, 'PNG', 10, 8, 25, 25);
+      }
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(39, 174, 96);
-      doc.text(s.p, 133, y, { align: 'right' });
-      doc.setDrawColor(238, 238, 238);
-      doc.line(15, y + 2, 133, y + 2);
-      y += 8;
+      doc.text('Gerador de Documentos', 40, 22);
+      doc.setFontSize(16);
+      doc.setTextColor(52, 152, 219);
+      doc.text('Online Anix', 40, 32);
+
+      // Promo Box
+      doc.setFillColor(52, 152, 219);
+      doc.roundedRect(10, 50, 128, 25, 3, 3, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Documentos Profissionais em Minutos!', pageWidth / 2, 60, { align: 'center' });
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Escolha → Preencha → Pague via PIX → Baixe!', pageWidth / 2, 68, { align: 'center' });
+
+      // Services
+      const services = [
+        { n: 'Recibo Pagamento', p: 'R$ 2,90' },
+        { n: 'Recibo Aluguel', p: 'R$ 2,90' },
+        { n: 'Contrato Locação', p: 'R$ 5,90' },
+        { n: 'Currículo Profissional', p: 'R$ 2,90' },
+        { n: 'Declaração Residência', p: 'R$ 2,90' },
+        { n: 'Termo de Vistoria', p: 'R$ 2,90' }
+      ];
+
+      let y = 88;
+      services.forEach(s => {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(44, 62, 80);
+        doc.text(s.n, 15, y);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(39, 174, 96);
+        doc.text(s.p, 133, y, { align: 'right' });
+        doc.setDrawColor(230, 230, 230);
+        doc.line(15, y + 2, 133, y + 2);
+        y += 10;
+      });
+
+      // QR Code Section
+      doc.setFillColor(248, 249, 250);
+      doc.roundedRect(10, 145, 128, 45, 5, 5, 'F');
+      
+      if (qrBase64) {
+        doc.addImage(qrBase64, 'PNG', 100, 150, 30, 30);
+      }
+
       doc.setTextColor(44, 62, 80);
-    });
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ESCANEIE E ACESSE!', 20, 160);
+      doc.setTextColor(52, 152, 219);
+      doc.setFontSize(14);
+      doc.text('anixdocs.vercel.app', 20, 175);
 
-    // QR Code Section
-    doc.setFillColor(248, 249, 250);
-    doc.roundedRect(44, 150, 60, 40, 5, 5, 'F');
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Escaneie e Acesse!', pageWidth / 2, 158, { align: 'center' });
-    doc.setTextColor(102, 126, 234);
-    doc.text('anixdocs.vercel.app', pageWidth / 2, 185, { align: 'center' });
+      // Footer
+      doc.setFillColor(44, 62, 80);
+      doc.rect(0, 195, pageWidth, 15, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Gerador de Documentos Online Anix', 10, 205);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Prático, Rápido e Profissional', 138, 205, { align: 'right' });
 
-    // Footer
-    doc.setFillColor(44, 62, 80);
-    doc.rect(0, 195, pageWidth, 15, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(12);
-    doc.text('Gerador de Documentos Online Anix', 15, 205);
-    doc.setFontSize(8);
-    doc.text('Pratico, Rapido e Profissional', 133, 205, { align: 'right' });
-
-    doc.save('flyer-anixdocs-a5.pdf');
+      doc.save('panfleto-gerador-anix.pdf');
+    } catch (e) {
+      console.error("Erro ao gerar flyer:", e);
+      alert("Erro ao gerar o PDF.");
+    }
   };
 
   const formatCurrency = (value) => {
