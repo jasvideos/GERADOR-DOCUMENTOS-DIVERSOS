@@ -116,7 +116,9 @@ const Admin = () => {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(42);
     doc.setFont('helvetica', 'bold');
-    doc.text('AnixDocs', pageWidth / 2, 30, { align: 'center' });
+    doc.text('Gerador de Documentos', pageWidth / 2, 28, { align: 'center' });
+    doc.setFontSize(28);
+    doc.text('Online Anix', pageWidth / 2, 40, { align: 'center' });
     
     doc.setFontSize(16);
     doc.setFont('helvetica', 'normal');
@@ -198,7 +200,7 @@ const Admin = () => {
     doc.rect(0, 275, pageWidth, 22, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(18);
-    doc.text('AnixDocs', 20, 289);
+    doc.text('Gerador de Documentos Online Anix', 20, 289);
     doc.setFontSize(10);
     doc.text('Documentos profissionais em segundos', pageWidth - 20, 289, { align: 'right' });
 
@@ -215,7 +217,7 @@ const Admin = () => {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(28);
     doc.setFont('helvetica', 'bold');
-    doc.text('AnixDocs', pageWidth / 2, 20, { align: 'center' });
+    doc.text('Gerador de Documentos Online Anix', pageWidth / 2, 20, { align: 'center' });
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.text('Muito Facil! Faca voce mesmo em minutos.', pageWidth / 2, 30, { align: 'center' });
@@ -275,7 +277,7 @@ const Admin = () => {
     doc.rect(0, 195, pageWidth, 15, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(12);
-    doc.text('AnixDocs', 15, 205);
+    doc.text('Gerador de Documentos Online Anix', 15, 205);
     doc.setFontSize(8);
     doc.text('Pratico, Rapido e Profissional', 133, 205, { align: 'right' });
 

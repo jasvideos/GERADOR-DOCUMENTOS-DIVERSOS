@@ -2543,21 +2543,41 @@ function App() {
 
   const [isVerifying, setIsVerifying] = useState(false);
 
-  // Trata o polling do Pix
+  // Trata o polling do Pix (Automação de verificação)
   useEffect(() => {
     let intervalId;
     if (showPixModal && pixData?.paymentId) {
-      intervalId = setInterval(async () => {
+      const checkStatus = async () => {
         try {
+          // 1. Tenta via Supabase primeiro (consulta leve)
           const { data } = await supabase.from('payments').select('status').eq('id', pixData.paymentId).single();
           if (data && data.status === 'completed') {
             clearInterval(intervalId);
             handlePaymentConfirmed();
+            return;
+          }
+
+          // 2. Se no BD ainda não consta como pago, força a verificação no Mercado Pago via nossa API
+          // Isso resolve o problema de atraso no webhook
+          if (pixData?.mpPaymentId) {
+            const resp = await fetch('/api/verify-pix', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paymentId: pixData.paymentId, mpPaymentId: pixData.mpPaymentId })
+            });
+            const verifyData = await resp.json();
+            if (verifyData.status === 'completed') {
+              clearInterval(intervalId);
+              handlePaymentConfirmed();
+            }
           }
         } catch (e) {
           console.error("Polling error:", e);
         }
-      }, 3000);
+      };
+
+      intervalId = setInterval(checkStatus, 4000); // Verifica a cada 4 segundos
+      checkStatus(); // Executa imediatamente ao abrir o modal
     }
     return () => {
       if (intervalId) clearInterval(intervalId);
@@ -3016,7 +3036,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>AnixDocs</h1>
+        <h1>Gerador de Documentos Online Anix</h1>
         <h2>Faça você mesmo • Rápido e Profissional</h2>
       </header>
 
