@@ -3172,14 +3172,7 @@ function App() {
         <div className="right-panel" onContextMenu={(e) => e.preventDefault()}>
           {previewUrl ? (
             <div className="preview-container">
-              {/* Botão de voltar para edição (mobile only) */}
-              <button
-                className="btn-back-edit-mobile"
-                onClick={handleBackToHome}
-                tabIndex={0}
-              >
-                ← Voltar para edição
-              </button>
+
               <iframe 
                 src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
                 className="preview-frame"
@@ -3466,18 +3459,7 @@ function App() {
                 </ol>
               </div>
 
-              <div className="test-buttons">
-                <button 
-                  className="btn-primary"
-                  onClick={handlePaymentConfirmed}
-                  style={{width: '100%', padding: '12px', fontSize: '1rem', marginTop: '15px'}}
-                >
-                  ✅ SIMULAR PAGAMENTO CONFIRMADO (TESTE)
-                </button>
-                <p style={{fontSize: '0.8rem', color: '#999', textAlign: 'center', marginTop: '10px'}}>
-                  Em produção, a confirmação será automática via webhook
-                </p>
-              </div>
+
             </div>
           </div>
         </div>
