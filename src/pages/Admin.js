@@ -118,6 +118,40 @@ const Admin = () => {
     }
   };
 
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handleResetDatabase = async () => {
+    const confirmMsg = "VOCÊ TEM CERTEZA? Isso irá apagar todos os acessos e pagamentos permanentemente.";
+    if (!window.confirm(confirmMsg)) return;
+
+    const confirmPassword = window.prompt("Para confirmar, digite a senha de administrador:");
+    if (!confirmPassword) return;
+
+    setIsResetting(true);
+    try {
+      const response = await fetch('/api/reset-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: confirmPassword })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Banco de dados resetado com sucesso!");
+        // Recarrega os dados para atualizar a interface
+        window.location.reload();
+      } else {
+        alert("Erro: " + (data.error || "Não foi possível resetar os dados."));
+      }
+    } catch (err) {
+      console.error("Reset error:", err);
+      alert("Erro ao conectar com o servidor.");
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('admin_auth');
@@ -465,7 +499,7 @@ const Admin = () => {
 
       {/* Navegação */}
       <nav style={styles.nav}>
-        {['overview', 'documentos', 'localizacao', 'pagamentos', 'precos', 'acessos'].map(tab => (
+        {['overview', 'documentos', 'localizacao', 'pagamentos', 'precos', 'acessos', 'configuracoes'].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -480,6 +514,7 @@ const Admin = () => {
             {tab === 'pagamentos' && '💰 Pagamentos'}
             {tab === 'precos' && '💲 Preços'}
             {tab === 'acessos' && '👁️ Acessos'}
+            {tab === 'configuracoes' && '⚙️ Configurações'}
           </button>
         ))}
       </nav>
@@ -730,6 +765,32 @@ const Admin = () => {
                 </table>
               </div>
             )}
+
+            {/* Configurações */}
+            {activeTab === 'configuracoes' && (
+              <div style={styles.tableCard}>
+                <h3 style={styles.tableTitle}>⚙️ Configurações do Sistema</h3>
+                <div style={styles.configSection}>
+                  <div style={styles.configItem}>
+                    <div style={styles.configText}>
+                      <h4 style={styles.configItemTitle}>Limpar Dados de Teste</h4>
+                      <p style={styles.configItemDesc}>
+                        Esta ação irá apagar todos os registros de acessos, gerações de documentos e pagamentos. 
+                        <strong> Os preços configurados não serão afetados.</strong>
+                        Esta ação é irreversível.
+                      </p>
+                    </div>
+                    <button 
+                      onClick={handleResetDatabase}
+                      disabled={isResetting}
+                      style={styles.dangerButton}
+                    >
+                      {isResetting ? 'Limpando...' : 'Zerar Banco de Dados'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </main>
@@ -802,6 +863,42 @@ const styles = {
     backgroundColor: '#3498db',
     color: 'white',
     borderColor: '#3498db'
+  },
+  configSection: {
+    padding: '20px 0'
+  },
+  configItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '20px',
+    backgroundColor: '#fff5f5',
+    border: '1px solid #feb2b2',
+    borderRadius: '8px'
+  },
+  configText: {
+    flex: 1,
+    marginRight: '20px'
+  },
+  configItemTitle: {
+    margin: '0 0 10px 0',
+    color: '#c53030'
+  },
+  configItemDesc: {
+    margin: 0,
+    fontSize: '14px',
+    color: '#742a2a'
+  },
+  dangerButton: {
+    padding: '12px 24px',
+    backgroundColor: '#e53e3e',
+    color: 'white',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    transition: 'background-color 0.2s'
   },
   main: {
     padding: '30px'
