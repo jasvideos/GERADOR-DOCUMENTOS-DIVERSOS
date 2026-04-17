@@ -10,6 +10,14 @@ import {
 } from './services/analytics';
 import { supabase } from './lib/supabase';
 
+// Helper to save recent doc
+const saveRecentDoc = (doc) => {
+  const recent = JSON.parse(localStorage.getItem('recent_docs') || '[]');
+  const filtered = recent.filter(r => r.id !== doc.id);
+  filtered.unshift({ ...doc, timestamp: new Date().toISOString() });
+  localStorage.setItem('recent_docs', JSON.stringify(filtered.slice(0, 5)));
+};
+
 
 // --- Funções Utilitárias ---
 const numeroPorExtenso = (valor) => {
@@ -126,7 +134,8 @@ const documentModels = [
   {
     id: 'recibo',
     title: 'Recibo de Pagamento',
-    icon: '📄',
+    icon: '🧾',
+    category: 'card-green',
     price: 2.90,
     description: 'Gere recibos simples de pagamento com valor por extenso automático.',
     fieldGroups: [{ fields: [
@@ -144,34 +153,24 @@ const documentModels = [
     generatePDF: (data) => {
       const doc = new jsPDF();
       let yOffset = 0;
-
       if (data.logo) {
-        // Espaço 20x120mm centralizado (x=45, y=10)
         doc.addImage(data.logo, 45, 10, 120, 20);
-        yOffset = 30; // Empurra o conteúdo para baixo se houver logo
+        yOffset = 30;
       }
-
       doc.setFontSize(22);
       doc.text('RECIBO', 105, 20 + yOffset, null, null, 'center');
-      
-      doc.setFontSize(12);
-
       doc.setFontSize(16);
       doc.text(`VALOR: R$ ${data.valor || '0,00'}`, 190, 40 + yOffset, null, null, 'right');
-
       doc.setFontSize(12);
       const valorExtenso = numeroPorExtenso(data.valor) || '____________________';
       const texto = `Recebi(emos) de ${data.pagador || '____________________'}, a importância de R$ ${data.valor || '___'} (${valorExtenso}) referente a ${data.referente || '____________________'}.`;
       const splitText = doc.splitTextToSize(texto, 170);
       doc.text(splitText, 20, 60 + yOffset);
-
       doc.text(`Para maior clareza firmo(amos) o presente.`, 20, 90 + yOffset);
       doc.text(`${data.cidade || 'Cidade'} - ${data.estado || 'UF'}, ${data.data || '___/___/___'}`, 105, 120 + yOffset, null, null, 'center');
-
       doc.text('________________________________________________', 105, 130 + yOffset, null, null, 'center');
       doc.text(`${data.beneficiario || 'Assinatura'}`, 105, 135 + yOffset, null, null, 'center');
       doc.text(`CPF/CNPJ: ${data.cpf_cnpj || ''}`, 105, 140 + yOffset, null, null, 'center');
-
       return doc;
     }
   },
@@ -179,6 +178,7 @@ const documentModels = [
     id: 'recibo_aluguel',
     title: 'Recibo de Aluguel',
     icon: '🏠',
+    category: 'card-green',
     price: 2.90,
     description: 'Recibos detalhados para locação de imóveis residenciais ou comerciais.',
     fieldGroups: [{ fields: [
@@ -200,40 +200,31 @@ const documentModels = [
       const pageWidth = 210;
       const maxLineWidth = pageWidth - (margin * 2);
       let yPos = 20;
-
       doc.setFontSize(22);
       doc.setFont('helvetica', 'bold');
       doc.text('RECIBO DE ALUGUEL', pageWidth / 2, yPos, { align: 'center' });
       yPos += 20;
-
       doc.setFontSize(16);
       doc.text(`VALOR: R$ ${data.valor_aluguel || '0,00'}`, pageWidth - margin, yPos, { align: 'right' });
       yPos += 20;
-
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
-
       const valorExtenso = numeroPorExtenso(data.valor_aluguel) || '____________________';
       const texto = `Recebi(emos) de ${data.locatario_nome || '____________________'} (CPF/CNPJ nº ${data.locatario_cpf_cnpj || '____________________'}), a importância de R$ ${data.valor_aluguel || '___'} (${valorExtenso}), referente ao pagamento do aluguel do imóvel situado no endereço ${data.endereco_imovel || '__________________________________'}, correspondente ao mês de ${data.mes_referencia || '____________________'}.`;
-      
       const splitText = doc.splitTextToSize(texto, maxLineWidth);
       doc.text(splitText, margin, yPos, { align: 'left' });
       yPos += (splitText.length * 5) + 15;
-
       doc.text('Por ser a expressão da verdade, firmo(amos) o presente.', margin, yPos);
       yPos += 20;
-
       const d = data.data ? new Date(data.data + 'T12:00:00') : null;
       const dateText = d ? `${data.cidade || 'Cidade'} - ${data.estado || 'UF'}, ${d.getDate()} de ${d.toLocaleString('pt-BR', { month: 'long' })} de ${d.getFullYear()}.` : `${data.cidade || 'Cidade'} - ${data.estado || 'UF'}, ___ de ____________ de ______.`;
       doc.text(dateText, pageWidth / 2, yPos, { align: 'center' });
       yPos += 30;
-
       doc.line(margin, yPos, pageWidth - margin, yPos);
       yPos += 5;
       doc.text(data.locador_nome || 'Assinatura do Locador', pageWidth / 2, yPos, { align: 'center' });
       yPos += 5;
       doc.text(`CPF/CNPJ: ${data.locador_cpf_cnpj || '____________________'}`, pageWidth / 2, yPos, { align: 'center' });
-
       return doc;
     }
   },
@@ -241,6 +232,7 @@ const documentModels = [
     id: 'declaracao_residencia',
     title: 'Declaração de Residência',
     icon: '📍',
+    category: 'card-orange',
     price: 2.90,
     description: 'Documento para comprovação de endereço residencial.',
     fieldGroups: [{ fields: [
@@ -259,29 +251,25 @@ const documentModels = [
       const doc = new jsPDF();
       doc.setFontSize(18);
       doc.text('DECLARAÇÃO DE RESIDÊNCIA', 105, 20, null, null, 'center');
-      
-      doc.setFontSize(11);
       doc.setFontSize(12);
       const texto = `Eu, ${data.nome || '________________'}, ${data.nacionalidade || 'brasileiro(a)'}, ${data.estado_civil || 'solteiro(a)'}, portador(a) do RG nº ${data.rg || '___'} e inscrito(a) no CPF sob o nº ${data.cpf || '___'}, DECLARO para os devidos fins de comprovação de residência, que sou residente e domiciliado(a) na ${data.endereco || '________________'}.`;
-      
       const splitText = doc.splitTextToSize(texto, 170);
       doc.text(splitText, 20, 50);
-
       doc.text(`Por ser verdade, firmo o presente.`, 20, 90);
       doc.text(`${data.cidade || 'Cidade'} - ${data.estado || 'UF'}, ${data.data || '___/___/___'}`, 20, 110);
-
       doc.text('________________________________________________', 105, 140, null, null, 'center');
       doc.text('Assinatura do Declarante', 105, 145, null, null, 'center');
-
       return doc;
     }
   },
   {
     id: 'contrato_locacao',
     title: 'Contrato de Locação',
-    icon: '📝',
+    icon: '📄',
+    category: 'card-blue',
     price: 5.90,
     description: 'Contrato completo (Residencial ou Comercial) com cláusulas detalhadas.',
+eto (Residencial ou Comercial) com cláusulas detalhadas.',
     fieldGroups: [
       {
         tab: 'Partes',
@@ -2243,7 +2231,23 @@ function App() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
+  // Novos estados para a modernização Premium
+  const [searchTerm, setSearchTerm] = useState('');
+  const [recentDocs, setRecentDocs] = useState([]);
+
   const selectedDoc = documentModels.find(d => d.id === selectedDocId);
+
+  // Carrega documentos recentes
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('recent_docs') || '[]');
+    setRecentDocs(saved);
+  }, []);
+
+  // Filtra documentos pela busca
+  const filteredDocs = documentModels.filter(doc => 
+    doc.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    doc.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Registra visualização da página ao carregar
   useEffect(() => {
@@ -2461,6 +2465,13 @@ function App() {
     setPreviewUrl(null);
     setActiveTab(0);
     setActiveModal(null);
+    
+    // Salva nos recentes
+    const doc = documentModels.find(d => d.id === id);
+    if (doc) {
+      saveRecentDoc(doc);
+      setRecentDocs(JSON.parse(localStorage.getItem('recent_docs') || '[]'));
+    }
   };
 
   const handleBackToHome = () => {
@@ -3036,29 +3047,94 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Gerador de Documentos Online Anix</h1>
-        <h2>Faça você mesmo • Rápido e Profissional</h2>
+        <div className="header-content">
+          <div className="welcome-text">Olá, Bem-vindo! 👋</div>
+          <h1>Gerador de Documentos Online Anix</h1>
+          
+          {!selectedDoc && (
+            <div className="search-container">
+              <div className="search-input-wrapper">
+                <span className="search-icon">🔍</span>
+                <input 
+                  type="text" 
+                  className="search-input" 
+                  placeholder="Buscar tipo de documento..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </header>
 
       <div className="main-container">
-        {/* --- Painel Esquerdo (Botões ou Formulário) --- */}
+        {/* --- Painel Esquerdo (Dashboard ou Formulário) --- */}
         <div className="left-panel">
           {!selectedDoc ? (
-            <div className="doc-grid">
-              {documentModels.map(doc => (
-                <div key={doc.id} className="doc-card" onClick={() => handleDocSelect(doc.id)}>
-                  <div className="doc-card-header">
-                    <div className="doc-card-icon">{doc.icon || '📄'}</div>
-                    <div className="doc-card-price">R$ {doc.price?.toFixed(2).replace('.', ',')}</div>
+            <div className="dashboard-section">
+              {/* Documentos Recentes */}
+              {recentDocs.length > 0 && !searchTerm && (
+                <>
+                  <h2 className="recent-header">Documentos Recentes</h2>
+                  <div className="recent-list">
+                    {recentDocs.map(doc => (
+                      <div key={doc.id} className="recent-item" onClick={() => handleDocSelect(doc.id)}>
+                        <div className="recent-item-icon">{doc.icon}</div>
+                        <div className="recent-item-info">
+                          <div className="recent-item-name">{doc.title}</div>
+                          <div className="recent-item-meta">Acessado em {new Date(doc.timestamp).toLocaleDateString()}</div>
+                        </div>
+                        <div className="card-footer">Continuar →</div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="doc-card-title">{doc.title}</div>
-                  <div className="doc-card-desc">{doc.description || 'Clique para criar este documento.'}</div>
+                </>
+              )}
+
+              <h2 className="recent-header">
+                {searchTerm ? `Resultados para "${searchTerm}"` : 'Todos os Documentos'}
+              </h2>
+              
+              <div className="doc-grid">
+                {filteredDocs.map(doc => (
+                  <div 
+                    key={doc.id} 
+                    className={`doc-card ${doc.category || 'card-blue'}`} 
+                    onClick={() => handleDocSelect(doc.id)}
+                  >
+                    <div className="doc-card-header">
+                      <div className="icon-box">{doc.icon || '📄'}</div>
+                      <div className="doc-card-price">R$ {doc.price?.toFixed(2).replace('.', ',')}</div>
+                    </div>
+                    <h3 className="doc-card-title">{doc.title}</h3>
+                    <p className="doc-card-desc">{doc.description || 'Clique para criar este documento.'}</p>
+                    <div className="card-footer">Criar Documento →</div>
+                  </div>
+                ))}
+              </div>
+              
+              {filteredDocs.length === 0 && (
+                <div style={{textAlign: 'center', padding: '40px', color: '#64748b'}}>
+                  <div style={{fontSize: '3rem', marginBottom: '10px'}}>🔎</div>
+                  <p>Nenhum documento encontrado para sua busca.</p>
                 </div>
-              ))}
+              )}
             </div>
           ) : (
             <>
-              <h1>{selectedDoc.title}</h1>
+              <div style={{display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px'}}>
+                <button 
+                  onClick={handleBackToHome}
+                  style={{
+                    background: '#f1f5f9', border: 'none', borderRadius: '50%', 
+                    width: '35px', height: '35px', cursor: 'pointer', fontSize: '1.2rem'
+                  }}
+                >
+                  ←
+                </button>
+                <h1 style={{margin: 0}}>{selectedDoc.title}</h1>
+              </div>
               <p>Preencha os dados abaixo. O preview será atualizado ao lado.</p>
               
               {selectedDoc.id === 'curriculo' ? (

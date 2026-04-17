@@ -1,25 +1,42 @@
-# Estratégia de ASO - AnixDocs (Gerador de Documentos)
+# 📝 Versão Final para a Google Play Store
 
-Este documento detalha o planejamento para otimização do seu aplicativo nas lojas (ASO), focando em visibilidade e conversão de downloads.
+Copie e cole as informações abaixo diretamente no Google Play Console.
 
-## 1. Sugestão de Textos Estratégicos (Copywriting)
+### 🏷️ Título do Aplicativo (30 caracteres)
+> `AnixDocs: Criar Recibo e PDF`
 
-O objetivo aqui é equilibrar a legibilidade com a indexação de palavras-chave.
+### 📄 Descrição Curta (80 caracteres)
+> `Crie recibos, contratos e currículos profissionais em PDF. Rápido e fácil!`
 
-### Título do Aplicativo (Máx 30 caracteres)
-*   **Sugestão A**: `Gerador de Documentos: PDF Anix` (Foco na marca e PDF)
-*   **Sugestão B**: `Recibos e Contratos: Criar PDF` (Foco nas funções principais)
-*   **Sugestão C**: `AnixDocs: Criar Recibo e PDF` (Equilibrado)
+### 📜 Descrição Longa (Otimizada para Busca)
+`Simplifique sua burocracia com o AnixDocs! O aplicativo definitivo para gerar documentos profissionais em PDF direto do seu celular.`
 
-### Descrição Curta (Máx 80 caracteres)
-> "Crie recibos, contratos e currículos profissionais em segundos. Rápido e fácil!"
+`Precisa de um recibo urgente? Quer criar um contrato de aluguel ou um currículo impecável? Com o Gerador de Documentos Online Anix, você faz tudo em poucos minutos, paga via PIX e baixa o arquivo na hora.`
 
-### Descrição Longa (Checklist de Conteúdo)
-A descrição longa ajuda na indexação no Google Play. Use termos variados:
-- **Introdução**: Foque na dor do usuário (perder tempo com burocracia).
-- **Lista de Documentos**: Liste todos (Recibo de Aluguel, Contrato de Locação, CV, Declarações).
-- **Vantagens**: "Pague via PIX", "Baixe na hora", "Pronto para imprimir", "Modelos profissionais".
-- **Chamada para Ação (CTA)**: "Baixe agora e simplifique seu dia a dia!"
+**✅ O que você pode criar:**
+- Recibos de Pagamento e Aluguel 🏠
+- Contratos de Locação e Prestação de Serviços 🤝
+- Currículos Profissionais Modernos 💼
+- Declarações de Residência e Hipossuficiência 📄
+- Orçamentos e Termos de Vistoria 🛠️
+- Projetos de União Estável e Autorização de Viagem ✈️
+
+**🌟 Por que escolher o AnixDocs?**
+- **Rapidez Imbatível**: Preencha os dados e gere o PDF em segundos.
+- **Modelos Profissionais**: Documentos revisados e com visual limpo.
+- **Praticidade Total**: Faça tudo pelo celular, de onde estiver.
+- **Pagamento Seguro**: Liberação instantânea após o PIX.
+- **Sem Assinatura**: Pague apenas pelo documento que gerar.
+
+`Não perca tempo com modelos complicados do Word. Baixe o AnixDocs agora e tenha um escritório virtual no seu bolso!`
+
+---
+
+## 🎨 Galeria de Imagens (Screenshots)
+Os mockups gerados para a loja estão disponíveis em:
+- [Screenshot Home](file:///C:/Users/SERVIDOR%2002/.gemini/antigravity/brain/835d798e-1be6-472f-82a5-f7c486c35492/screenshot_home_1776443000576.png)
+- [Screenshot Formulário](file:///C:/Users/SERVIDOR%2002/.gemini/antigravity/brain/835d798e-1be6-472f-82a5-f7c486c35492/screenshot_form_1776443022874.png)
+- [Screenshot Sucesso](file:///C:/Users/SERVIDOR%2002/.gemini/antigravity/brain/835d798e-1be6-472f-82a5-f7c486c35492/screenshot_success_1776443045583.png)
 
 ---
 
