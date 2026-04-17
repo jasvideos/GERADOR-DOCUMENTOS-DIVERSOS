@@ -269,7 +269,6 @@ const documentModels = [
     category: 'card-blue',
     price: 5.90,
     description: 'Contrato completo (Residencial ou Comercial) com cláusulas detalhadas.',
-eto (Residencial ou Comercial) com cláusulas detalhadas.',
     fieldGroups: [
       {
         tab: 'Partes',
