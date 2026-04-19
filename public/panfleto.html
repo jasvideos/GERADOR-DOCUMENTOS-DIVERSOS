@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AnixDocs — Panfleto Publicitário A3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      gap: 20px;
+      min-height: 100vh;
+    }
+
+    /* ===== TOOLBAR (fora do panfleto) ===== */
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      background: white;
+      padding: 12px 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 900px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toolbar-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .toolbar-subtitle {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .btn-download {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(99,102,241,0.4);
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99,102,241,0.5);
+    }
+
+    /* ===== PANFLETO A3 (420 × 297mm em landscape) ===== */
+    .flyer {
+      width: 1122px;   /* 420mm @ 96 dpi ≈ 1587px; usamos um scale menor para caber na tela */
+      min-height: 793px; /* 297mm @ 96 dpi ≈ 1123px */
+      background: #0a0f1e;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== CABEÇALHO ===== */
+    .flyer-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      padding: 36px 48px 28px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 2px solid rgba(99,102,241,0.3);
+    }
+
+    .flyer-header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .flyer-header::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: 30%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-logo-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .logo-name {
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #818cf8, #c4b5fd, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .logo-sub {
+      font-size: 0.95rem;
+      color: #94a3b8;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+
+    .header-badge-row {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .header-badge {
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-pc {
+      background: rgba(99,102,241,0.2);
+      border: 1px solid rgba(99,102,241,0.5);
+      color: #c7d2fe;
+    }
+
+    .badge-mobile {
+      background: rgba(16,185,129,0.2);
+      border: 1px solid rgba(16,185,129,0.5);
+      color: #6ee7b7;
+    }
+
+    .badge-pdf {
+      background: rgba(245,158,11,0.2);
+      border: 1px solid rgba(245,158,11,0.5);
+      color: #fde68a;
+    }
+
+    .header-headline {
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .headline-main {
+      font-size: 2rem;
+      font-weight: 900;
+      color: white;
+      line-height: 1.15;
+      max-width: 680px;
+    }
+
+    .headline-main span {
+      background: linear-gradient(90deg, #818cf8, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .headline-sub {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #94a3b8;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .benefits-row {
+      display: flex;
+      gap: 24px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .benefit-icon {
+      font-size: 1.1rem;
+    }
+
+    /* ===== CORPO ===== */
+    .flyer-body {
+      display: flex;
+      flex: 1;
+      padding: 28px 40px 28px 48px;
+      gap: 32px;
+    }
+
+    /* ===== COLUNA DE DOCUMENTOS ===== */
+    .docs-column {
+      flex: 1;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #6366f1;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 14px;
+    }
+
+    .docs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .doc-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .doc-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .doc-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .doc-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .doc-desc {
+      font-size: 0.68rem;
+      color: #64748b;
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .doc-price {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #818cf8;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    /* ===== COLUNA LATERAL ===== */
+    .side-column {
+      width: 240px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    /* QR code box */
+    .qr-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .qr-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .qr-placeholder {
+      width: 130px;
+      height: 130px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #64748b;
+      text-align: center;
+      padding: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      /* REAL QR code will go here */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ffffff' width='200' height='200'/%3E%3Crect fill='%23000000' x='10' y='10' width='70' height='70'/%3E%3Crect fill='%23ffffff' x='20' y='20' width='50' height='50'/%3E%3Crect fill='%23000000' x='30' y='30' width='30' height='30'/%3E%3Crect fill='%23000000' x='120' y='10' width='70' height='70'/%3E%3Crect fill='%23ffffff' x='130' y='20' width='50' height='50'/%3E%3Crect fill='%23000000' x='140' y='30' width='30' height='30'/%3E%3Crect fill='%23000000' x='10' y='120' width='70' height='70'/%3E%3Crect fill='%23ffffff' x='20' y='130' width='50' height='50'/%3E%3Crect fill='%23000000' x='30' y='140' width='30' height='30'/%3E%3Crect fill='%23000000' x='90' y='10' width='10' height='10'/%3E%3Crect fill='%23000000' x='100' y='10' width='10' height='10'/%3E%3Crect fill='%23000000' x='90' y='30' width='10' height='10'/%3E%3Crect fill='%23000000' x='110' y='30' width='10' height='10'/%3E%3Crect fill='%23000000' x='90' y='50' width='10' height='10'/%3E%3Crect fill='%23000000' x='100' y='60' width='10' height='10'/%3E%3Crect fill='%23000000' x='120' y='90' width='10' height='10'/%3E%3Crect fill='%23000000' x='130' y='90' width='10' height='10'/%3E%3Crect fill='%23000000' x='90' y='100' width='10' height='10'/%3E%3Crect fill='%23000000' x='110' y='100' width='10' height='10'/%3E%3Crect fill='%23000000' x='90' y='120' width='10' height='10'/%3E%3Crect fill='%23000000' x='100' y='130' width='10' height='10'/%3E%3Crect fill='%23000000' x='120' y='120' width='10' height='10'/%3E%3Crect fill='%23000000' x='140' y='120' width='10' height='10'/%3E%3Crect fill='%23000000' x='160' y='120' width='10' height='10'/%3E%3Crect fill='%23000000' x='130' y='140' width='10' height='10'/%3E%3Crect fill='%23000000' x='150' y='140' width='10' height='10'/%3E%3Crect fill='%23000000' x='170' y='140' width='10' height='10'/%3E%3Crect fill='%23000000' x='120' y='160' width='10' height='10'/%3E%3Crect fill='%23000000' x='140' y='160' width='10' height='10'/%3E%3Crect fill='%23000000' x='160' y='160' width='10' height='10'/%3E%3C/svg%3E");
+      background-size: cover;
+    }
+
+    .qr-url {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #818cf8;
+      text-align: center;
+      word-break: break-all;
+    }
+
+    .qr-caption {
+      font-size: 0.68rem;
+      color: #64748b;
+      text-align: center;
+    }
+
+    /* Caixa de destaque */
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .highlight-box h3 {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #c4b5fd;
+      margin-bottom: 12px;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    .feature-list li::before {
+      content: '✦';
+      color: #818cf8;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ===== RODAPÉ ===== */
+    .flyer-footer {
+      background: rgba(99,102,241,0.08);
+      border-top: 1px solid rgba(99,102,241,0.2);
+      padding: 14px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .footer-url {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #818cf8;
+      letter-spacing: 0.3px;
+    }
+
+    .footer-tagline {
+      font-size: 0.78rem;
+      color: #64748b;
+      text-align: center;
+    }
+
+    .footer-cta {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: none;
+      white-space: nowrap;
+    }
+
+    /* ===== PRINT ===== */
+    @media print {
+      html, body {
+        background: white !important;
+        padding: 0 !important;
+      }
+
+      .toolbar { display: none !important; }
+
+      .flyer {
+        width: 420mm !important;
+        min-height: 297mm !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+      }
+
+      @page {
+        size: A3 landscape;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOOLBAR DE DOWNLOAD -->
+  <div class="toolbar">
+    <div>
+      <div class="toolbar-title">📄 Panfleto Publicitário — AnixDocs</div>
+      <div class="toolbar-subtitle">Formato A3 Landscape (420 × 297mm) · Pronto para impressão</div>
+    </div>
+    <button class="btn-download" onclick="window.print()">
+      🖨️ Imprimir / Salvar como PDF
+    </button>
+  </div>
+
+  <!-- PANFLETO A3 -->
+  <div class="flyer">
+
+    <!-- CABEÇALHO -->
+    <div class="flyer-header">
+      <div class="header-row">
+        <div class="header-logo-block">
+          <div class="logo-name">AnixDocs</div>
+          <div class="logo-sub">GERADOR DE DOCUMENTOS PROFISSIONAIS</div>
+        </div>
+        <div class="header-badge-row">
+          <div class="header-badge badge-pc">💻 Computador</div>
+          <div class="header-badge badge-mobile">📱 Celular</div>
+          <div class="header-badge badge-pdf">📥 Download PDF</div>
+        </div>
+      </div>
+
+      <div class="header-headline">
+        <div class="headline-main">
+          Crie documentos profissionais<br />
+          em <span>minutos</span>, de qualquer lugar!
+        </div>
+        <div class="headline-sub">
+          Preencha pelo computador ou celular e baixe na hora em PDF — sem instalação, sem complicação.
+        </div>
+      </div>
+
+      <div class="benefits-row">
+        <div class="benefit-item"><span class="benefit-icon">⚡</span> Rápido e fácil</div>
+        <div class="benefit-item"><span class="benefit-icon">🔒</span> Seus dados ficam com você</div>
+        <div class="benefit-item"><span class="benefit-icon">📋</span> 12 tipos de documentos</div>
+        <div class="benefit-item"><span class="benefit-icon">✅</span> PDF profissional instantâneo</div>
+        <div class="benefit-item"><span class="benefit-icon">💳</span> Pagamento único por documento</div>
+      </div>
+    </div>
+
+    <!-- CORPO -->
+    <div class="flyer-body">
+
+      <!-- DOCUMENTOS -->
+      <div class="docs-column">
+        <div class="section-title">📋 Documentos Disponíveis</div>
+        <div class="docs-grid">
+
+          <div class="doc-item">
+            <div class="doc-icon">🧾</div>
+            <div class="doc-info">
+              <div class="doc-name">Recibo de Pagamento</div>
+              <div class="doc-desc">Valor por extenso automático</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">🏠</div>
+            <div class="doc-info">
+              <div class="doc-name">Recibo de Aluguel</div>
+              <div class="doc-desc">Recibo detalhado de locação</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">Contrato de Locação</div>
+              <div class="doc-desc">Residencial ou Comercial completo</div>
+            </div>
+            <div class="doc-price">R$ 5,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">📝</div>
+            <div class="doc-info">
+              <div class="doc-name">Currículo Profissional</div>
+              <div class="doc-desc">5 modelos modernos e elegantes</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">📍</div>
+            <div class="doc-info">
+              <div class="doc-name">Declaração de Residência</div>
+              <div class="doc-desc">Comprovante de endereço</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">🔍</div>
+            <div class="doc-info">
+              <div class="doc-name">Termo de Vistoria</div>
+              <div class="doc-desc">Laudo de vistoria de imóvel</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">📊</div>
+            <div class="doc-info">
+              <div class="doc-name">Orçamento de Serviços</div>
+              <div class="doc-desc">Orçamento profissional com logo</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">⚖️</div>
+            <div class="doc-info">
+              <div class="doc-name">Procuração Particular</div>
+              <div class="doc-desc">Outorga poderes a terceiros</div>
+            </div>
+            <div class="doc-price">R$ 3,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">💑</div>
+            <div class="doc-info">
+              <div class="doc-name">Declaração de União Estável</div>
+              <div class="doc-desc">Reconhecimento de união</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">✈️</div>
+            <div class="doc-info">
+              <div class="doc-name">Aut. Viagem de Menor</div>
+              <div class="doc-desc">Autorização de viagem infantil</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">📃</div>
+            <div class="doc-info">
+              <div class="doc-name">Declaração de Hipossuficiência</div>
+              <div class="doc-desc">Para fins de gratuidade judicial</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+          <div class="doc-item">
+            <div class="doc-icon">💼</div>
+            <div class="doc-info">
+              <div class="doc-name">RPA — Rec. Aut. Autônomo</div>
+              <div class="doc-desc">Com cálculo de INSS e IRRF</div>
+            </div>
+            <div class="doc-price">R$ 2,90</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COLUNA LATERAL -->
+      <div class="side-column">
+
+        <!-- QR CODE -->
+        <div class="qr-box">
+          <div class="qr-title">📸 Acesse agora</div>
+          <div class="qr-placeholder" title="QR Code do site"></div>
+          <div class="qr-url">anixdocs.vercel.app</div>
+          <div class="qr-caption">Aponte a câmera do celular<br />e acesse instantaneamente</div>
+        </div>
+
+        <!-- DIFERENCIAIS -->
+        <div class="highlight-box">
+          <h3>🌟 Por que usar o AnixDocs?</h3>
+          <ul class="feature-list">
+            <li>Preencha direto no celular ou computador</li>
+            <li>Baixe em PDF em questão de segundos</li>
+            <li>Sem cadastro obrigatório</li>
+            <li>Dados 100% no seu dispositivo</li>
+            <li>5 modelos de currículo para escolher</li>
+            <li>Tutorial com narração de voz incluso</li>
+            <li>Pagamento único via Pix — sem assinatura</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RODAPÉ -->
+    <div class="flyer-footer">
+      <div class="footer-url">🌐 anixdocs.vercel.app</div>
+      <div class="footer-tagline">
+        Seus documentos profissionais, na palma da sua mão.<br />
+        <strong style="color:#818cf8">Acesse, preencha e baixe — simples assim!</strong>
+      </div>
+      <div class="footer-cta">Acesse Agora →</div>
+    </div>
+
+  </div>
+
+</body>
+</html>
