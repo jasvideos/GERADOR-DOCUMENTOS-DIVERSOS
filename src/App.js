@@ -6,9 +6,10 @@ import {
   trackPageView, 
   trackDocumentView, 
   trackDocumentGeneration, 
-  trackPayment 
+  trackPayment,
+  getDocumentPrices
 } from './services/analytics';
-import { supabase } from './lib/supabase';
+import { supabase, isSupabaseConfigured } from './lib/supabase';
 
 // Helper to save recent doc
 const saveRecentDoc = (doc) => {
@@ -540,6 +541,7 @@ const documentModels = [
     id: 'curriculo', 
     title: 'Curriculum Vitae', 
     icon: '💼',
+    category: 'card-purple',
     price: 2.90,
     description: 'Crie um currículo profissional com 5 modelos diferentes.',
     isCustom: true,
@@ -2217,36 +2219,59 @@ function App() {
   // Estados inicializados limpos para garantir que o usuário inicie na tela Home
   const [selectedDocId, setSelectedDocId] = useState(null);
   const [formData, setFormData] = useState({});
-  const [errors, setErrors] = useState({});
-  const [activeTab, setActiveTab] = useState(0);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [activeModal, setActiveModal] = useState(null); // 'resumo', 'idiomas', 'habilidades', 'welcome', 'pix', 'preview'
-  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
   const [showPixModal, setShowPixModal] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
-  const [pixCode, setPixCode] = useState('');
-  const [pixData, setPixData] = useState(null);
   const [isGeneratingPix, setIsGeneratingPix] = useState(false);
+  const [pixData, setPixData] = useState(null);
+  const [pixCode, setPixCode] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(
+    !localStorage.getItem('hide_welcome')
+  );
+  const [errors, setErrors] = useState({});
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [activeModal, setActiveModal] = useState(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
 
   // Novos estados para a modernização Premium
-  const [searchTerm, setSearchTerm] = useState('');
   const [recentDocs, setRecentDocs] = useState([]);
+  const [prices, setPrices] = useState({});
 
-  const selectedDoc = documentModels.find(d => d.id === selectedDocId);
+  // Busca preços dinâmicos do Supabase
+  useEffect(() => {
+    const fetchPrices = async () => {
+      if (!isSupabaseConfigured()) return;
+      try {
+        const dbPrices = await getDocumentPrices();
+        const priceMap = {};
+        dbPrices.forEach(item => {
+          priceMap[item.document_id] = parseFloat(item.price);
+        });
+        setPrices(priceMap);
+      } catch (error) {
+        console.error('Erro ao carregar preços:', error);
+      }
+    };
+    fetchPrices();
+  }, []);
+
+  // Mescla modelos com os preços do banco
+  const docsWithPrices = documentModels.map(doc => ({
+    ...doc,
+    price: prices[doc.id] || doc.price
+  }));
+
+  const selectedDoc = docsWithPrices.find(d => d.id === selectedDocId);
+
+  const filteredDocs = docsWithPrices;
 
   // Carrega documentos recentes
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('recent_docs') || '[]');
     setRecentDocs(saved);
   }, []);
-
-  // Filtra documentos pela busca
-  const filteredDocs = documentModels.filter(doc => 
-    doc.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    doc.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   // Registra visualização da página ao carregar
   useEffect(() => {
@@ -2459,17 +2484,21 @@ function App() {
 
   const handleDocSelect = (id) => {
     setSelectedDocId(id);
-    setFormData({}); // Limpa o formulário ao trocar de documento
+    setFormData({ data: new Date().toISOString().split('T')[0] }); // Define data de hoje por padrão
     setErrors({});
     setPreviewUrl(null);
     setActiveTab(0);
     setActiveModal(null);
     
-    // Salva nos recentes
-    const doc = documentModels.find(d => d.id === id);
+    // Salva nos recentes e registra visualização
+    const doc = docsWithPrices.find(d => d.id === id);
     if (doc) {
       saveRecentDoc(doc);
       setRecentDocs(JSON.parse(localStorage.getItem('recent_docs') || '[]'));
+      trackDocumentView(doc.id, doc.title);
+      
+      // Auto-scroll para o topo do formulário
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -2550,8 +2579,6 @@ function App() {
       }
     }
   };
-
-  const [isVerifying, setIsVerifying] = useState(false);
 
   // Trata o polling do Pix (Automação de verificação)
   useEffect(() => {
@@ -2762,62 +2789,21 @@ function App() {
   const languagesList = ["Inglês", "Espanhol", "Francês"];
   const languageLevels = ["Básico", "Intermediário", "Avançado", "Fluente"];
 
+  // --- Modelos de Currículo (Global para o Componente) ---
+  const modelosCurriculo = [
+    { id: 'classico', nome: 'Clássico', desc: 'Layout tradicional' },
+    { id: 'moderno', nome: 'Moderno', desc: 'Design atual' },
+    { id: 'criativo', nome: 'Criativo', desc: 'Cores vibrantes' },
+    { id: 'executivo', nome: 'Executivo', desc: 'Elegante/Liderança' },
+    { id: 'primeiro_emprego', nome: '1º Emprego', desc: 'Foco em formação' },
+  ];
+
   // --- Renderização do Formulário Personalizado (CV) ---
   const renderCVForm = () => {
     const cvTabs = ['Dados Pessoais', 'Resumo', 'Experiência', 'Formação', 'Idiomas', 'Habilidades'];
 
-    const modelosCurriculo = [
-      { id: 'classico', nome: 'Clássico', desc: 'Layout tradicional, ideal para áreas formais' },
-      { id: 'moderno', nome: 'Moderno', desc: 'Duas colunas com design atual' },
-      { id: 'criativo', nome: 'Criativo', desc: 'Visual diferenciado com cores' },
-      { id: 'executivo', nome: 'Executivo', desc: 'Elegante para cargos de liderança' },
-      { id: 'primeiro_emprego', nome: 'Primeiro Emprego', desc: 'Focado em formação e habilidades' },
-    ];
-
     return (
       <div className="cv-form">
-        {/* Seletor de Modelo */}
-        <div className="modelo-selector" style={{ marginBottom: '20px', padding: '20px', background: '#f8f9fa', borderRadius: '10px' }}>
-          <label style={{ fontWeight: 'bold', marginBottom: '15px', display: 'block', fontSize: '16px' }}>Escolha o Modelo do Currículo:</label>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(3, 1fr)', 
-            gap: '12px',
-            maxWidth: '100%'
-          }}>
-            {modelosCurriculo.map(modelo => (
-              <div 
-                key={modelo.id}
-                onClick={() => setFormData(prev => ({ ...prev, modelo_curriculo: modelo.id }))}
-                style={{
-                  padding: '15px',
-                  border: formData.modelo_curriculo === modelo.id ? '2px solid #3498db' : '2px solid #e0e0e0',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  background: formData.modelo_curriculo === modelo.id ? '#e8f4fc' : 'white',
-                  transition: 'all 0.2s ease',
-                  textAlign: 'center',
-                  boxShadow: formData.modelo_curriculo === modelo.id ? '0 4px 12px rgba(52, 152, 219, 0.3)' : '0 2px 4px rgba(0,0,0,0.05)'
-                }}
-                onMouseEnter={(e) => {
-                  if (formData.modelo_curriculo !== modelo.id) {
-                    e.currentTarget.style.borderColor = '#aaa';
-                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (formData.modelo_curriculo !== modelo.id) {
-                    e.currentTarget.style.borderColor = '#e0e0e0';
-                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
-                  }
-                }}
-              >
-                <strong style={{ display: 'block', color: formData.modelo_curriculo === modelo.id ? '#2980b9' : '#333', marginBottom: '5px', fontSize: '14px' }}>{modelo.nome}</strong>
-                <small style={{ color: '#777', fontSize: '12px', lineHeight: '1.3', display: 'block' }}>{modelo.desc}</small>
-              </div>
-            ))}
-          </div>
-        </div>
 
         <div className="tab-buttons">
           {cvTabs.map((tab, index) => (
@@ -3047,23 +3033,8 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="header-content">
-          <div className="welcome-text">Olá, Bem-vindo! 👋</div>
-          <h1>Gerador de Documentos Online Anix</h1>
-          
-          {!selectedDoc && (
-            <div className="search-container">
-              <div className="search-input-wrapper">
-                <span className="search-icon">🔍</span>
-                <input 
-                  type="text" 
-                  className="search-input" 
-                  placeholder="Buscar tipo de documento..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
-          )}
+          <h1>AnixDocs</h1>
+          <p>Gerador de Documentos Profissionais</p>
         </div>
       </header>
 
@@ -3073,7 +3044,7 @@ function App() {
           {!selectedDoc ? (
             <div className="dashboard-section">
               {/* Documentos Recentes */}
-              {recentDocs.length > 0 && !searchTerm && (
+              {recentDocs.length > 0 && (
                 <>
                   <h2 className="recent-header">Documentos Recentes</h2>
                   <div className="recent-list">
@@ -3092,7 +3063,7 @@ function App() {
               )}
 
               <h2 className="recent-header">
-                {searchTerm ? `Resultados para "${searchTerm}"` : 'Todos os Documentos'}
+                Todos os Documentos
               </h2>
               
               <div className="doc-grid">
@@ -3246,6 +3217,24 @@ function App() {
         <div className="right-panel" onContextMenu={(e) => e.preventDefault()}>
           {previewUrl ? (
             <div className="preview-container">
+              {/* Seletor de Modelo de Currículo no Topo do Preview */}
+              {selectedDoc?.id === 'curriculo' && (
+                <div className="preview-model-header">
+                  <div className="model-tabs-label">Escolha o Modelo do Currículo:</div>
+                  <div className="model-tabs">
+                    {modelosCurriculo.map(modelo => (
+                      <button
+                        key={modelo.id}
+                        className={`model-tab-btn ${formData.modelo_curriculo === modelo.id ? 'active' : ''}`}
+                        onClick={() => setFormData(prev => ({ ...prev, modelo_curriculo: modelo.id }))}
+                        title={modelo.desc}
+                      >
+                        {modelo.nome}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <iframe 
                 src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
@@ -3444,6 +3433,7 @@ function App() {
           </div>
         </div>
       )}
+
 
       {/* --- Modal de Pagamento PIX --- */}
       {showPixModal && selectedDoc && (
