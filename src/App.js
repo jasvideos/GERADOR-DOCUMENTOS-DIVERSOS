@@ -2820,23 +2820,6 @@ function App() {
     return (
       <div className="cv-form">
 
-        {/* Seletor de Modelo - aparece no left-panel (visível no mobile e desktop) */}
-        <div className="cv-model-selector-inline">
-          <span className="model-tabs-label">Modelo do Currículo:</span>
-          <div className="model-tabs">
-            {modelosCurriculo.map(modelo => (
-              <button
-                key={modelo.id}
-                className={`model-tab-btn ${formData.modelo_curriculo === modelo.id ? 'active' : ''}`}
-                onClick={() => setFormData(prev => ({ ...prev, modelo_curriculo: modelo.id }))}
-                title={modelo.desc}
-              >
-                {modelo.nome}
-              </button>
-            ))}
-          </div>
-        </div>
-
         <div className="tab-buttons">
           {cvTabs.map((tab, index) => (
             <button
@@ -3236,6 +3219,24 @@ function App() {
                   </form>
                 </>
               )}
+            {/* Seletor de modelos de currículo - mobile only, antes do botão de baixar */}
+            {selectedDoc?.id === 'curriculo' && (
+              <div className="cv-model-selector-inline">
+                <span className="model-tabs-label">Modelo do Currículo:</span>
+                <div className="model-tabs">
+                  {modelosCurriculo.map(modelo => (
+                    <button
+                      key={modelo.id}
+                      className={`model-tab-btn ${formData.modelo_curriculo === modelo.id ? 'active' : ''}`}
+                      onClick={() => setFormData(prev => ({ ...prev, modelo_curriculo: modelo.id }))}
+                      title={modelo.desc}
+                    >
+                      {modelo.nome}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="button-group">
               <button type="button" onClick={handleDownload} className="btn-action btn-download">Baixar PDF</button>
               <button type="button" onClick={handlePrint} className="btn-action btn-print">Imprimir</button>
