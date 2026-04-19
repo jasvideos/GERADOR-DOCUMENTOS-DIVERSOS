@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { jsPDF } from 'jspdf';
 import './App.css';
 import Admin from './pages/Admin';
+import TutorialContrato from './components/TutorialContrato';
 import { 
   trackPageView, 
   trackDocumentView, 
@@ -2243,6 +2244,7 @@ function App() {
   const [activeModal, setActiveModal] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Novos estados para a modernização Premium
   const [recentDocs, setRecentDocs] = useState([]);
@@ -3237,6 +3239,16 @@ function App() {
                 </div>
               </div>
             )}
+            {/* Botão Tutorial — só aparece para Contrato de Locação */}
+            {selectedDoc?.id === 'contrato_locacao' && (
+              <button
+                type="button"
+                className="btn-tutorial-trigger"
+                onClick={() => setShowTutorial(true)}
+              >
+                ▶️ Ver Tutorial de Preenchimento
+              </button>
+            )}
             <div className="button-group">
               <button type="button" onClick={handleDownload} className="btn-action btn-download">Baixar PDF</button>
               <button type="button" onClick={handlePrint} className="btn-action btn-print">Imprimir</button>
@@ -3589,8 +3601,17 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* --- Tutorial Contrato de Locação --- */}
+      {showTutorial && (
+        <TutorialContrato
+          onClose={() => setShowTutorial(false)}
+          onApplyData={setFormData}
+        />
+      )}
+
     </div>
   );
 }
 
-export default App;
+export default App;
