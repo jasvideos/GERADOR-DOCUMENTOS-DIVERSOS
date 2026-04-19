@@ -131,7 +131,7 @@ const buscarCEP = async (cep) => {
 };
 
 // --- Configuração dos Modelos de Documentos ---
-const documentModels = [
+export const documentModels = [
   {
     id: 'recibo',
     title: 'Recibo de Pagamento',
@@ -2306,20 +2306,15 @@ function App() {
 
   useEffect(() => {
     if (selectedDoc && selectedDoc.generatePDF) {
-      // Debounce para evitar lentidão na digitação
+      // Debounce alto (1200ms) para evitar o flickering de recarregar o iframe a cada letra digitada
       const timer = setTimeout(() => {
         const doc = selectedDoc.generatePDF(formData);
         if (doc) {
-          // Usar Blob + ObjectURL é muito mais performático que datauristring (evita flickering)
-          const blob = doc.output('blob');
-          const blobUrl = URL.createObjectURL(blob);
-          
-          setPreviewUrl(blobUrl);
-
-          // Limpeza: revoga a URL anterior para evitar vazamento de memória
-          return () => URL.revokeObjectURL(blobUrl);
+          // Usando datauristring de volta. Re-gerar Blobs causava memory leak e flickering intenso de navegação do iFrame.
+          // Com cache/limite de digitação o Chrome lida melhor sem recarregar o bloco principal.
+          setPreviewUrl(doc.output('datauristring'));
         }
-      }, 500); // Reduzido debounce para 500ms já que é mais rápido agora
+      }, 1200); 
       return () => clearTimeout(timer);
     }
   }, [formData, selectedDoc]);

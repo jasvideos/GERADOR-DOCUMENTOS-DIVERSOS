@@ -11,6 +11,7 @@ import {
 } from '../services/analytics';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { jsPDF } from 'jspdf';
+import { documentModels } from '../App';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -25,7 +26,7 @@ const Admin = () => {
   const [payments, setPayments] = useState([]);
   const [recentViews, setRecentViews] = useState([]);
   const [viewsByDay, setViewsByDay] = useState([]);
-  const [prices, setPrices] = useState([]);
+  const [dbPrices, setDbPrices] = useState({}); // Preços salvos no DB
   const [editPrices, setEditPrices] = useState({}); // Novo estado para múltiplas edições
   const [updatingId, setUpdatingId] = useState(null);
 
@@ -97,7 +98,15 @@ const Admin = () => {
         setPayments(paymentsData);
         setRecentViews(viewsData);
         setViewsByDay(dailyViews);
-        setPrices(pricesData);
+
+        // Converte o array de preços do DB para um objeto id -> price
+        const pricesMap = {};
+        if (pricesData) {
+          pricesData.forEach(p => {
+            pricesMap[p.document_id] = p.price;
+          });
+        }
+        setDbPrices(pricesMap);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       }
@@ -116,7 +125,9 @@ const Admin = () => {
     const success = await updateDocumentPrice(documentId, parseFloat(newValue));
     if (success) {
       const updatedPrices = await getDocumentPrices();
-      setPrices(updatedPrices);
+      const pricesMap = {};
+      updatedPrices.forEach(p => { pricesMap[p.document_id] = p.price; });
+      setDbPrices(pricesMap);
       // Limpa o estado de edição para este documento
       setEditPrices(prev => {
         const next = { ...prev };
@@ -711,42 +722,40 @@ const Admin = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {prices.length > 0 ? prices.map((item, index) => (
-                      <tr key={index}>
-                        <td style={styles.td}>{item.document_id}</td>
+                    {documentModels.map((doc, index) => {
+                      // Usa o preço do DB se existir, senão o preço padrão do modelo
+                      const currentPrice = dbPrices[doc.id] !== undefined ? dbPrices[doc.id] : doc.price;
+                      
+                      return (
+                      <tr key={doc.id}>
+                        <td style={styles.td}><strong>{doc.title}</strong></td>
                         <td style={styles.td}>
                           <input
                             type="number"
                             step="0.01"
-                            value={editPrices[item.document_id] !== undefined ? editPrices[item.document_id] : item.price}
+                            value={editPrices[doc.id] !== undefined ? editPrices[doc.id] : currentPrice}
                             onChange={(e) => setEditPrices(prev => ({ 
                               ...prev, 
-                              [item.document_id]: e.target.value 
+                              [doc.id]: e.target.value 
                             }))}
                             style={styles.priceInput}
                           />
                         </td>
                         <td style={styles.td}>
                           <button 
-                            onClick={() => handlePriceUpdate(item.document_id)}
+                            onClick={() => handlePriceUpdate(doc.id)}
                             style={{
                               ...styles.saveButton,
-                              opacity: updatingId === item.document_id ? 0.7 : 1,
-                              cursor: updatingId === item.document_id ? 'not-allowed' : 'pointer'
+                              opacity: updatingId === doc.id ? 0.7 : 1,
+                              cursor: updatingId === doc.id ? 'not-allowed' : 'pointer'
                             }}
-                            disabled={updatingId === item.document_id}
+                            disabled={updatingId === doc.id}
                           >
-                            {updatingId === item.document_id ? 'Salvando...' : 'Salvar'}
+                            {updatingId === doc.id ? 'Salvando...' : 'Salvar'}
                           </button>
                         </td>
                       </tr>
-                    )) : (
-                      <tr>
-                        <td style={styles.td} colSpan="3">
-                          Nenhum preço personalizado. Os preços padrão estão sendo usados.
-                        </td>
-                      </tr>
-                    )}
+                    )})}
                   </tbody>
                 </table>
               </div>
