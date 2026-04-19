@@ -536,9 +536,10 @@ const TutorialContrato = ({ onClose, onApplyData }) => {
                   >
                     <label className="tutorial-field-label">{campo.label}</label>
                     <div className="tutorial-field-value">
-                      {hasValue || (isCurrentField ? '' : '')}
+                      {isCurrentField
+                        ? displayedValues[campo.key]
+                        : hasValue}
                       {isCurrentField && <span className="tutorial-cursor">|</span>}
-                      {!isCurrentField && hasValue}
                     </div>
                   </div>
                 );
