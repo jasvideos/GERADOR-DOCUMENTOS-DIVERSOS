@@ -26,7 +26,8 @@ const Admin = () => {
   const [recentViews, setRecentViews] = useState([]);
   const [viewsByDay, setViewsByDay] = useState([]);
   const [prices, setPrices] = useState([]);
-  const [editingPrice, setEditingPrice] = useState(null);
+  const [editPrices, setEditPrices] = useState({}); // Novo estado para múltiplas edições
+  const [updatingId, setUpdatingId] = useState(null);
 
   // O ADMIN_PASSWORD foi removido do frontend por segurança.
   // A verificação agora ocorre no servidor via /api/login.
@@ -108,14 +109,22 @@ const Admin = () => {
   }, [isAuthenticated]);
 
   const handlePriceUpdate = async (documentId) => {
-    if (editingPrice === null) return;
+    const newValue = editPrices[documentId];
+    if (newValue === undefined) return;
     
-    const success = await updateDocumentPrice(documentId, parseFloat(editingPrice));
+    setUpdatingId(documentId);
+    const success = await updateDocumentPrice(documentId, parseFloat(newValue));
     if (success) {
       const updatedPrices = await getDocumentPrices();
       setPrices(updatedPrices);
-      setEditingPrice(null);
+      // Limpa o estado de edição para este documento
+      setEditPrices(prev => {
+        const next = { ...prev };
+        delete next[documentId];
+        return next;
+      });
     }
+    setUpdatingId(false);
   };
 
   const [isResetting, setIsResetting] = useState(false);
@@ -709,17 +718,25 @@ const Admin = () => {
                           <input
                             type="number"
                             step="0.01"
-                            defaultValue={item.price}
-                            onChange={(e) => setEditingPrice(e.target.value)}
+                            value={editPrices[item.document_id] !== undefined ? editPrices[item.document_id] : item.price}
+                            onChange={(e) => setEditPrices(prev => ({ 
+                              ...prev, 
+                              [item.document_id]: e.target.value 
+                            }))}
                             style={styles.priceInput}
                           />
                         </td>
                         <td style={styles.td}>
                           <button 
                             onClick={() => handlePriceUpdate(item.document_id)}
-                            style={styles.saveButton}
+                            style={{
+                              ...styles.saveButton,
+                              opacity: updatingId === item.document_id ? 0.7 : 1,
+                              cursor: updatingId === item.document_id ? 'not-allowed' : 'pointer'
+                            }}
+                            disabled={updatingId === item.document_id}
                           >
-                            Salvar
+                            {updatingId === item.document_id ? 'Salvando...' : 'Salvar'}
                           </button>
                         </td>
                       </tr>

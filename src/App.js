@@ -2210,6 +2210,15 @@ const documentModels = [
   },
 ];
 
+// --- Modelos de Currículo (Definidos fora para evitar re-render) ---
+const modelosCurriculo = [
+  { id: 'classico', nome: 'Clássico', desc: 'Layout tradicional' },
+  { id: 'moderno', nome: 'Moderno', desc: 'Design atual' },
+  { id: 'criativo', nome: 'Criativo', desc: 'Cores vibrantes' },
+  { id: 'executivo', nome: 'Executivo', desc: 'Elegante/Liderança' },
+  { id: 'primeiro_emprego', nome: '1º Emprego', desc: 'Foco em formação' },
+];
+
 function App() {
   // Se a URL contém '/admin', mostra o painel administrativo
   if (window.location.pathname === '/admin') {
@@ -2301,10 +2310,16 @@ function App() {
       const timer = setTimeout(() => {
         const doc = selectedDoc.generatePDF(formData);
         if (doc) {
-          const dataUri = doc.output('datauristring');
-          setPreviewUrl(dataUri);
+          // Usar Blob + ObjectURL é muito mais performático que datauristring (evita flickering)
+          const blob = doc.output('blob');
+          const blobUrl = URL.createObjectURL(blob);
+          
+          setPreviewUrl(blobUrl);
+
+          // Limpeza: revoga a URL anterior para evitar vazamento de memória
+          return () => URL.revokeObjectURL(blobUrl);
         }
-      }, 800);
+      }, 500); // Reduzido debounce para 500ms já que é mais rápido agora
       return () => clearTimeout(timer);
     }
   }, [formData, selectedDoc]);
@@ -2484,7 +2499,10 @@ function App() {
 
   const handleDocSelect = (id) => {
     setSelectedDocId(id);
-    setFormData({ data: new Date().toISOString().split('T')[0] }); // Define data de hoje por padrão
+    setFormData({ 
+      data: new Date().toISOString().split('T')[0],
+      ...(id === 'curriculo' ? { modelo_curriculo: 'classico' } : {}) 
+    }); 
     setErrors({});
     setPreviewUrl(null);
     setActiveTab(0);
@@ -2789,14 +2807,6 @@ function App() {
   const languagesList = ["Inglês", "Espanhol", "Francês"];
   const languageLevels = ["Básico", "Intermediário", "Avançado", "Fluente"];
 
-  // --- Modelos de Currículo (Global para o Componente) ---
-  const modelosCurriculo = [
-    { id: 'classico', nome: 'Clássico', desc: 'Layout tradicional' },
-    { id: 'moderno', nome: 'Moderno', desc: 'Design atual' },
-    { id: 'criativo', nome: 'Criativo', desc: 'Cores vibrantes' },
-    { id: 'executivo', nome: 'Executivo', desc: 'Elegante/Liderança' },
-    { id: 'primeiro_emprego', nome: '1º Emprego', desc: 'Foco em formação' },
-  ];
 
   // --- Renderização do Formulário Personalizado (CV) ---
   const renderCVForm = () => {
