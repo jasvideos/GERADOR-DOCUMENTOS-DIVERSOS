@@ -3,6 +3,7 @@ import { jsPDF } from 'jspdf';
 import './App.css';
 import Admin from './pages/Admin';
 import TutorialContrato from './components/TutorialContrato';
+import TutorialCurriculo from './components/TutorialCurriculo';
 import { 
   trackPageView, 
   trackDocumentView, 
@@ -2245,6 +2246,7 @@ function App() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showTutorialCurriculo, setShowTutorialCurriculo] = useState(false);
 
   // Novos estados para a modernização Premium
   const [recentDocs, setRecentDocs] = useState([]);
@@ -3053,6 +3055,23 @@ function App() {
           <h1>AnixDocs</h1>
           <p>Gerador de Documentos Profissionais</p>
         </div>
+        {/* Botões de Tutorial no Topo */}
+        <div className="header-tutorials">
+          <button
+            className="btn-header-tutorial btn-tutorial-contrato"
+            onClick={() => setShowTutorial(true)}
+            title="Ver tutorial do Contrato de Locação"
+          >
+            🎬 Tutorial Contrato
+          </button>
+          <button
+            className="btn-header-tutorial btn-tutorial-curriculo"
+            onClick={() => setShowTutorialCurriculo(true)}
+            title="Ver tutorial do Currículo"
+          >
+            🎬 Tutorial Currículo
+          </button>
+        </div>
       </header>
 
       <div className="main-container">
@@ -3610,8 +3629,16 @@ function App() {
         />
       )}
 
+      {/* --- Tutorial Currículo Profissional --- */}
+      {showTutorialCurriculo && (
+        <TutorialCurriculo
+          onClose={() => setShowTutorialCurriculo(false)}
+          onApplyData={setFormData}
+        />
+      )}
+
     </div>
   );
 }
 
-export default App;
+export default App;

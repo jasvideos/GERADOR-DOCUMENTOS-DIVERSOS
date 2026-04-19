@@ -31,17 +31,19 @@ body {
 .app-header {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   color: white;
-  padding: 15px 20px; /* Compactação máxima */
-  text-align: left;
+  padding: 12px 20px;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
   box-shadow: var(--shadow-md);
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   position: relative;
   z-index: 10;
   overflow: hidden;
+  flex-wrap: wrap;
 }
 
 .app-header::before {
@@ -1392,4 +1394,106 @@ form {
   color: #7c3aed;
   transform: translateY(-1px);
   box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+}
+
+/* --- Botões de Tutorial no Header --- */
+.header-tutorials {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-header-tutorial {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-tutorial-contrato {
+  background: rgba(99, 102, 241, 0.2);
+  color: #c7d2fe;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.btn-tutorial-contrato:hover {
+  background: rgba(99, 102, 241, 0.35);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-tutorial-curriculo {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.btn-tutorial-curriculo:hover {
+  background: rgba(16, 185, 129, 0.35);
+  color: white;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .btn-header-tutorial {
+    padding: 6px 10px;
+    font-size: 0.72rem;
+  }
+  .header-tutorials {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* --- Alerta de Modelos no Tutorial do Currículo --- */
+.tutorial-model-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  margin: 10px 12px 0;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 12px;
+}
+
+.tutorial-model-alert-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+.tutorial-model-alert strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #6ee7b7;
+  margin-bottom: 8px;
+}
+
+.tutorial-model-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.tutorial-model-pill {
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #a7f3d0;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* --- Hints Informativos (abas sem campos digitáveis) --- */
+.tutorial-info-hint {
+  padding: 10px 12px;
+  color: #64748b;
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 2px solid rgba(16, 185, 129, 0.3);
+  margin-left: 4px;
 }
