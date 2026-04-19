@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { jsPDF } from 'jspdf';
 import './App.css';
 import Admin from './pages/Admin';
@@ -2266,13 +2266,16 @@ function App() {
     fetchPrices();
   }, []);
 
-  // Mescla modelos com os preços do banco
-  const docsWithPrices = documentModels.map(doc => ({
+  // CORREÇÃO DO FLICKERING: useMemo garante que docsWithPrices só muda
+  // quando prices ou documentModels mudam de verdade (não a cada re-render)
+  const docsWithPrices = useMemo(() => documentModels.map(doc => ({
     ...doc,
     price: prices[doc.id] || doc.price
-  }));
+  })), [prices]);
 
-  const selectedDoc = docsWithPrices.find(d => d.id === selectedDocId);
+  const selectedDoc = useMemo(() => 
+    docsWithPrices.find(d => d.id === selectedDocId),
+  [docsWithPrices, selectedDocId]);
 
   const filteredDocs = docsWithPrices;
 
@@ -2305,26 +2308,26 @@ function App() {
   }, [formData, activeTab, selectedDoc]);
 
   useEffect(() => {
-    if (selectedDoc && selectedDoc.generatePDF) {
-      // Debounce para mitigar cintilação: só atualiza a tela quando o usuário pausa a digitação
-      const timer = setTimeout(() => {
-        const doc = selectedDoc.generatePDF(formData);
-        if (doc) {
-          const blob = doc.output('blob');
-          const blobUrl = URL.createObjectURL(blob);
-          
-          setPreviewUrl(prevUrl => {
-            // Limpeza: remove da memória a URL antiga de PDF para não vazar memória no navegador
-            if (prevUrl && prevUrl.startsWith('blob:')) {
-              URL.revokeObjectURL(prevUrl);
-            }
-            return blobUrl;
-          });
-        }
-      }, 1000); 
-      return () => clearTimeout(timer);
-    }
-  }, [formData, selectedDoc]);
+    if (!selectedDoc || !selectedDoc.generatePDF) return;
+
+    // Debounce de 800ms: o preview só é gerado DEPOIS que o usuário pausa
+    const timer = setTimeout(() => {
+      const doc = selectedDoc.generatePDF(formData);
+      if (!doc) return;
+
+      const blob = doc.output('blob');
+      const newUrl = URL.createObjectURL(blob);
+
+      setPreviewUrl(prev => {
+        if (prev && prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return newUrl;
+      });
+    }, 800);
+
+    return () => clearTimeout(timer);
+    // formData e selectedDoc.id (string estável) como dependências
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData, selectedDocId]);
 
   // Bloqueia atalhos de teclado (Ctrl+P, Ctrl+S, etc)
   useEffect(() => {
