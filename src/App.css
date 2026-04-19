@@ -1339,18 +1339,29 @@ form {
   border-color: var(--primary-color);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
-  cursor: pointer;
-  transition: all 0.2s ease;
+
+/* --- Seletor inline no formulário (left-panel) --- */
+.cv-model-selector-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
 }
 
-.model-tab-btn:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+/* No desktop, o seletor do right-panel já existe, então ocultamos o do left-panel */
+@media (min-width: 769px) {
+  .cv-model-selector-inline {
+    display: none;
+  }
 }
 
-.model-tab-btn.active {
-  background: #3b82f6;
-  color: white;
-  border-color: #3b82f6;
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+/* No mobile, o right-panel é oculto, então o preview-model-desktop-only some junto */
+@media (max-width: 768px) {
+  .preview-model-desktop-only {
+    display: none;
+  }
 }

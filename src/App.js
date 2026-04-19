@@ -2820,6 +2820,23 @@ function App() {
     return (
       <div className="cv-form">
 
+        {/* Seletor de Modelo - aparece no left-panel (visível no mobile e desktop) */}
+        <div className="cv-model-selector-inline">
+          <span className="model-tabs-label">Modelo do Currículo:</span>
+          <div className="model-tabs">
+            {modelosCurriculo.map(modelo => (
+              <button
+                key={modelo.id}
+                className={`model-tab-btn ${formData.modelo_curriculo === modelo.id ? 'active' : ''}`}
+                onClick={() => setFormData(prev => ({ ...prev, modelo_curriculo: modelo.id }))}
+                title={modelo.desc}
+              >
+                {modelo.nome}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="tab-buttons">
           {cvTabs.map((tab, index) => (
             <button
@@ -3232,10 +3249,10 @@ function App() {
         <div className="right-panel" onContextMenu={(e) => e.preventDefault()}>
           {previewUrl ? (
             <div className="preview-container">
-              {/* Seletor de Modelo de Currículo no Topo do Preview */}
+              {/* Seletor de Modelo de Currículo no topo do preview - só visível no desktop */}
               {selectedDoc?.id === 'curriculo' && (
-                <div className="preview-model-header">
-                  <div className="model-tabs-label">Escolha o Modelo do Currículo:</div>
+                <div className="preview-model-header preview-model-desktop-only">
+                  <div className="model-tabs-label">Modelo do Currículo:</div>
                   <div className="model-tabs">
                     {modelosCurriculo.map(modelo => (
                       <button
