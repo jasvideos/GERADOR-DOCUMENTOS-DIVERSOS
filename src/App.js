@@ -2306,15 +2306,22 @@ function App() {
 
   useEffect(() => {
     if (selectedDoc && selectedDoc.generatePDF) {
-      // Debounce alto (1200ms) para evitar o flickering de recarregar o iframe a cada letra digitada
+      // Debounce para mitigar cintilação: só atualiza a tela quando o usuário pausa a digitação
       const timer = setTimeout(() => {
         const doc = selectedDoc.generatePDF(formData);
         if (doc) {
-          // Usando datauristring de volta. Re-gerar Blobs causava memory leak e flickering intenso de navegação do iFrame.
-          // Com cache/limite de digitação o Chrome lida melhor sem recarregar o bloco principal.
-          setPreviewUrl(doc.output('datauristring'));
+          const blob = doc.output('blob');
+          const blobUrl = URL.createObjectURL(blob);
+          
+          setPreviewUrl(prevUrl => {
+            // Limpeza: remove da memória a URL antiga de PDF para não vazar memória no navegador
+            if (prevUrl && prevUrl.startsWith('blob:')) {
+              URL.revokeObjectURL(prevUrl);
+            }
+            return blobUrl;
+          });
         }
-      }, 1200); 
+      }, 1000); 
       return () => clearTimeout(timer);
     }
   }, [formData, selectedDoc]);
@@ -3241,11 +3248,14 @@ function App() {
                 </div>
               )}
 
-              <iframe 
-                src={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
+              <object 
+                data={`${previewUrl}#toolbar=0&navpanes=0&view=FitH`} 
+                type="application/pdf"
                 className="preview-frame"
-                title="Preview do Documento"
-              />
+                aria-label="Preview do Documento"
+              >
+                <p>Seu navegador não suporta visualização de PDF integrada. <a href={previewUrl}>Baixe o PDF</a> para visualizá-lo.</p>
+              </object>
               {/* Camada de bloqueio para evitar interação com o PDF */}
               <div 
                 className="preview-blocker"

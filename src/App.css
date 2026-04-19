@@ -163,19 +163,19 @@ body {
 
 .doc-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Cards menores */
-  gap: 15px; /* Menor espaçamento */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Cards ainda menores */
+  gap: 12px; /* Menor espaçamento */
 }
 
 .doc-card {
   background: white;
-  border-radius: 24px;
-  padding: 28px;
+  border-radius: 16px; /* Borda menos agressiva */
+  padding: 20px; /* Reduzido de 28px para 20px */
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px; /* Reduzido de 18px */
   border: 1px solid rgba(255, 255, 255, 1);
   box-shadow: 
     0 10px 15px -3px rgba(0, 0, 0, 0.05),
@@ -211,13 +211,13 @@ body {
 }
 
 .icon-box {
-  width: 50px;
-  height: 50px;
-  border-radius: 14px;
+  width: 40px; /* Reduzido de 50px */
+  height: 40px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 1.5rem; /* Reduzido de 1.8rem */
   background: #f8fafc;
 }
 
@@ -242,15 +242,17 @@ body {
 
 .doc-card-title {
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.05rem; /* Reduzido de 1.2rem */
   color: #1e293b;
   margin: 0;
 }
 
 .doc-card-desc {
-  font-size: 0.9rem;
+  font-size: 0.8rem; /* Reduzido de 0.9rem */
   color: #64748b;
-  line-height: 1.5;
+  line-height: 1.4;
+  margin: 0;
+  flex-grow: 1;
 }
 
 /* Footer Action within Card */
