@@ -80,10 +80,10 @@
     .flyer {
       width: 1123px;   /* 297mm @ 96 dpi */
       min-height: 1587px; /* 420mm @ 96 dpi */
-      background: #0a0f1e;
+      background: #ffffff;
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.2);
       position: relative;
       display: flex;
       flex-direction: column;
@@ -91,11 +91,11 @@
 
     /* ===== CABEÇALHO ===== */
     .flyer-header {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
       padding: 36px 48px 28px;
       position: relative;
       overflow: hidden;
-      border-bottom: 2px solid rgba(99,102,241,0.3);
+      border-bottom: 2px solid rgba(99,102,241,0.15);
     }
 
     .flyer-header::before {
@@ -103,7 +103,7 @@
       position: absolute;
       top: -60px; right: -60px;
       width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -112,7 +112,7 @@
       position: absolute;
       bottom: -80px; left: 30%;
       width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -134,7 +134,7 @@
     .logo-name {
       font-size: 3rem;
       font-weight: 900;
-      background: linear-gradient(135deg, #818cf8, #c4b5fd, #ffffff);
+      background: linear-gradient(135deg, #4f46e5, #3b82f6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -144,8 +144,8 @@
 
     .logo-sub {
       font-size: 0.95rem;
-      color: #94a3b8;
-      font-weight: 500;
+      color: #64748b;
+      font-weight: 600;
       letter-spacing: 1px;
     }
 
@@ -164,21 +164,21 @@
     }
 
     .badge-pc {
-      background: rgba(99,102,241,0.2);
-      border: 1px solid rgba(99,102,241,0.5);
-      color: #c7d2fe;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #4f46e5;
     }
 
     .badge-mobile {
-      background: rgba(16,185,129,0.2);
-      border: 1px solid rgba(16,185,129,0.5);
-      color: #6ee7b7;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: #059669;
     }
 
     .badge-pdf {
-      background: rgba(245,158,11,0.2);
-      border: 1px solid rgba(245,158,11,0.5);
-      color: #fde68a;
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.3);
+      color: #d97706;
     }
 
     .header-headline {
@@ -190,13 +190,13 @@
     .headline-main {
       font-size: 2.6rem;
       font-weight: 900;
-      color: white;
+      color: #1e293b;
       line-height: 1.15;
       max-width: 800px;
     }
 
     .headline-main span {
-      background: linear-gradient(90deg, #818cf8, #c4b5fd);
+      background: linear-gradient(90deg, #4f46e5, #8b5cf6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -204,9 +204,9 @@
 
     .headline-sub {
       margin-top: 10px;
-      font-size: 1rem;
-      color: #94a3b8;
-      max-width: 600px;
+      font-size: 1.1rem;
+      color: #475569;
+      max-width: 650px;
       line-height: 1.6;
     }
 
@@ -222,8 +222,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.85rem;
-      color: #e2e8f0;
+      font-size: 0.95rem;
+      color: #334155;
       font-weight: 600;
     }
 
@@ -265,8 +265,8 @@
       align-items: center;
       gap: 16px;
       padding: 20px 24px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
       transition: all 0.2s ease;
     }
@@ -284,7 +284,7 @@
     .doc-name {
       font-size: 1.1rem;
       font-weight: 700;
-      color: #e2e8f0;
+      color: #1e293b;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -302,7 +302,7 @@
     .doc-price {
       font-size: 1.2rem;
       font-weight: 800;
-      color: #818cf8;
+      color: #4f46e5;
       flex-shrink: 0;
       white-space: nowrap;
     }
@@ -319,63 +319,64 @@
 
     /* QR code box */
     .qr-box {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(99,102,241,0.25);
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
       border-radius: 16px;
-      padding: 24px;
+      padding: 24px 36px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 36px;
+      flex: 1;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .qr-text-col {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      width: 300px;
-      flex-shrink: 0;
-      justify-content: center;
+      gap: 12px;
     }
 
     .qr-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .qr-placeholder {
-      width: 130px;
-      height: 130px;
-      background: white;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      color: #64748b;
-      text-align: center;
-      padding: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      /* REAL QR code will go here */
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ffffff' width='200' height='200'/%3E%3Crect fill='%23000000' x='10' y='10' width='70' height='70'/%3E%3Crect fill='%23ffffff' x='20' y='20' width='50' height='50'/%3E%3Crect fill='%23000000' x='30' y='30' width='30' height='30'/%3E%3Crect fill='%23000000' x='120' y='10' width='70' height='70'/%3E%3Crect fill='%23ffffff' x='130' y='20' width='50' height='50'/%3E%3Crect fill='%23000000' x='140' y='30' width='30' height='30'/%3E%3Crect fill='%23000000' x='10' y='120' width='70' height='70'/%3E%3Crect fill='%23ffffff' x='20' y='130' width='50' height='50'/%3E%3Crect fill='%23000000' x='30' y='140' width='30' height='30'/%3E%3Crect fill='%23000000' x='90' y='10' width='10' height='10'/%3E%3Crect fill='%23000000' x='100' y='10' width='10' height='10'/%3E%3Crect fill='%23000000' x='90' y='30' width='10' height='10'/%3E%3Crect fill='%23000000' x='110' y='30' width='10' height='10'/%3E%3Crect fill='%23000000' x='90' y='50' width='10' height='10'/%3E%3Crect fill='%23000000' x='100' y='60' width='10' height='10'/%3E%3Crect fill='%23000000' x='120' y='90' width='10' height='10'/%3E%3Crect fill='%23000000' x='130' y='90' width='10' height='10'/%3E%3Crect fill='%23000000' x='90' y='100' width='10' height='10'/%3E%3Crect fill='%23000000' x='110' y='100' width='10' height='10'/%3E%3Crect fill='%23000000' x='90' y='120' width='10' height='10'/%3E%3Crect fill='%23000000' x='100' y='130' width='10' height='10'/%3E%3Crect fill='%23000000' x='120' y='120' width='10' height='10'/%3E%3Crect fill='%23000000' x='140' y='120' width='10' height='10'/%3E%3Crect fill='%23000000' x='160' y='120' width='10' height='10'/%3E%3Crect fill='%23000000' x='130' y='140' width='10' height='10'/%3E%3Crect fill='%23000000' x='150' y='140' width='10' height='10'/%3E%3Crect fill='%23000000' x='170' y='140' width='10' height='10'/%3E%3Crect fill='%23000000' x='120' y='160' width='10' height='10'/%3E%3Crect fill='%23000000' x='140' y='160' width='10' height='10'/%3E%3Crect fill='%23000000' x='160' y='160' width='10' height='10'/%3E%3C/svg%3E");
-      background-size: cover;
-    }
-
-    .qr-url {
-      font-size: 0.78rem;
-      font-weight: 800;
-      color: #818cf8;
-      text-align: center;
-      word-break: break-all;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #1e293b;
+      letter-spacing: -1px;
     }
 
     .qr-caption {
-      font-size: 0.68rem;
-      color: #64748b;
-      text-align: center;
+      font-size: 1.1rem;
+      color: #475569;
+      font-weight: 500;
+      max-width: 250px;
     }
+
+    .qr-placeholder {
+      width: 160px;
+      height: 160px;
+      background: #ffffff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    .qr-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* removing qr-url and qr-caption older styles as they are replaced above */
 
     /* Caixa de destaque */
     .highlight-box {
-      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
-      border: 1px solid rgba(99,102,241,0.25);
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
       border-radius: 16px;
       padding: 28px;
       flex: 1;
@@ -387,7 +388,7 @@
     .highlight-box h3 {
       font-size: 1.1rem;
       font-weight: 800;
-      color: #c4b5fd;
+      color: #166534;
       margin-bottom: 16px;
     }
 
@@ -401,25 +402,26 @@
     .feature-list li {
       display: flex;
       align-items: flex-start;
-      gap: 8px;
-      font-size: 0.75rem;
-      color: #94a3b8;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: #15803d;
+      font-weight: 600;
       line-height: 1.4;
     }
 
     .feature-list li::before {
       content: '✦';
-      color: #818cf8;
-      font-size: 0.7rem;
+      color: #22c55e;
+      font-size: 0.8rem;
       flex-shrink: 0;
       margin-top: 1px;
     }
 
     /* ===== RODAPÉ ===== */
     .flyer-footer {
-      background: rgba(99,102,241,0.08);
-      border-top: 1px solid rgba(99,102,241,0.2);
-      padding: 14px 48px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      padding: 18px 48px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -427,9 +429,9 @@
     }
 
     .footer-url {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: #818cf8;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #4f46e5;
       letter-spacing: 0.3px;
     }
 
@@ -652,10 +654,13 @@
 
         <!-- QR CODE -->
         <div class="qr-box">
-          <div class="qr-title">📸 Acesse agora</div>
-          <div class="qr-placeholder" title="QR Code do site"></div>
-          <div class="qr-url">anixdocs.vercel.app</div>
-          <div class="qr-caption">Aponte a câmera do celular<br />e acesse instantaneamente</div>
+          <div class="qr-text-col">
+            <div class="qr-title">ACESSE AGORA!</div>
+            <div class="qr-caption">Escaneie o QR Code ao lado com seu celular</div>
+          </div>
+          <div class="qr-placeholder" title="QR Code anixdocs.vercel.app">
+            <img crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://anixdocs.vercel.app&color=0a0f1e" alt="QR Code" />
+          </div>
         </div>
 
         <!-- DIFERENCIAIS -->
