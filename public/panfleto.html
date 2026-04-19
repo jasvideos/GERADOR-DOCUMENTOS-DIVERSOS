@@ -67,11 +67,19 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(99,102,241,0.5);
     }
+    
+    .btn-print {
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 4px 15px rgba(16,185,129,0.4);
+    }
+    .btn-print:hover {
+      box-shadow: 0 6px 20px rgba(16,185,129,0.5);
+    }
 
-    /* ===== PANFLETO A3 (420 × 297mm em landscape) ===== */
+    /* ===== PANFLETO A3 VERTICAL (297 × 420mm) ===== */
     .flyer {
-      width: 1122px;   /* 420mm @ 96 dpi ≈ 1587px; usamos um scale menor para caber na tela */
-      min-height: 793px; /* 297mm @ 96 dpi ≈ 1123px */
+      width: 1123px;   /* 297mm @ 96 dpi */
+      min-height: 1587px; /* 420mm @ 96 dpi */
       background: #0a0f1e;
       border-radius: 16px;
       overflow: hidden;
@@ -180,11 +188,11 @@
     }
 
     .headline-main {
-      font-size: 2rem;
+      font-size: 2.6rem;
       font-weight: 900;
       color: white;
       line-height: 1.15;
-      max-width: 680px;
+      max-width: 800px;
     }
 
     .headline-main span {
@@ -226,9 +234,10 @@
     /* ===== CORPO ===== */
     .flyer-body {
       display: flex;
+      flex-direction: column;
       flex: 1;
-      padding: 28px 40px 28px 48px;
-      gap: 32px;
+      padding: 36px 48px;
+      gap: 36px;
     }
 
     /* ===== COLUNA DE DOCUMENTOS ===== */
@@ -248,14 +257,14 @@
     .docs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 20px;
     }
 
     .doc-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
+      gap: 16px;
+      padding: 20px 24px;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.07);
       border-radius: 12px;
@@ -263,7 +272,7 @@
     }
 
     .doc-icon {
-      font-size: 1.6rem;
+      font-size: 2.2rem;
       flex-shrink: 0;
     }
 
@@ -273,7 +282,7 @@
     }
 
     .doc-name {
-      font-size: 0.82rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: #e2e8f0;
       white-space: nowrap;
@@ -282,29 +291,30 @@
     }
 
     .doc-desc {
-      font-size: 0.68rem;
+      font-size: 0.85rem;
       color: #64748b;
-      margin-top: 1px;
+      margin-top: 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .doc-price {
-      font-size: 0.9rem;
+      font-size: 1.2rem;
       font-weight: 800;
       color: #818cf8;
       flex-shrink: 0;
       white-space: nowrap;
     }
 
-    /* ===== COLUNA LATERAL ===== */
+    /* ===== COLUNA INFERIOR (QR CODE + DESTAQUES) ===== */
     .side-column {
-      width: 240px;
+      width: 100%;
       display: flex;
-      flex-direction: column;
-      gap: 20px;
+      flex-direction: row;
+      gap: 24px;
       flex-shrink: 0;
+      margin-top: auto;
     }
 
     /* QR code box */
@@ -312,11 +322,14 @@
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(99,102,241,0.25);
       border-radius: 16px;
-      padding: 20px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
+      width: 300px;
+      flex-shrink: 0;
+      justify-content: center;
     }
 
     .qr-title {
@@ -364,14 +377,18 @@
       background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
       border: 1px solid rgba(99,102,241,0.25);
       border-radius: 16px;
-      padding: 18px;
+      padding: 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .highlight-box h3 {
-      font-size: 0.85rem;
+      font-size: 1.1rem;
       font-weight: 800;
       color: #c4b5fd;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .feature-list {
@@ -451,7 +468,7 @@
       }
 
       @page {
-        size: A3 landscape;
+        size: A3 portrait;
         margin: 0;
       }
     }
@@ -463,11 +480,16 @@
   <div class="toolbar">
     <div>
       <div class="toolbar-title">📄 Panfleto Publicitário — AnixDocs</div>
-      <div class="toolbar-subtitle">Formato A3 Landscape (420 × 297mm) · Pronto para impressão</div>
+      <div class="toolbar-subtitle">Formato A3 Vertical (297 × 420mm)</div>
     </div>
-    <button class="btn-download" onclick="window.print()">
-      🖨️ Imprimir / Salvar como PDF
-    </button>
+    <div style="display: flex; gap: 10px;">
+      <button class="btn-download" onclick="downloadFlyerPNG()" id="btn-png">
+        📥 Baixar Imagem (PNG)
+      </button>
+      <button class="btn-download btn-print" onclick="window.print()">
+        🖨️ Imprimir / PDF
+      </button>
+    </div>
   </div>
 
   <!-- PANFLETO A3 -->
@@ -665,5 +687,39 @@
 
   </div>
 
+  <!-- SCRIPT PARA DOWNLOAD EM PNG -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    function downloadFlyerPNG() {
+      const flyer = document.querySelector('.flyer');
+      const btnPng = document.getElementById('btn-png');
+      const originalText = btnPng.innerHTML;
+      
+      btnPng.innerHTML = '⏳ Gerando Imagem...';
+      btnPng.disabled = true;
+
+      // Adiciona um pequeno atraso para dar tempo das fontes da web carregarem totalmente
+      setTimeout(() => {
+        html2canvas(flyer, { 
+          scale: 2,           // Qualidade alta
+          useCORS: true,      // Permite imagens externas
+          backgroundColor: '#0a0f1e' 
+        }).then(canvas => {
+          const link = document.createElement('a');
+          link.download = 'Panfleto-AnixDocs-A3-Vertical.png';
+          link.href = canvas.toDataURL('image/png', 1.0);
+          link.click();
+          
+          btnPng.innerHTML = originalText;
+          btnPng.disabled = false;
+        }).catch(err => {
+          console.error("Erro ao gerar imagem: ", err);
+          alert('Houve um erro ao gerar a imagem. Tente Imprimir para PDF no botão verde.');
+          btnPng.innerHTML = originalText;
+          btnPng.disabled = false;
+        });
+      }, 500);
+    }
+  </script>
 </body>
 </html>
