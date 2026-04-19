@@ -2807,10 +2807,17 @@ function App() {
   ];
 
   const skillsList = [
-    "Liderança", "Negociação", "Adaptabilidade", "Comunicação eficaz", 
-    "Autoconfiança", "Resiliência", "Autoconhecimento", "Pensamento crítico", 
-    "Trabalho em equipe", "Criatividade", "Proatividade", "Inteligência emocional", 
-    "Resolução de problemas", "Foco em resultados", "Gestão do tempo"
+    // Comportamentais
+    "Liderança", "Negociação", "Adaptabilidade", "Comunicação eficaz",
+    "Autoconfiança", "Resiliência", "Autoconhecimento", "Pensamento crítico",
+    "Trabalho em equipe", "Criatividade", "Proatividade", "Inteligência emocional",
+    "Resolução de problemas", "Foco em resultados", "Gestão do tempo",
+    "Organização", "Flexibilidade", "Empatia", "Ética profissional", "Iniciativa",
+    // Técnicas
+    "Microsoft Excel", "Microsoft Word", "Microsoft PowerPoint", "Google Planilhas",
+    "Atendimento ao cliente", "Vendas", "Marketing Digital", "Redes Sociais",
+    "Pacote Office", "Gestão de projetos", "Análise de dados", "Edição de imagens",
+    "Drivers / CNH", "Operação de caixa", "Estoque e logística", "Suporte técnico",
   ];
 
   const languagesList = ["Inglês", "Espanhol", "Francês"];
