@@ -12,6 +12,7 @@ import {
   getDocumentPrices
 } from './services/analytics';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
+import { CHAVE_PIX_DOACAO, getAffiliateByCategory, MERCADO_LIVRE_LINK } from './config/affiliates';
 
 // Helper to save recent doc
 const saveRecentDoc = (doc) => {
@@ -2244,13 +2245,88 @@ function App() {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
+  const [isPaid, setIsPaid] = useState(true); // Totalmente grátis por padrão
   const [showTutorial, setShowTutorial] = useState(false);
   const [showTutorialCurriculo, setShowTutorialCurriculo] = useState(false);
+
+  // Estados da Monetização Livre (Downloads Patrocinados e Doações)
+  const [isPreparingDownload, setIsPreparingDownload] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadActionType, setDownloadActionType] = useState(null);
+  const [showDonationInModal, setShowDonationInModal] = useState(false);
+
+  // Estados da Promoção Dinâmica (Mercado Livre, etc.)
+  const [promoLink, setPromoLink] = useState(MERCADO_LIVRE_LINK);
+  const [promoTitle, setPromoTitle] = useState('Garanta o Manto da Seleção Brasileira!');
+  const [promoDesc, setPromoDesc] = useState('Garanta a camisa oficial da nossa Seleção com desconto exclusivo, parcelamento facilitado e entrega super rápida no Mercado Livre!');
+  const [promoImg, setPromoImg] = useState('https://images.unsplash.com/photo-1620371350502-999e9a7d80a4?w=500&auto=format&fit=crop&q=60');
+
+  useEffect(() => {
+    // 1. Tenta carregar do localStorage
+    const savedLink = localStorage.getItem('promo_link');
+    const savedTitle = localStorage.getItem('promo_title');
+    const savedDesc = localStorage.getItem('promo_desc');
+    const savedImg = localStorage.getItem('promo_img');
+
+    if (savedLink) setPromoLink(savedLink);
+    if (savedTitle) setPromoTitle(savedTitle);
+    if (savedDesc) setPromoDesc(savedDesc);
+    if (savedImg) setPromoImg(savedImg);
+
+    // 2. Tenta carregar do Supabase se estiver configurado
+    if (isSupabaseConfigured()) {
+      const loadSupabaseSettings = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('app_settings')
+            .select('key, value');
+          
+          if (!error && data) {
+            data.forEach(item => {
+              if (item.key === 'promo_link') setPromoLink(item.value);
+              if (item.key === 'promo_title') setPromoTitle(item.value);
+              if (item.key === 'promo_desc') setPromoDesc(item.value);
+              if (item.key === 'promo_img') setPromoImg(item.value);
+            });
+          }
+        } catch (e) {
+          // A tabela pode não existir ainda, falha silenciosamente
+        }
+      };
+      loadSupabaseSettings();
+    }
+  }, []);
 
   // Novos estados para a modernização Premium
   const [recentDocs, setRecentDocs] = useState([]);
   const [prices, setPrices] = useState({});
+
+  // Lógica da Contagem Regressiva do Download Patrocinado
+  useEffect(() => {
+    let interval;
+    if (isPreparingDownload && downloadProgress < 100) {
+      interval = setInterval(() => {
+        setDownloadProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 2.5; // 100% em 4 segundos
+        });
+      }, 100);
+    }
+    return () => clearInterval(interval);
+  }, [isPreparingDownload, downloadProgress]);
+
+  // Executa a ação do documento quando o progresso chega a 100%
+  useEffect(() => {
+    if (downloadProgress === 100 && downloadActionType && isPreparingDownload) {
+      const timer = setTimeout(() => {
+        executeDocumentAction(downloadActionType);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [downloadProgress, downloadActionType, isPreparingDownload]);
 
   // Busca preços dinâmicos do Supabase
   useEffect(() => {
@@ -2557,50 +2633,48 @@ function App() {
   };
 
   const handleDownload = () => {
-    if (!isPaid) {
-      handleRequestPayment();
-      return;
-    }
-    const doc = generateDoc();
-    if (doc) {
-      doc.save(`${selectedDoc.id}.pdf`);
-      trackDocumentGeneration(selectedDoc.id, selectedDoc.title, 'download');
-    }
+    setDownloadActionType('download');
+    setIsPreparingDownload(true);
+    setDownloadProgress(0);
+    setShowDonationInModal(false);
   };
 
   const handlePrint = () => {
-    if (!isPaid) {
-      handleRequestPayment();
-      return;
-    }
+    setDownloadActionType('print');
+    setIsPreparingDownload(true);
+    setDownloadProgress(0);
+    setShowDonationInModal(false);
+  };
+
+  const handleShare = () => {
+    setDownloadActionType('share');
+    setIsPreparingDownload(true);
+    setDownloadProgress(0);
+    setShowDonationInModal(false);
+  };
+
+  const executeDocumentAction = (type) => {
     const doc = generateDoc();
-    if (doc) {
+    if (!doc) return;
+
+    if (type === 'download') {
+      doc.save(`${selectedDoc.id}.pdf`);
+      trackDocumentGeneration(selectedDoc.id, selectedDoc.title, 'download');
+    } else if (type === 'print') {
       doc.autoPrint();
       window.open(doc.output('bloburl'), '_blank');
       trackDocumentGeneration(selectedDoc.id, selectedDoc.title, 'print');
-    }
-  };
-
-  const handleShare = async () => {
-    if (!isPaid) {
-      handleRequestPayment();
-      return;
-    }
-    const doc = generateDoc();
-    if (doc) {
+    } else if (type === 'share') {
       const blob = doc.output('blob');
       const file = new File([blob], `${selectedDoc.id}.pdf`, { type: "application/pdf" });
       if (navigator.share) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: selectedDoc.title,
-            text: 'Segue o documento gerado.'
-          });
+        navigator.share({
+          files: [file],
+          title: selectedDoc.title,
+          text: 'Segue o documento gerado.'
+        }).then(() => {
           trackDocumentGeneration(selectedDoc.id, selectedDoc.title, 'share');
-        } catch (err) {
-          console.error("Erro ao compartilhar", err);
-        }
+        }).catch(err => console.error("Erro ao compartilhar", err));
       } else {
         alert("O compartilhamento direto não é suportado neste navegador/dispositivo. Por favor, baixe o PDF e envie manualmente.");
       }
@@ -3062,6 +3136,16 @@ function App() {
           <h1>AnixDocs</h1>
           <p>Gerador de Documentos Profissionais</p>
         </div>
+        {/* Banner Promocional do Topo (Afiliado Mercado Livre/Dinâmico) */}
+        <a 
+          href={promoLink} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="header-affiliate-link"
+          title={promoTitle}
+        >
+          🇧🇷 {promoTitle.length > 28 ? promoTitle.slice(0, 28) + '...' : promoTitle} →
+        </a>
         {/* Botões de Tutorial no Topo */}
         <div className="header-tutorials">
           <button
@@ -3086,6 +3170,25 @@ function App() {
         <div className="left-panel">
           {!selectedDoc ? (
             <div className="dashboard-section">
+              {/* Banner Promocional Dinâmico (Configurável no Painel Admin) */}
+              <div className="brazil-promo-banner">
+                <a href={promoLink} target="_blank" rel="noopener noreferrer" className="brazil-promo-img-link">
+                  <div className="brazil-promo-img-box">
+                    <img 
+                      src={promoImg} 
+                      alt={promoTitle} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} 
+                    />
+                  </div>
+                </a>
+                <div className="brazil-promo-info">
+                  <span className="brazil-promo-badge">Parceria Recomendada</span>
+                  <h3 className="brazil-promo-title">{promoTitle}</h3>
+                  <p className="brazil-promo-desc">{promoDesc}</p>
+                  <a href={promoLink} target="_blank" rel="noopener noreferrer" className="brazil-promo-btn">Aproveitar Oferta Especial →</a>
+                </div>
+              </div>
+
               {/* Documentos Recentes */}
               {recentDocs.length > 0 && (
                 <>
@@ -3118,7 +3221,7 @@ function App() {
                   >
                     <div className="doc-card-header">
                       <div className="icon-box">{doc.icon || '📄'}</div>
-                      <div className="doc-card-price">R$ {doc.price?.toFixed(2).replace('.', ',')}</div>
+                      <div className="doc-card-price free-badge">100% GRÁTIS</div>
                     </div>
                     <h3 className="doc-card-title">{doc.title}</h3>
                     <p className="doc-card-desc">{doc.description || 'Clique para criar este documento.'}</p>
@@ -3456,7 +3559,8 @@ function App() {
                   flexWrap: 'wrap',
                   gap: '10px',
                   fontSize: '1rem',
-                  color: '#34495e'
+                  color: '#34495e',
+                  marginBottom: '15px'
                 }}>
                   <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
                     <span style={{fontSize: '1.5rem'}}>📄</span>
@@ -3469,14 +3573,12 @@ function App() {
                   </span>
                   <span style={{fontSize: '1.2rem', color: '#667eea'}}>→</span>
                   <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
-                    <span style={{fontSize: '1.5rem'}}>💳</span>
-                    <span>Pague via PIX</span>
-                  </span>
-                  <span style={{fontSize: '1.2rem', color: '#667eea'}}>→</span>
-                  <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
                     <span style={{fontSize: '1.5rem'}}>⬇️</span>
                     <span>Baixe</span>
                   </span>
+
+                  <div style={{width: '100%', height: '1px', margin: '5px 0'}} />
+
                   <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
                     <span style={{fontSize: '1.5rem'}}>🖨️</span>
                     <span>Imprima</span>
@@ -3485,6 +3587,24 @@ function App() {
                     <span style={{fontSize: '1.5rem'}}>📱</span>
                     <span>Compartilhe via WhatsApp</span>
                   </span>
+                </div>
+
+                <div style={{
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  color: 'white',
+                  padding: '10px 24px',
+                  borderRadius: '30px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  fontWeight: '800',
+                  fontSize: '1.2rem',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  marginTop: '10px'
+                }}>
+                  <span>🎉</span> 100% GRATUITO
                 </div>
               </div>
               
@@ -3627,6 +3747,99 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* --- Modal de Transição do Download Patrocinado --- */}
+      {isPreparingDownload && selectedDoc && (() => {
+        return (
+          <div className="transition-modal-overlay">
+            <div className="transition-modal-content" onClick={e => e.stopPropagation()}>
+              <div className="transition-modal-header">
+                <h3>Preparando seu PDF Gratuito...</h3>
+              </div>
+              <div className="transition-modal-body">
+                <div className="ad-loading-section">
+                  <div className="progress-bar-container">
+                    <div className="progress-bar-fill" style={{ width: `${downloadProgress}%` }}></div>
+                  </div>
+                  <span className="countdown-number">
+                    {downloadProgress < 100 
+                      ? `Gerando PDF em segurança (${Math.ceil((100 - downloadProgress) / 25)}s)...`
+                      : "Seu PDF foi gerado com sucesso!"
+                    }
+                  </span>
+                </div>
+
+                {/* Seção de Doação Voluntária (Apoie o Projeto) */}
+                <div className="donation-section" style={{ marginTop: '10px' }}>
+                  <div className="donation-btn-toggle">
+                    <p style={{ margin: 0, fontSize: '0.82rem', fontWeight: '700', color: '#475569', lineHeight: '1.5' }}>
+                      ☕ O AnixDocs agora é 100% gratuito! Se este documento economizou seu tempo e dinheiro, nos apoie com qualquer valor voluntário para ajudar a manter a ferramenta online.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setShowDonationInModal(!showDonationInModal)}
+                      className="sponsored-offer-action-btn"
+                      style={{ 
+                        marginTop: '5px', 
+                        padding: '10px 20px', 
+                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        boxShadow: '0 4px 10px rgba(16, 185, 129, 0.2)',
+                        border: 'none',
+                        color: 'white',
+                        fontWeight: '800',
+                        fontSize: '0.85rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      CLIQUE AQUI PARA DOAR {showDonationInModal ? '▲' : '▼'}
+                    </button>
+                  </div>
+
+                  {showDonationInModal && (
+                    <div className="donation-content-box">
+                      <p>O AnixDocs agora é 100% gratuito! Se este documento economizou seu tempo e dinheiro, nos apoie com qualquer valor voluntário para ajudar a manter a ferramenta online.</p>
+                      
+                      <div className="pix-qr-code-placeholder" style={{ background: 'white' }}>
+                        <img 
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(CHAVE_PIX_DOACAO)}`} 
+                          alt="PIX QR Code" 
+                          style={{ width: '100%', height: '100%', borderRadius: '10px' }} 
+                        />
+                      </div>
+                      
+                      <div className="pix-key-container">
+                        <span className="pix-key-label">Chave PIX Copia e Cola:</span>
+                        <div className="pix-key-badge" onClick={() => {
+                          navigator.clipboard.writeText(CHAVE_PIX_DOACAO);
+                          alert("Chave Pix copiada!");
+                        }}>
+                          {CHAVE_PIX_DOACAO}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Botão de Fechar se já terminou */}
+                {downloadProgress === 100 && (
+                  <button 
+                    className="sponsored-offer-action-btn" 
+                    style={{ background: '#64748b', marginTop: '10px' }}
+                    onClick={() => {
+                      setIsPreparingDownload(false);
+                      setDownloadProgress(0);
+                      setDownloadActionType(null);
+                    }}
+                  >
+                    Fechar Janela
+                  </button>
+                )}
+
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* --- Tutorial Contrato de Locação --- */}
       {showTutorial && (

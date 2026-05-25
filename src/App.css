@@ -1498,3 +1498,556 @@ form {
   border-left: 2px solid rgba(16, 185, 129, 0.3);
   margin-left: 4px;
 }
+
+/* --- MONETIZAÇÃO PREMIUM - NOVOS ESTILOS --- */
+
+/* Badge 100% Grátis nos Cards */
+.doc-card-price.free-badge {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-weight: 800;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Card Patrocinado (Native Ad Grid) */
+.sponsored-card {
+  border: 1px dashed rgba(59, 130, 246, 0.6) !important;
+  background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%) !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.05) !important;
+}
+.sponsored-card:hover {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1) !important;
+}
+.sponsored-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  align-self: flex-start;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Anúncio da Barra Lateral (Sidebar Ad) */
+.sidebar-ad-container {
+  margin: 25px 0 15px;
+  padding: 16px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.sidebar-ad-container:hover {
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.sidebar-ad-title {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.sidebar-ad-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.sidebar-ad-content h4 {
+  font-size: 0.95rem;
+  color: #1e293b;
+  margin: 6px 0;
+  font-weight: 700;
+}
+.sidebar-ad-content p {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 14px;
+  line-height: 1.45;
+}
+.sidebar-ad-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: all 0.25s ease;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+}
+.sidebar-ad-btn:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3);
+  color: white;
+}
+
+/* Modal de Transição/Carregamento do Download (TransitionModal) */
+.transition-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.35s ease-out;
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.transition-modal-content {
+  background: white;
+  width: 100%;
+  max-width: 520px;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes modalSlideUp {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.transition-modal-header {
+  padding: 24px 24px 12px;
+  text-align: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+.transition-modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #0f172a;
+  font-weight: 800;
+}
+.transition-modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.ad-loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 6px 0;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+  width: 0%;
+  transition: width 0.1s linear;
+}
+.countdown-number {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 700;
+}
+
+/* Bloco da Oferta de Afiliado */
+.sponsored-offer-box {
+  background: #eff6ff;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 20px;
+  padding: 18px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  text-align: left;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+.sponsored-offer-img {
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+.sponsored-offer-info {
+  flex: 1;
+}
+.sponsored-offer-label {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #3b82f6;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+.sponsored-offer-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 6px;
+  line-height: 1.35;
+}
+.sponsored-offer-desc {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+.sponsored-offer-action-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  border: none;
+}
+.sponsored-offer-action-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+  color: white;
+}
+.sponsored-offer-action-btn:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Seção de Doação Voluntária */
+.donation-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.78rem;
+  margin: 12px 0;
+  font-weight: 600;
+}
+.donation-divider::before, .donation-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+.donation-divider:not(:empty)::before { margin-right: .8em; }
+.donation-divider:not(:empty)::after { margin-left: .8em; }
+
+.donation-section {
+  text-align: center;
+}
+.donation-btn-toggle {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  line-height: 1.45;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+.donation-content-box {
+  margin-top: 15px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #fafafb;
+  border: 1.5px dashed #cbd5e1;
+  animation: donationFadeIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+@keyframes donationFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.donation-content-box p {
+  font-size: 0.8rem;
+  color: #475569;
+  line-height: 1.45;
+  margin: 0;
+}
+.pix-key-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.pix-key-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+.pix-key-badge {
+  font-family: 'Courier New', monospace;
+  background: #f1f5f9;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  user-select: all;
+  cursor: pointer;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.pix-qr-code-placeholder {
+  width: 110px;
+  height: 110px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  color: #cbd5e1;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+.pix-qr-code-placeholder::after {
+  content: 'PIX QR Code';
+  position: absolute;
+  bottom: 8px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- BANNER PROMOCIONAL SELEÇÃO BRASILEIRA (MERCADO LIVRE AFILIADOS) --- */
+.brazil-promo-banner {
+  margin-bottom: 25px;
+  background: linear-gradient(135deg, #009c3b 0%, #002776 100%);
+  border-radius: 20px;
+  padding: 24px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  box-shadow: 0 15px 30px rgba(0, 156, 59, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.brazil-promo-banner:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 35px rgba(0, 156, 59, 0.35);
+}
+.brazil-promo-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #ffdf00 0%, transparent 60%);
+  opacity: 0.35;
+  pointer-events: none;
+}
+.brazil-promo-img-link {
+  display: block;
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+.brazil-promo-img-link:hover {
+  transform: scale(1.05);
+}
+.brazil-promo-img-box {
+  width: 110px;
+  height: 110px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+.header-affiliate-link {
+  background: linear-gradient(90deg, #ffdf00 0%, #10b981 100%);
+  color: #0f172a !important;
+  font-weight: 800;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 10px rgba(255, 223, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  margin-right: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+.header-affiliate-link:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 14px rgba(255, 223, 0, 0.5);
+  background: white;
+  color: #002776 !important;
+}
+.brazil-promo-info {
+  flex: 1;
+  text-align: left;
+}
+.brazil-promo-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #ffdf00;
+  background: rgba(255, 223, 0, 0.15);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 223, 0, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.brazil-promo-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  color: white;
+}
+.brazil-promo-desc {
+  font-size: 0.88rem;
+  opacity: 0.95;
+  margin: 0 0 16px 0;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+.brazil-promo-btn {
+  display: inline-block;
+  background: #ffdf00;
+  color: #002776;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 10px 24px;
+  border-radius: 30px;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(255, 223, 0, 0.3);
+  transition: all 0.25s ease;
+  border: none;
+}
+.brazil-promo-btn:hover {
+  background: white;
+  color: #009c3b;
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 768px) {
+  .brazil-promo-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+    padding: 20px;
+  }
+  .brazil-promo-img-box {
+    width: 90px;
+    height: 90px;
+  }
+  .brazil-promo-info {
+    text-align: center;
+  }
+  .brazil-promo-btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .header-affiliate-link {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
+    justify-content: center;
+    order: 2;
+  }
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 15px;
+  }
+  .header-content {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .header-tutorials {
+    justify-content: center;
+    order: 3;
+    width: 100%;
+  }
+}

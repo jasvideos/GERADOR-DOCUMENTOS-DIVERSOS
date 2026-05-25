@@ -265,27 +265,53 @@ const TutorialContrato = ({ onClose, onApplyData }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [autoPlay, setAutoPlay] = useState(true); // Ativado por padrão para reprodução contínua (estilo vídeo)
 
   const typewriterRef = useRef(null);
   const utteranceRef = useRef(null);
   const captionIndexRef = useRef(0);
   const captionTimerRef = useRef(null);
+  const autoPlayRef = useRef(true);
+  const goNextRef = useRef(null);
+  const autoAdvanceTimeoutRef = useRef(null);
+  const narrationFinishedRef = useRef(false);
+  const typingFinishedRef = useRef(false);
 
   const totalSteps = TUTORIAL_STEPS.length;
   const step = TUTORIAL_STEPS[currentStep];
+
+  // Sincroniza referências para evitar capturar estado desatualizado em callbacks assíncronos
+  useEffect(() => {
+    autoPlayRef.current = autoPlay;
+  }, [autoPlay]);
+
+  useEffect(() => {
+    goNextRef.current = goNext;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
 
   // ---- Utilitário: parar tudo ----
   const stopAll = useCallback(() => {
     if (typewriterRef.current) clearInterval(typewriterRef.current);
     if (captionTimerRef.current) clearInterval(captionTimerRef.current);
+    if (autoAdvanceTimeoutRef.current) clearTimeout(autoAdvanceTimeoutRef.current);
     if (window.speechSynthesis) window.speechSynthesis.cancel();
     setIsTyping(false);
     setIsSpeaking(false);
   }, []);
 
   // ---- Narração por voz ----
-  const speak = useCallback((text) => {
-    if (!voiceEnabled || !window.speechSynthesis) return;
+  const speak = useCallback((text, onEndCallback) => {
+    const readingTime = Math.max(3500, text.length * 60);
+
+    if (!voiceEnabled || !window.speechSynthesis) {
+      setIsSpeaking(false);
+      if (onEndCallback) {
+        if (autoAdvanceTimeoutRef.current) clearTimeout(autoAdvanceTimeoutRef.current);
+        autoAdvanceTimeoutRef.current = setTimeout(onEndCallback, readingTime);
+      }
+      return;
+    }
 
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
@@ -298,8 +324,28 @@ const TutorialContrato = ({ onClose, onApplyData }) => {
     const ptVoice = voices.find(v => v.lang.startsWith('pt'));
     if (ptVoice) utter.voice = ptVoice;
 
-    utter.onstart = () => setIsSpeaking(true);
-    utter.onend = () => setIsSpeaking(false);
+    let startTime = Date.now();
+
+    const handleEnd = () => {
+      setIsSpeaking(false);
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 1000) {
+        // Se a fala durou menos de 1 segundo (bloqueio de autoplay do navegador ou erro),
+        // usamos o tempo de leitura simulado como fallback de segurança.
+        if (autoAdvanceTimeoutRef.current) clearTimeout(autoAdvanceTimeoutRef.current);
+        autoAdvanceTimeoutRef.current = setTimeout(onEndCallback, readingTime);
+      } else {
+        if (onEndCallback) onEndCallback();
+      }
+    };
+
+    utter.onstart = () => {
+      setIsSpeaking(true);
+      startTime = Date.now();
+    };
+    utter.onend = handleEnd;
+    utter.onerror = handleEnd;
+
     utteranceRef.current = utter;
     window.speechSynthesis.speak(utter);
   }, [voiceEnabled]);
@@ -356,8 +402,28 @@ const TutorialContrato = ({ onClose, onApplyData }) => {
     setActiveTab(s.tab);
     setProgress(Math.round(((stepIndex + 1) / totalSteps) * 100));
 
+    // Inicializa sinalizadores de término
+    narrationFinishedRef.current = false;
+    typingFinishedRef.current = s.field && s.value ? false : true;
+
+    // Função interna para verificar se as duas ações assíncronas já terminaram para avançar
+    const tryAutoAdvance = () => {
+      if (autoPlayRef.current && narrationFinishedRef.current && typingFinishedRef.current) {
+        if (autoAdvanceTimeoutRef.current) clearTimeout(autoAdvanceTimeoutRef.current);
+        autoAdvanceTimeoutRef.current = setTimeout(() => {
+          if (goNextRef.current) goNextRef.current();
+        }, 1800); // 1.8 segundos em destaque após completar digitação + fala e depois avança
+      }
+    };
+
+    // Callback executado quando a narração termina
+    const handleNarrationEnd = () => {
+      narrationFinishedRef.current = true;
+      tryAutoAdvance();
+    };
+
     // Narra e anima legenda
-    speak(s.narration);
+    speak(s.narration, handleNarrationEnd);
     animateCaption(s.narration);
 
     // Typewriter no campo
@@ -367,15 +433,14 @@ const TutorialContrato = ({ onClose, onApplyData }) => {
         typeField(s.field, s.value, () => {
           // Propaga ao App.js após completar
           onApplyData(prev => ({ ...prev, [s.field]: s.value }));
+          typingFinishedRef.current = true;
+          tryAutoAdvance();
         });
       }, 600);
     } else if (s.value === null && s.field === null) {
       // Passo de narração pura (intro/conclusão)
     }
   }, [stopAll, speak, animateCaption, typeField, onApplyData, totalSteps]);
-
-  // ---- Auto-avançar quando a narração termina ----
-  // (Neste modelo o usuário controla manualmente com os botões)
 
   // Inicia o primeiro passo
   useEffect(() => {
@@ -405,9 +470,14 @@ const TutorialContrato = ({ onClose, onApplyData }) => {
     if (isPaused) {
       window.speechSynthesis.resume();
       setIsPaused(false);
+      // Se estava pausado no tempo de leitura offline, retomamos
+      if (autoPlayRef.current && !voiceEnabled) {
+        runStep(currentStep);
+      }
     } else {
       window.speechSynthesis.pause();
       setIsPaused(true);
+      if (autoAdvanceTimeoutRef.current) clearTimeout(autoAdvanceTimeoutRef.current);
     }
   };
 
@@ -417,6 +487,10 @@ const TutorialContrato = ({ onClose, onApplyData }) => {
       setIsSpeaking(false);
     }
     setVoiceEnabled(v => !v);
+    // Reinicia o passo atual com a nova configuração de áudio
+    setTimeout(() => {
+      runStep(currentStep);
+    }, 100);
   };
 
   const TAB_NAMES = ['Partes', 'Imóvel e Prazo', 'Valores', 'Garantia', 'Finalização'];
@@ -596,7 +670,28 @@ const TutorialContrato = ({ onClose, onApplyData }) => {
             onClick={goPrev}
             disabled={currentStep === 0}
           >
-            ⏮ Anterior
+            Anterior ⏮
+          </button>
+
+          <button
+            className={`tutorial-ctrl-btn autoplay ${autoPlay ? 'active' : ''}`}
+            onClick={() => {
+              if (autoPlay) {
+                if (autoAdvanceTimeoutRef.current) clearTimeout(autoAdvanceTimeoutRef.current);
+              } else {
+                runStep(currentStep);
+              }
+              setAutoPlay(!autoPlay);
+            }}
+            title={autoPlay ? 'Pausar Reprodução Contínua (Vídeo)' : 'Iniciar Reprodução Contínua (Vídeo)'}
+            style={{
+              background: autoPlay ? 'linear-gradient(135deg, #10b981, #059669)' : '#4b5563',
+              color: 'white',
+              fontWeight: 'bold',
+              minWidth: '180px'
+            }}
+          >
+            {autoPlay ? '🔁 Vídeo: Contínuo' : '⏹ Vídeo: Manual'}
           </button>
 
           <button
@@ -604,7 +699,7 @@ const TutorialContrato = ({ onClose, onApplyData }) => {
             onClick={togglePause}
             disabled={!isSpeaking && !isPaused}
           >
-            {isPaused ? '▶ Continuar' : '⏸ Pausar'}
+            {isPaused ? '▶ Retomar' : '⏸ Pausar Voz'}
           </button>
 
           <button

@@ -69,6 +69,13 @@ CREATE TABLE IF NOT EXISTS document_prices (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );
 
+-- Tabela de configurações gerais do app (Promoções dinâmicas, etc.)
+CREATE TABLE IF NOT EXISTS app_settings (
+    key VARCHAR(100) PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
+
 -- ==============================================
 -- ÍNDICES PARA MELHOR PERFORMANCE
 -- ==============================================
@@ -91,6 +98,7 @@ ALTER TABLE document_views ENABLE ROW LEVEL SECURITY;
 ALTER TABLE document_generations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE document_prices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;
 
 -- Política para permitir INSERT anônimo (para rastreamento)
 DROP POLICY IF EXISTS "Allow anonymous inserts" ON page_views;
@@ -125,6 +133,13 @@ CREATE POLICY "Allow authenticated select" ON document_prices FOR SELECT USING (
 -- Política para preços (upsert)
 DROP POLICY IF EXISTS "Allow price upsert" ON document_prices;
 CREATE POLICY "Allow price upsert" ON document_prices FOR ALL USING (true) WITH CHECK (true);
+
+-- Políticas para configurações gerais (app_settings)
+DROP POLICY IF EXISTS "Allow settings select" ON app_settings;
+CREATE POLICY "Allow settings select" ON app_settings FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow settings upsert" ON app_settings;
+CREATE POLICY "Allow settings upsert" ON app_settings FOR ALL USING (true) WITH CHECK (true);
 
 -- ==============================================
 -- DADOS INICIAIS DE PREÇOS (OPCIONAL)
