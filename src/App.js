@@ -3137,15 +3137,17 @@ function App() {
           <p>Gerador de Documentos Profissionais</p>
         </div>
         {/* Banner Promocional do Topo (Afiliado Mercado Livre/Dinâmico) */}
-        <a 
-          href={promoLink} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="header-affiliate-link"
-          title={promoTitle}
-        >
-          🇧🇷 {promoTitle.length > 28 ? promoTitle.slice(0, 28) + '...' : promoTitle} →
-        </a>
+        {promoLink && promoTitle && (
+          <a 
+            href={promoLink} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="header-affiliate-link"
+            title={promoTitle}
+          >
+            🇧🇷 {promoTitle.length > 28 ? promoTitle.slice(0, 28) + '...' : promoTitle} →
+          </a>
+        )}
         {/* Botões de Tutorial no Topo */}
         <div className="header-tutorials">
           <button
@@ -3171,23 +3173,25 @@ function App() {
           {!selectedDoc ? (
             <div className="dashboard-section">
               {/* Banner Promocional Dinâmico (Configurável no Painel Admin) */}
-              <div className="brazil-promo-banner">
-                <a href={promoLink} target="_blank" rel="noopener noreferrer" className="brazil-promo-img-link">
-                  <div className="brazil-promo-img-box">
-                    <img 
-                      src={promoImg} 
-                      alt={promoTitle} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} 
-                    />
+              {promoLink && promoTitle && promoImg && (
+                <div className="brazil-promo-banner">
+                  <a href={promoLink} target="_blank" rel="noopener noreferrer" className="brazil-promo-img-link">
+                    <div className="brazil-promo-img-box">
+                      <img 
+                        src={promoImg} 
+                        alt={promoTitle} 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} 
+                      />
+                    </div>
+                  </a>
+                  <div className="brazil-promo-info">
+                    <span className="brazil-promo-badge">Parceria Recomendada</span>
+                    <h3 className="brazil-promo-title">{promoTitle}</h3>
+                    <p className="brazil-promo-desc">{promoDesc}</p>
+                    <a href={promoLink} target="_blank" rel="noopener noreferrer" className="brazil-promo-btn">Aproveitar Oferta Especial →</a>
                   </div>
-                </a>
-                <div className="brazil-promo-info">
-                  <span className="brazil-promo-badge">Parceria Recomendada</span>
-                  <h3 className="brazil-promo-title">{promoTitle}</h3>
-                  <p className="brazil-promo-desc">{promoDesc}</p>
-                  <a href={promoLink} target="_blank" rel="noopener noreferrer" className="brazil-promo-btn">Aproveitar Oferta Especial →</a>
                 </div>
-              </div>
+              )}
 
               {/* Documentos Recentes */}
               {recentDocs.length > 0 && (

@@ -264,6 +264,56 @@ const Admin = () => {
     setIsSavingPromo(false);
   };
 
+  const handlePromoRemove = async () => {
+    const confirmRemove = window.confirm("Tem certeza que deseja remover as promoções ativas?");
+    if (!confirmRemove) return;
+    
+    setIsSavingPromo(true);
+    
+    // Clear state
+    setPromoLink('');
+    setPromoTitle('');
+    setPromoDesc('');
+    setPromoImg('');
+    
+    // Clear local storage
+    localStorage.removeItem('promo_link');
+    localStorage.removeItem('promo_title');
+    localStorage.removeItem('promo_desc');
+    localStorage.removeItem('promo_img');
+
+    let supabaseSaved = false;
+
+    if (isSupabaseConfigured()) {
+      try {
+        const { error } = await supabase
+          .from('app_settings')
+          .upsert([
+            { key: 'promo_link', value: '', updated_at: new Date().toISOString() },
+            { key: 'promo_title', value: '', updated_at: new Date().toISOString() },
+            { key: 'promo_desc', value: '', updated_at: new Date().toISOString() },
+            { key: 'promo_img', value: '', updated_at: new Date().toISOString() }
+          ]);
+
+        if (!error) {
+          supabaseSaved = true;
+        } else {
+          console.error("Supabase upsert error:", error);
+        }
+      } catch (e) {
+        console.warn("Tabela 'app_settings' não criada no Supabase.");
+      }
+    }
+
+    if (supabaseSaved) {
+      alert("Promoção removida globalmente do banco de dados!");
+    } else {
+      alert("Promoção removida localmente!");
+    }
+
+    setIsSavingPromo(false);
+  };
+
   const handlePriceUpdate = async (documentId) => {
     const newValue = editPrices[documentId];
     if (newValue === undefined) return;
@@ -921,21 +971,35 @@ const Admin = () => {
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={handlePromoSave}
-                    style={{
-                      ...styles.saveButton,
-                      padding: '12px 24px',
-                      fontSize: '1rem',
-                      alignSelf: 'flex-start',
-                      marginTop: '10px',
-                      opacity: isSavingPromo ? 0.7 : 1,
-                      cursor: isSavingPromo ? 'not-allowed' : 'pointer'
-                    }}
-                    disabled={isSavingPromo}
-                  >
-                    {isSavingPromo ? 'Salvando...' : 'Salvar Alterações'}
-                  </button>
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                    <button
+                      onClick={handlePromoSave}
+                      style={{
+                        ...styles.saveButton,
+                        padding: '12px 24px',
+                        fontSize: '1rem',
+                        opacity: isSavingPromo ? 0.7 : 1,
+                        cursor: isSavingPromo ? 'not-allowed' : 'pointer'
+                      }}
+                      disabled={isSavingPromo}
+                    >
+                      {isSavingPromo ? 'Salvando...' : 'Salvar Alterações'}
+                    </button>
+                    <button
+                      onClick={handlePromoRemove}
+                      style={{
+                        ...styles.saveButton,
+                        backgroundColor: '#ef4444',
+                        padding: '12px 24px',
+                        fontSize: '1rem',
+                        opacity: isSavingPromo ? 0.7 : 1,
+                        cursor: isSavingPromo ? 'not-allowed' : 'pointer'
+                      }}
+                      disabled={isSavingPromo}
+                    >
+                      Remover Promoção
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

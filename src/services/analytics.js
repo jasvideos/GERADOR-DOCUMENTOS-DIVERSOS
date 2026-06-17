@@ -185,7 +185,13 @@ export const getOverviewStats = async () => {
     };
   } catch (error) {
     console.error('Erro ao obter estatísticas:', error);
-    return null;
+    return {
+      totalViews: 0,
+      todayViews: 0,
+      totalPayments: 0,
+      totalRevenue: 0,
+      totalGenerations: 0
+    };
   }
 };
 
