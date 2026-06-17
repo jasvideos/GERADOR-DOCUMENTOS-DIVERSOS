@@ -2256,24 +2256,25 @@ function App() {
   const [showDonationInModal, setShowDonationInModal] = useState(false);
 
   // Estados da Promoção Dinâmica (Mercado Livre, etc.)
-  const [promoLink, setPromoLink] = useState(MERCADO_LIVRE_LINK);
-  const [promoTitle, setPromoTitle] = useState('Garanta o Manto da Seleção Brasileira!');
-  const [promoDesc, setPromoDesc] = useState('Garanta a camisa oficial da nossa Seleção com desconto exclusivo, parcelamento facilitado e entrega super rápida no Mercado Livre!');
-  const [promoImg, setPromoImg] = useState('https://images.unsplash.com/photo-1620371350502-999e9a7d80a4?w=500&auto=format&fit=crop&q=60');
+  const [promoLink, setPromoLink] = useState(() => {
+    const saved = localStorage.getItem('promo_link');
+    return saved !== null ? saved : MERCADO_LIVRE_LINK;
+  });
+  const [promoTitle, setPromoTitle] = useState(() => {
+    const saved = localStorage.getItem('promo_title');
+    return saved !== null ? saved : 'Garanta o Manto da Seleção Brasileira!';
+  });
+  const [promoDesc, setPromoDesc] = useState(() => {
+    const saved = localStorage.getItem('promo_desc');
+    return saved !== null ? saved : 'Garanta a camisa oficial da nossa Seleção com desconto exclusivo, parcelamento facilitado e entrega super rápida no Mercado Livre!';
+  });
+  const [promoImg, setPromoImg] = useState(() => {
+    const saved = localStorage.getItem('promo_img');
+    return saved !== null ? saved : 'https://images.unsplash.com/photo-1620371350502-999e9a7d80a4?w=500&auto=format&fit=crop&q=60';
+  });
 
   useEffect(() => {
-    // 1. Tenta carregar do localStorage
-    const savedLink = localStorage.getItem('promo_link');
-    const savedTitle = localStorage.getItem('promo_title');
-    const savedDesc = localStorage.getItem('promo_desc');
-    const savedImg = localStorage.getItem('promo_img');
-
-    if (savedLink) setPromoLink(savedLink);
-    if (savedTitle) setPromoTitle(savedTitle);
-    if (savedDesc) setPromoDesc(savedDesc);
-    if (savedImg) setPromoImg(savedImg);
-
-    // 2. Tenta carregar do Supabase se estiver configurado
+    // Tenta carregar do Supabase se estiver configurado
     if (isSupabaseConfigured()) {
       const loadSupabaseSettings = async () => {
         try {

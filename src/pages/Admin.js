@@ -276,11 +276,11 @@ const Admin = () => {
     setPromoDesc('');
     setPromoImg('');
     
-    // Clear local storage
-    localStorage.removeItem('promo_link');
-    localStorage.removeItem('promo_title');
-    localStorage.removeItem('promo_desc');
-    localStorage.removeItem('promo_img');
+    // Clear local storage (Set empty strings so we override defaults)
+    localStorage.setItem('promo_link', '');
+    localStorage.setItem('promo_title', '');
+    localStorage.setItem('promo_desc', '');
+    localStorage.setItem('promo_img', '');
 
     let supabaseSaved = false;
 
